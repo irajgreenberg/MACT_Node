@@ -2,7 +2,10 @@
 const path = require("path");
 
 module.exports = {
-    entry: "./src/p5/proj01/sketch.ts",
+    // entry: "./src/p5/proj01/sketch.ts",
+    //entry: "./src/p5/CryptoIra/sketch.ts",
+    //entry: "./src/p5/CryptoIra02/sketch.ts",
+    entry: "./src/p5/CryptoIra03/sketch.ts",
 
     module: {
         rules: [
@@ -24,5 +27,8 @@ module.exports = {
         static: path.join(__dirname, "dist"),
         compress: true,
         port: 8080
+    },
+    externals: {
+        p5: 'p5'//
     }
 };
