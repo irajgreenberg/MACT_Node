@@ -53,18 +53,19 @@ export class CryptoIra {
                     this.p.fill(c);
                     this.p.push();
                     //this.p.translate(-this.ira.width / 2 + i * this.cellW, -this.ira.height / 2 + j * this.cellH, this.extrudes[k]);
-                    this.p.translate(-this.ira.width / 2 + this.blocksPos2D[i][j].x, -this.ira.height / 2 + j + this.blocksPos2D[i][j].y, this.blocksPos2D[i][j].z);
+                    this.p.translate(this.blocksPos2D[i][j].x, this.blocksPos2D[i][j].y, this.blocksPos2D[i][j].z);
                     this.p.scale(1, 1, this.extrudes[k]);
                     this.p.box(this.cellW, this.cellH, 5);
                     this.p.pop();
                     data += this.blocksPos2D[i][j].x + ", ";
                     data += this.blocksPos2D[i][j].y + ", ";
-                    data += this.blocksPos2D[i][j].z + ", \n";
+                    // data += this.blocksPos2D[i][j].z + ", \n";
+                    data += 0 + ", \n";
 
                     colData += c[0] + ", ";
                     colData += c[1] + ", ";
                     colData += c[2] + ", ";
-                    colData += c[3] + ", ";
+                    //colData += c[3] + ", ";
                 }
             }
         }

@@ -47,8 +47,10 @@ export class CryptoIra {
                 } else {
                     this.p.fill(c);
                     this.p.push();
-                    this.p.translate(-this.ira.width / 2 + i * this.cellW, -this.ira.height / 2 + j * this.cellH, this.extrudes[k]);
-                    this.p.scale(1, 1, this.extrudes[k]);
+                    //this.p.translate(i * this.cellW, j * this.cellH, this.extrudes[k]);
+                    this.p.translate(i * this.cellW, j * this.cellH, 0);
+                    //this.p.scale(1, 1, this.extrudes[k]);
+                    this.p.scale(1, 1, 1);
                     this.p.box(this.cellW, this.cellH, 5);
                     this.p.pop();
                 }

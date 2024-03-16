@@ -44,7 +44,7 @@ const sketch = (p: p5) => {
 
         // ****** Instantiate Custom Geom *******
         p.noStroke();
-        ci = new CryptoIra(p, 30, 30);
+        ci = new CryptoIra(p, 50, 50);
         // **************************************
     };
 

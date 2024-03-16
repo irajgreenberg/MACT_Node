@@ -41,7 +41,8 @@ export class VerletNode {
 		this.p.noStroke();
 		this.p.push();
 		this.p.translate(this.pos.x, this.pos.y, this.pos.z);
-		this.p.sphere(this.radius, detail, detail)
+		this.p.sphere(this.radius, detail, detail);
+		//this.p.box(this.radius, this.radius, this.radius);
 		this.p.pop();
 		//this.p.noFill();
 	}
