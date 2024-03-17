@@ -13,12 +13,12 @@ import { CryptoIra } from './CryptoIra';
 const sketch = (p: p5) => {
 
     // window size
-    // const canvasW = 600;
-    // const canvasH = 600;
-    // const canvasW = p.windowWidth;
-    // const canvasH = p.windowHeight;
-    const canvasW = 450;
-    const canvasH = 800;
+
+    // const canvasW = 450;
+    // const canvasH = 800;
+
+    let canvasW = 450;
+    let canvasH = 800;
 
 
     // background color
@@ -46,6 +46,11 @@ const sketch = (p: p5) => {
         p.background(bgR, bgG, bgB);
         document.body.style.backgroundColor = bgColor;
         document.title = "CryptoIra";
+
+        // added Sun 3/17
+
+        canvasH = p.windowHeight;
+        canvasW = canvasH * 9 / 16;
 
         let cnv = p.createCanvas(canvasW, canvasH, p.WEBGL);
         boundary = new p5.Vector(p.width, p.height, 100);
