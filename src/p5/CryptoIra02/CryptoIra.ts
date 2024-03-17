@@ -14,20 +14,21 @@ export class CryptoIra {
     cellW: number;
     cellH: number;
 
-    ira: p5.Image;
+    // ira: p5.Image;
+    srcImg: p5.Image;
     extrudes: number[] = [];
     blocksPos2D: p5.Vector[][] = [];
     cols2D: p5.Color[][] = [];
 
-    constructor(p: p5, freqW: number, freqH: number) {
+    constructor(p: p5, freqW: number, freqH: number, srcImg: p5.Image) {
         this.p = p;
         this.freqW = freqW;
         this.freqH = freqH;
-        this.ira = p.loadImage("data/CryptoIra/ira_photo_matte.png");
-        this.ira.resize(600, 600);
-
-        this.cellW = this.ira.width / freqW;
-        this.cellH = this.ira.height / freqH;
+        this.srcImg = srcImg;
+        // this.ira = p.loadImage(srcImg);
+        // console.log("srcImg = ", srcImg);
+        this.cellW = srcImg.width / freqW;
+        this.cellH = srcImg.height / freqH;
 
         for (let i = 0, k = 0; i < freqW; i++) {
             this.blocksPos2D[i] = [];
@@ -37,7 +38,7 @@ export class CryptoIra {
                 this.blocksPos2D[i][j] = new p5.Vector(i * this.cellW, j * this.cellH, this.extrudes[k]);
             }
         }
-        this.ira.loadPixels();
+        this.srcImg.loadPixels();
     }
 
     collectData(): void {
@@ -47,7 +48,7 @@ export class CryptoIra {
             this.cols2D[i] = [];
             for (let j = 0; j < this.freqH; j++) {
                 k = i * this.freqH + j;
-                let c = this.ira.get(i * this.cellW, j * this.cellH);
+                let c = this.srcImg.get(i * this.cellW, j * this.cellH);
                 if (this.p.brightness(c) < 10) {
                 } else {
                     this.p.fill(c);

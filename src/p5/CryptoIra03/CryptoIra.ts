@@ -26,7 +26,7 @@ export class CryptoIra {
         this.p = p;
         this.boundary = boundary;
         for (let i = 0; i < this.data.length; i += 3) {
-            this.vBlocks.push(new VerletNode(p, new p5.Vector(this.data[i] - 150, this.data[i + 1] - 150, this.data[i + 2]), this.p.windowWidth / (freq * this.p.random(2.5, 4.5)), p.color(this.cols[i] + this.p.int(this.p.random(-15, 15)), this.cols[i + 1] + this.p.int(this.p.random(-15, 15)), this.cols[i + 2] + this.p.int(this.p.random(-15, 15)))));
+            this.vBlocks.push(new VerletNode(p, new p5.Vector(this.data[i] - 150, this.data[i + 1] - 150, this.data[i + 2]), 600 / (freq * this.p.random(2.5, 4.5)), p.color(this.cols[i] + this.p.int(this.p.random(-15, 15)), this.cols[i + 1] + this.p.int(this.p.random(-15, 15)), this.cols[i + 2] + this.p.int(this.p.random(-15, 15)))));
         }
 
         for (let i = 0, k = 0; i < this.vBlocks.length; i++) {

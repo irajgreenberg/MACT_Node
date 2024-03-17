@@ -13,8 +13,13 @@ import { CryptoIra } from './CryptoIra';
 const sketch = (p: p5) => {
 
     // window size
-    const canvasW = 600;
-    const canvasH = 600;
+    //portrait
+    // const canvasW = 600;
+    // const canvasH = 600;
+
+    // standing figure
+    const canvasW = 450;
+    const canvasH = 800;
 
     // background color
     let bgR = p.int(p.random(110, 140));
@@ -26,6 +31,12 @@ const sketch = (p: p5) => {
 
     // declare custom objects
     let ci: CryptoIra;
+
+    let srcImg: p5.Image;
+
+    p.preload = () => {
+        srcImg = p.loadImage("data/CryptoIra/naked_man_matte.png");
+    }
 
     p.setup = () => {
         bgColor = "#" + p.hex(bgR, 2) + p.hex(bgG, 2) + p.hex(bgB, 2);
@@ -43,8 +54,10 @@ const sketch = (p: p5) => {
         directLightVector = p.createVector(0, 0, 300);
 
         // ****** Instantiate Custom Geom *******
+        // let srcImg = "data/CryptoIra/ira_photo_matte.png";
+        // //let srcImg = "data/CryptoIra/standingMan_matte.png";
         p.noStroke();
-        ci = new CryptoIra(p, 50, 50);
+        ci = new CryptoIra(p, 35, 35, srcImg);
         // **************************************
     };
 

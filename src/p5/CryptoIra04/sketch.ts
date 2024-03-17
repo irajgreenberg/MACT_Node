@@ -15,8 +15,10 @@ const sketch = (p: p5) => {
     // window size
     // const canvasW = 600;
     // const canvasH = 600;
-    const canvasW = p.windowWidth;
-    const canvasH = p.windowHeight;
+    // const canvasW = p.windowWidth;
+    // const canvasH = p.windowHeight;
+    const canvasW = 450;
+    const canvasH = 800;
 
 
     // background color
@@ -32,7 +34,7 @@ const sketch = (p: p5) => {
     let ci: CryptoIra;
 
     // control north-south movement
-    let boundary = new p5.Vector(325, 325, 150);
+    let boundary: p5.Vector;
 
     let lightColorModulation: number;
     let isClicked: boolean = true;
@@ -46,6 +48,7 @@ const sketch = (p: p5) => {
         document.title = "CryptoIra";
 
         let cnv = p.createCanvas(canvasW, canvasH, p.WEBGL);
+        boundary = new p5.Vector(p.width, p.height, 100);
 
 
         p.setAttributes('antialias', true);
@@ -92,7 +95,7 @@ const sketch = (p: p5) => {
         // ********* Animate Custom Geom ********
         // p.rotateX(p.frameCount * p.PI / 1440);
         // p.rotateY(p.frameCount * p.PI / 2880);
-        p.scale(1.25);
+        // p.scale(1.25);
         ci.draw();
         // **************************************
 
