@@ -4,14 +4,16 @@ export class VerletNode {
 
 	p: P5;
 	pos: P5.Vector;
-	radius: number;
+	radius: number | P5.Vector;
 	col: P5.Color;
-	radiusOld: number;
+	radiusOld: number | P5.Vector;
 	posOld: P5.Vector;
 
 	offset: P5.Vector | undefined;
 
-	constructor(p: P5, pos: P5.Vector, radius: number, col: P5.Color) {
+	isEllipsoid: boolean = false;
+
+	constructor(p: P5, pos: P5.Vector, radius: number | P5.Vector, col: P5.Color) {
 		this.p = p;
 		this.pos = pos;
 		this.radius = radius;
@@ -41,7 +43,14 @@ export class VerletNode {
 		this.p.noStroke();
 		this.p.push();
 		this.p.translate(this.pos.x, this.pos.y, this.pos.z);
-		this.p.sphere(this.radius, detail, detail);
+		if (typeof this.radius === "number") {
+			let rad =
+				this.p.sphere(this.radius, detail, detail);
+		} else {
+			this.p.ellipsoid(this.radius.x, this.radius.y, this.radius.z, detail, detail);
+		}
+
+
 		//this.p.box(this.radius, this.radius, this.radius);
 		this.p.pop();
 		//this.p.noFill();
@@ -53,31 +62,61 @@ export class VerletNode {
 	}
 
 	boundsCollide(bounds: P5.Vector) {
-		if (this.pos.x > bounds.x / 2 - this.radius) {
-			this.pos.x = bounds.x / 2 - this.radius;
-			this.pos.x -= 1;
-		}
-		else if (this.pos.x < -bounds.x / 2 + this.radius) {
-			this.pos.x = -bounds.x / 2 + this.radius;
-			this.pos.x += 1;
-		}
+		if (typeof (this.radius) === "number") {
+			if (this.pos.x > bounds.x / 2 - this.radius) {
+				this.pos.x = bounds.x / 2 - this.radius;
+				this.pos.x -= 1;
+			}
+			else if (this.pos.x < -bounds.x / 2 + this.radius) {
+				this.pos.x = -bounds.x / 2 + this.radius;
+				this.pos.x += 1;
+			}
 
-		if (this.pos.y > bounds.y / 2 - this.radius) {
-			this.pos.y = bounds.y / 2 - this.radius;
-			this.pos.y -= 1;
-		}
-		else if (this.pos.y < -bounds.y / 2 + this.radius) {
-			this.pos.y = -bounds.y / 2 + this.radius;
-			this.pos.y += 1;
-		}
+			if (this.pos.y > bounds.y / 2 - this.radius) {
+				this.pos.y = bounds.y / 2 - this.radius;
+				this.pos.y -= 1;
+			}
+			else if (this.pos.y < -bounds.y / 2 + this.radius) {
+				this.pos.y = -bounds.y / 2 + this.radius;
+				this.pos.y += 1;
+			}
 
-		if (this.pos.z > bounds.z / 2 - this.radius) {
-			this.pos.z = bounds.z / 2 - this.radius;
-			this.pos.z -= 1;
-		}
-		else if (this.pos.z < -bounds.z / 2 + this.radius) {
-			this.pos.z = -bounds.z / 2 + this.radius;
-			this.pos.z += 1;
+			if (this.pos.z > bounds.z / 2 - this.radius) {
+				this.pos.z = bounds.z / 2 - this.radius;
+				this.pos.z -= 1;
+			}
+			else if (this.pos.z < -bounds.z / 2 + this.radius) {
+				this.pos.z = -bounds.z / 2 + this.radius;
+				this.pos.z += 1;
+			}
+		} else {
+			if (this.pos.x > bounds.x / 2 - this.radius.x) {
+				this.pos.x = bounds.x / 2 - this.radius.x;
+				this.pos.x -= this.radius.x;
+			}
+			else if (this.pos.x < -bounds.x / 2 + this.radius.x) {
+				this.pos.x = -bounds.x / 2 + this.radius.x;
+				this.pos.x += this.radius.x;
+			}
+
+			if (this.pos.y > bounds.y / 2 - this.radius.y) {
+				this.pos.y = bounds.y / 2 - this.radius.y;
+				this.pos.y -= this.radius.y;
+			}
+			else if (this.pos.y < -bounds.y / 2 + this.radius.y) {
+				this.pos.y = -bounds.y / 2 + this.radius.y;
+				this.pos.y += this.radius.y;
+			}
+
+			if (this.pos.z > bounds.z / 2 - this.radius.z) {
+				this.pos.z = bounds.z / 2 - this.radius.z;
+				this.pos.z -= this.radius.z;
+			}
+			else if (this.pos.z < -bounds.z / 2 + this.radius.z) {
+				this.pos.z = -bounds.z / 2 + this.radius.z;
+				this.pos.z += this.radius.z;
+			}
+
 		}
 	}
 

@@ -5,8 +5,10 @@ module.exports = {
     // entry: "./src/p5/proj01/sketch.ts",
     //entry: "./src/p5/CryptoIra/sketch.ts",
     //entry: "./src/p5/CryptoIra02/sketch.ts",
-    // entry: "./src/p5/CryptoIra03/sketch.ts",
-    entry: "./src/p5/CryptoIra04/sketch.ts",
+    //entry: "./src/p5/CryptoIra03/sketch.ts",
+    // entry: "./src/p5/CryptoIra04/sketch.ts",
+    //entry: "./src/p5/CryptoManDataCollector/sketch.ts",
+    entry: "./src/p5/VerletDemo_01/sketch.ts",
 
     module: {
         rules: [

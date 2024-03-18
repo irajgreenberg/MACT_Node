@@ -17,8 +17,9 @@ const sketch = (p: p5) => {
     // const canvasW = 450;
     // const canvasH = 800;
 
-    let canvasW = 450;
-    let canvasH = 800;
+
+    let canvasH = p.windowHeight;
+    let canvasW = canvasH * 9 / 16;;
 
 
     // background color
@@ -53,7 +54,8 @@ const sketch = (p: p5) => {
         canvasW = canvasH * 9 / 16;
 
         let cnv = p.createCanvas(canvasW, canvasH, p.WEBGL);
-        boundary = new p5.Vector(p.width, p.height, 100);
+        //boundary = new p5.Vector(p.width, p.height, 100);
+        boundary = new p5.Vector(9 / 16, 1, .3);
 
 
         p.setAttributes('antialias', true);
@@ -98,9 +100,7 @@ const sketch = (p: p5) => {
         p.pointLight(p.random(30, 60), p.random(30, 60), p.random(30, 90), p.sin(p.frameCount * p.PI / 90) * 600, p.cos(p.frameCount * p.PI / 90) * 500, 380);
 
         // ********* Animate Custom Geom ********
-        // p.rotateX(p.frameCount * p.PI / 1440);
-        // p.rotateY(p.frameCount * p.PI / 2880);
-        // p.scale(1.25);
+        p.scale(new p5.Vector(canvasW, canvasH, (canvasH + canvasW) / 2));
         ci.draw();
         // **************************************
 
