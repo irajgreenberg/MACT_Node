@@ -1,0 +1,351 @@
+// Protobyte library supports development
+// of softbody organisms.
+
+// appendage to existing VerletStrand
+// that receives head VerletNode for 
+// control by main spine
+
+// Original Author: Ira Greenberg, 11/2023
+// Center of Creative Computation, SMU
+//----------------------------------------------
+
+import { BufferGeometry, Color, Group, Line, LineBasicMaterial, MathUtils, MeshBasicMaterial, Vector3 } from 'three';
+import { AnchorPoint, GeometryDetail, FuncType } from './IJGUtils';
+import { VerletNode } from './VerletNode';
+import { VerletStick } from './VerletStick';
+
+
+export class VerletArm extends Group {
+    head: VerletNode;
+    tail: Vector3;
+    len: number = 0;
+    segmentCount: number;
+
+    segments: VerletStick[] = [];
+    nodes: VerletNode[] = [];
+    // controls anchor ponts along strand
+    private anchorPointDetail: AnchorPoint;
+    // controls spring tension between adjacent nodes
+    elasticity: number;
+    nodeType: GeometryDetail;
+    areNodesVisible: boolean = true;
+
+    tendrilGeometry: BufferGeometry;
+    material = new MeshBasicMaterial({ color: 0xffffff, });
+    public tendril: Line;
+
+    // used to cheaply rotate nodes around their local axis
+    // should eventually be set as a per node property
+    testRot = 0;
+
+    segmentLen: number;
+
+    constructor(head: VerletNode, tail: Vector3, segmentCount: number,
+        anchorPointDetail: AnchorPoint = AnchorPoint.NONE, elasticity: number = .5,
+        nodeType: GeometryDetail = GeometryDetail.SPHERE_LOW, nodeRadius: number = 1) {
+        super();
+        this.head = head;
+        this.tail = tail;
+        this.segmentCount = segmentCount;
+        this.anchorPointDetail = anchorPointDetail;
+        this.elasticity = elasticity;
+        this.nodeType = nodeType;
+        // encapsulaes stick data
+        this.tendril = new Line();
+
+        // local vars for segment calcuations
+        let deltaVec = new Vector3();
+        // get chain vector
+        // this.tail = this.head.position.multiply(new Vector3(this.len));
+        deltaVec.subVectors(this.tail, this.head.position);
+        let chainLen = deltaVec.length();
+        // get chain segment length
+        this.segmentLen = chainLen / this.segmentCount;
+
+        deltaVec.normalize();
+        deltaVec.multiplyScalar(this.segmentLen);
+        // console.log(deltaVec);
+        this.nodes.push(head); // use spin node as first node in arm
+        for (var i = 1; i < this.segmentCount + 1; i++) {
+            // working, but copies values - so lose reference to node object pesition in memory
+            this.nodes.push(new VerletNode(new Vector3(
+                this.head.position.x + deltaVec.x * i,
+                this.head.position.y + deltaVec.y * i,
+                this.head.position.z + deltaVec.z * i
+            ),
+                nodeRadius,
+                new Color(1, 1, 1),
+                this.nodeType));
+        }
+
+        // process nodes
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].setNodeVisible(true);
+            this.nodes[i].setNodeAlpha(1);
+            // show nodes
+            this.add(this.nodes[i]);
+        }
+
+        // add constraints
+        switch (this.anchorPointDetail) {
+            case AnchorPoint.NONE:
+                for (var i = 0; i < this.segments.length; i++) {
+                    this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.NONE);
+                }
+                break;
+            case AnchorPoint.HEAD:
+                for (var i = 0; i < this.segments.length; i++) {
+                    if (i === 0) {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.HEAD);
+                    } else {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.NONE);
+                    }
+                }
+                break;
+            case AnchorPoint.TAIL:
+                for (var i = 0; i < this.segments.length; i++) {
+                    if (i === this.segments.length - 1) {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.TAIL);
+                    } else {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.NONE);
+                    }
+                }
+                break;
+            case AnchorPoint.HEAD_TAIL:
+                for (var i = 0; i < this.segments.length; i++) {
+                    if (i === 0) {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.HEAD);
+                    } else if (i === this.segments.length - 1) {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.TAIL);
+                    } else {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.NONE);
+                    }
+                }
+                break;
+            case AnchorPoint.MOD2:
+                for (var i = 0; i < this.segments.length; i++) {
+                    if (i % 2 === 0) {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.MOD2);
+                    } else {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.NONE);
+                    }
+                }
+                break;
+            case AnchorPoint.RAND:
+                for (var i = 0; i < this.segments.length; i++) {
+                    if (MathUtils.randInt(0, 1) === 0) {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.RAND);
+                    } else {
+                        this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.NONE);
+                    }
+                }
+                break;
+            default:
+                for (var i = 0; i < this.segments.length; i++) {
+                    this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.NONE);
+                }
+        }
+
+        // uncomment to draw VereltSticks
+        // for (let i = 0; i < this.segments.length; i++) {
+        //     this.add(this.segments[i])
+        // }
+
+        // create tendril
+        let pts: Vector3[] = [];
+        for (let i = 0; i < this.nodes.length; i++) {
+            pts[i] = this.nodes[i].position;
+        }
+        this.tendrilGeometry = new BufferGeometry().setFromPoints(pts);
+        let tendrilMaterial = new LineBasicMaterial({ color: 0xFFFFFF });
+        tendrilMaterial.transparent = true;
+        tendrilMaterial.opacity = 1;
+        this.tendril = new Line(this.tendrilGeometry, tendrilMaterial);
+        this.add(this.tendril);
+    }
+
+    // Euler
+    public moveNode(index: number, vec: Vector3): void {
+        this.nodes[index].position.x += vec.x;
+        this.nodes[index].position.y += vec.y;
+        this.nodes[index].position.z += vec.z;
+    }
+
+    // sets postion
+    public moveToNode(index: number, vec: Vector3): void {
+        this.nodes[index].position.x = vec.x;
+        this.nodes[index].position.y = vec.y;
+        this.nodes[index].position.z = vec.z;
+    }
+
+    public verlet(isConstrained: boolean = true): void {
+        let loopStart = 0;
+        let loopEnd = this.nodes.length;
+        if (this.anchorPointDetail === AnchorPoint.HEAD) {
+            loopStart = 1;
+        } else if (this.anchorPointDetail === AnchorPoint.TAIL) {
+            loopEnd = this.nodes.length - 1
+        } else if (this.anchorPointDetail === AnchorPoint.HEAD_TAIL) {
+            loopStart = 1;
+            loopEnd = this.nodes.length - 1;
+        }
+        for (var i = loopStart; i < loopEnd; i++) {
+            this.nodes[i].verlet();
+            this.nodes[i].rotateX(this.testRot * .1);
+            this.nodes[i].rotateY(this.testRot);
+            this.nodes[i].rotateZ(-this.testRot * .3);
+        }
+        if (isConstrained) {
+            this.constrain();
+        }
+        this.testRot += Math.PI / 15080;
+    }
+
+    private constrain(): void {
+        // constrain nodes using VerletStick
+        for (var i = 0; i < this.segmentCount; i++) {
+            this.segments[i].constrainLen();
+        }
+
+        // update tendril line
+        (this.tendril.geometry as BufferGeometry).attributes.position.needsUpdate = true;
+        for (var i = 0; i < this.nodes.length; i++) {
+            (this.tendril.geometry as BufferGeometry).attributes.position.setXYZ(i, this.nodes[i].position.x, this.nodes[i].position.y, this.nodes[i].position.z);
+        }
+    }
+
+    public constrainBounds(bounds: Vector3, offset: Vector3 = new Vector3(), isSpehere: boolean = false): void {
+        for (var i = 0; i < this.nodes.length; i++) {
+            let v = new Vector3(bounds.x + offset.x, bounds.y + offset.y, bounds.z + offset.z);
+            if (isSpehere) {
+                this.nodes[i].constrainBounds(v, offset.x, true);
+            } else {
+                this.nodes[i].constrainBounds(v);
+            }
+        }
+    }
+
+    // Resets node position delta and stick lengths
+    // required when tranforming strand shapes after initialization
+    public resetVerlet(): void {
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].resetVerlet();
+        }
+        for (var i = 0; i < this.segmentCount; i++) {
+            this.segments[i].reinitializeLen();
+        }
+    }
+
+    setHeadPosition(pos: Vector3, offsetRatio: number = 1): void {
+        let head = pos.clone();
+        head.multiplyScalar(offsetRatio);
+        this.nodes[0].position.x = head.x;
+        this.nodes[0].position.y = head.y;
+        this.nodes[0].position.z = head.z;
+    }
+
+    setTailPosition(pos: Vector3, offsetRatio: number = 1): void {
+        this.nodes[this.nodes.length - 1].position.x = pos.x * offsetRatio;
+        this.nodes[this.nodes.length - 1].position.y = pos.y * offsetRatio;
+        this.nodes[this.nodes.length - 1].position.z = pos.z * offsetRatio;
+    }
+
+    setTailPositionX(posX: number): void {
+        this.nodes[this.nodes.length - 1].position.x = posX;
+    }
+    setTailPositionY(posY: number): void {
+        this.nodes[this.nodes.length - 1].position.y = posY;
+    }
+    setTailPositionZ(posZ: number): void {
+        this.nodes[this.nodes.length - 1].position.z = posZ;
+    }
+
+    setNodesVisible(areNodesVisible: boolean): void {
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].setNodeVisible(areNodesVisible);
+        }
+    }
+
+    // enables setting individual node visibiliity by index
+    setNodeVisible(index: number, isNodesVisible: boolean): void {
+        this.nodes[index].setNodeVisible(isNodesVisible);
+    }
+
+    setNodesColor(color: Color): void {
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].setNodeColor(color);
+        }
+    }
+
+    setNodesOpacity(alpha: number): void {
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].setNodeAlpha(alpha);
+        }
+    }
+
+    setNodesScale(scaleMax: number, scaleMin: number = 1, fallOff = FuncType.NONE) {
+        const delta = (scaleMax - scaleMin) / this.nodes.length;
+        for (var i = 0; i < this.nodes.length; i++) {
+
+            switch (fallOff) {
+                case FuncType.NONE:
+                    this.nodes[i].geometry.scale(scaleMax, scaleMax, scaleMax);
+                    break;
+                case FuncType.LINEAR:
+                    this.nodes[i].geometry.scale(scaleMax - delta * i, scaleMax - delta * i, scaleMax - delta * i);
+                    break;
+                case FuncType.LINEAR_INVERSE:
+                    this.nodes[i].geometry.scale(scaleMin + delta * i, scaleMin + delta * i, scaleMin + delta * i);
+                    break;
+                default:
+                    this.nodes[i].geometry.scale(scaleMax, scaleMax, scaleMax);
+
+
+            }
+        }
+    }
+
+    setStrandOpacity(alpha: number): void {
+        let tenMat = this.tendril.material as MeshBasicMaterial;
+        tenMat.transparent = true; //annoying ide can't
+        tenMat.opacity = alpha;
+    }
+
+    setStrandColor(tendrilColor: Color) {
+        let tenMat = this.tendril.material as MeshBasicMaterial;
+        tenMat.color = tendrilColor;
+    }
+
+    setStrandMaterials(tendrilColor: Color, alpha: number): void {
+        let tenMat = this.tendril.material as MeshBasicMaterial;
+        tenMat.color = tendrilColor;
+        tenMat.transparent = true; //annoying ide can't
+        tenMat.opacity = alpha;
+    }
+
+    setMaterials(tendrilColor: Color, alpha: number, nodeColor: Color): void {
+        let tenMat = this.tendril.material as MeshBasicMaterial;
+        tenMat.color = tendrilColor;
+        tenMat.transparent = true; //annoying ide can't
+        tenMat.opacity = alpha;
+
+        for (var i = 0; i < this.nodes.length; i++) {
+            let tenMat = this.nodes[i].material as MeshBasicMaterial;
+            tenMat.color = nodeColor;
+        }
+    }
+
+    enableShadow(isShadowEnabled: boolean = true): void {
+        this.tendril.castShadow = isShadowEnabled;
+    }
+
+    // createSkin() {
+    //     const path = new CustomSinCurve(10);
+    //     const geometry = new TubeGeometry(path, 20, 2, 8, false);
+    //     const material = new MeshBasicMaterial({ color: 0x00ff00 });
+    //     const mesh = new Mesh(geometry, material);
+    //     scene.add(mesh);
+
+    // }
+
+}

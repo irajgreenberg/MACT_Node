@@ -8,7 +8,9 @@ module.exports = {
     //entry: "./src/p5/CryptoIra03/sketch.ts",
     // entry: "./src/p5/CryptoIra04/sketch.ts",
     //entry: "./src/p5/CryptoManDataCollector/sketch.ts",
-    entry: "./src/p5/VerletDemo_01/sketch.ts",
+    //entry: "./src/p5/CryptoUomo/sketch.ts",
+    //entry: "./src/p5/VerletDemo_01/sketch.ts",
+    entry: "./src/three/Verletion/sketch.ts",
 
     module: {
         rules: [
@@ -29,7 +31,7 @@ module.exports = {
     devServer: {
         static: path.join(__dirname, "dist"),
         compress: true,
-        port: 8080
+        port: 8081
     },
     externals: {
         p5: 'p5'//
