@@ -7,12 +7,15 @@ import { Group, Vector3 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, cos, sin } from "../PByte3/IJGUtils";
 import { VerletFace4 } from "../PByte3/VerletFace4";
+import { VerletFace3 } from "../PByte3/VerletFace3";
 
 export class Verletion extends Group {
 
-    p1: VerletFace4;
+    //  p1: VerletFace4;
     pos: Vector3;
     dim: Vector3;
+    f1: VerletFace3;
+    // f2: VerletFace3;
 
 
 
@@ -26,8 +29,9 @@ export class Verletion extends Group {
             vecs.push(new Vector3(cos(theta) * this.dim.x, sin(theta) * this.dim.y, 0));
             theta += TWO_PI / 4;
         }
-        this.p1 = new VerletFace4(vecs, .03);
-        this.add(this.p1);
+        // this.p1 = new VerletFace4(vecs, .03);
+        this.f1 = new VerletFace3([vecs[0], vecs[1], vecs[2]], .03);
+        this.add(this.f1);
         this.create();
     }
 
@@ -35,8 +39,8 @@ export class Verletion extends Group {
     }
 
     verlet(): void {
-        this.p1.verlet();
-        this.p1.constrain(new Vector3(300, 300, 300));
+        this.f1.verlet();
+        this.f1.constrain(new Vector3(300, 300, 300));
     }
 }
 
