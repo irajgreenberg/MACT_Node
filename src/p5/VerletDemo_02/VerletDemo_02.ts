@@ -7,7 +7,7 @@
 // simple Verlet creature
 
 import p5 from "p5";
-import { VerletBaseMin } from "../../libPByte_p5/VerletBaseMin";
+import { VerletBaseMin } from "../libPByte_p5/VerletBaseMin";
 
 export class VerletDemo_02 extends VerletBaseMin {
 

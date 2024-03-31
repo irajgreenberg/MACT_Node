@@ -8,8 +8,9 @@
 import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI } from "../PByte3/IJGUtils";
+import { FuncType, saveImage, PI, TWO_PI } from "../libPByte_3/IJGUtils";
 import { Verletion } from './Verletion';
+import { Vman } from './VMan';
 
 // create and position camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
@@ -43,8 +44,8 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 
 /****************** Enter Custom Geometry *******************/
-let v: Verletion = new Verletion(new Vector3(0, 0, 0), new Vector3(100, 100, 0));
-scene.add(v);
+let vm: Vman = new Vman(new Vector3(0, 0, 0), new Vector3(100, 100, 0));
+scene.add(vm);
 /************************************************************/
 
 
@@ -94,6 +95,7 @@ function animate() {
 
     const time = Date.now() * 0.007;
     // ascent.move(time, new Vector3(1000, 3500, 1000));
+    vm.verlet();
     render();
 }
 

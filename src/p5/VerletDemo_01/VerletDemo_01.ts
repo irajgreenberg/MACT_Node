@@ -9,8 +9,8 @@
 
 
 import p5 from "p5";
-import { VerletNode } from "../../libPByte_p5/VerletNode";
-import { VerletStick } from "../../libPByte_p5/VerletStick";
+import { VerletNode } from "../libPByte_p5/VerletNode";
+import { VerletStick } from "../libPByte_p5/VerletStick";
 
 export class VerletDemo_01 {
 

@@ -5,43 +5,43 @@
 
 import { Group, Vector3 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, cos, sin } from "../PByte3/IJGUtils";
-import { VerletFace4 } from "../PByte3/VerletFace4";
-import { VerletFace3 } from "../PByte3/VerletFace3";
+import { FuncType, saveImage, PI, TWO_PI, cos, sin } from "../libPByte_3/IJGUtils";
+import { VerletFace4 } from "../libPByte_3/VerletFace4";
+import { VerletFace3 } from "../libPByte_3/VerletFace3";
 
 export class Verletion extends Group {
 
-    //  p1: VerletFace4;
-    pos: Vector3;
-    dim: Vector3;
-    f1: VerletFace3;
-    // f2: VerletFace3;
+    // //  p1: VerletFace4;
+    // pos: Vector3;
+    // dim: Vector3;
+    // f1: VerletFace3;
+    // // f2: VerletFace3;
 
 
 
-    constructor(pos: Vector3, dim: Vector3) {
-        super();
-        this.pos = pos;
-        this.dim = dim;
-        let vecs: Vector3[] = [];
-        let theta = PI / 4;
-        for (let i = 0; i < 4; i++) {
-            vecs.push(new Vector3(cos(theta) * this.dim.x, sin(theta) * this.dim.y, 0));
-            theta += TWO_PI / 4;
-        }
-        // this.p1 = new VerletFace4(vecs, .03);
-        this.f1 = new VerletFace3([vecs[0], vecs[1], vecs[2]], .03);
-        this.add(this.f1);
-        this.create();
-    }
+    // constructor(pos: Vector3, dim: Vector3) {
+    //     super();
+    //     this.pos = pos;
+    //     this.dim = dim;
+    //     let vecs: Vector3[] = [];
+    //     let theta = PI / 4;
+    //     for (let i = 0; i < 4; i++) {
+    //         vecs.push(new Vector3(cos(theta) * this.dim.x, sin(theta) * this.dim.y, 0));
+    //         theta += TWO_PI / 4;
+    //     }
+    //     // this.p1 = new VerletFace4(vecs, .03);
+    //     this.f1 = new VerletFace3([vecs[0], vecs[1], vecs[2]], .03);
+    //     this.add(this.f1);
+    //     this.create();
+    // }
 
-    create() {
-    }
+    // create() {
+    // }
 
-    verlet(): void {
-        this.f1.verlet();
-        this.f1.constrain(new Vector3(300, 300, 300));
-    }
+    // verlet(): void {
+    //     this.f1.verlet();
+    //     this.f1.constrain(new Vector3(300, 300, 300));
+    // }
 }
 
 

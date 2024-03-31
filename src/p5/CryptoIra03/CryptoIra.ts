@@ -6,8 +6,8 @@
 // Class Description: 
 
 import p5 from "p5";
-import { VerletStick } from "../../libPByte_p5/VerletStick";
-import { VerletNode } from "../../libPByte_p5/VerletNode";
+import { VerletStick } from "../libPByte_p5/VerletStick";
+import { VerletNode } from "../libPByte_p5/VerletNode";
 
 export class CryptoIra {
     p: p5;
