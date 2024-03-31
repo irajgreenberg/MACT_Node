@@ -20,13 +20,18 @@ export class Vman extends VerletBase {
     // overall dimensions
     dim: Vector3;
 
+    // vertical body segments
+    vSegCount: number;
+
     // TO DO
     // manType: VManType
 
-    constructor(pos: Vector3, dim: Vector3) {
+    constructor(pos: Vector3, dim: Vector3, vSegCount: number) {
         super();
         this.pos = pos;
         this.dim = dim;
+        this.vSegCount = vSegCount;
+
         this._init();
     }
 
@@ -34,27 +39,48 @@ export class Vman extends VerletBase {
         // calculate basic man geometry
         // vertices
         let vecs: Vector3[] = [];
-        let theta = PI / 4;
-        for (let i = 0; i < 4; i++) {
-            vecs.push(new Vector3(cos(theta) * this.dim.x, sin(theta) * this.dim.y, 0));
-            this.nodes.push(new VerletNode(vecs[i], 4));
 
-            if (i > 0) {
-                this.sticks.push(new VerletStick(this.nodes[i - 1], this.nodes[i]));
-            }
-            theta += TWO_PI / 4;
+        let segHt = this.dim.y / this.vSegCount;
+
+        let x1 = -this.dim.x / 2;
+        let x2 = this.dim.x / 2;
+        let y = this.dim.y / 2;
+
+        for (let i = 0; i <= this.vSegCount; i++) {
+            this.nodes.push(new VerletNode(new Vector3(x1, y - segHt * i, this.dim.z / 2), 4));
+            this.nodes.push(new VerletNode(new Vector3(x2, y - segHt * i, this.dim.z / 2), 4));
         }
-        // close form
-        this.sticks.push(new VerletStick(this.nodes[this.nodes.length - 1], this.nodes[0]));
+
+        for (let i = 0, j = 0; i < this.nodes.length; i++, j += 2) {
+            if (j > 0 && j < this.nodes.length - 1) {
+                this.sticks.push(new VerletStick(this.nodes[j - 2], this.nodes[j - 2 + 1]));
+                this.sticks.push(new VerletStick(this.nodes[j - 2], this.nodes[j]));
+                this.sticks.push(new VerletStick(this.nodes[j - 1], this.nodes[j + 1]));
+            } else if (j > 0 && j <= this.nodes.length) {
+                this.sticks.push(new VerletStick(this.nodes[j - 2], this.nodes[j - 2 + 1]));
+            }
+        }
+
 
         // add 1 cross-support
-        this.crossSupports.push(new VerletStick(this.nodes[this.nodes.length - 1], this.nodes[1]));
+        this.crossSupports.push(new VerletStick(this.nodes[0], this.nodes[this.nodes.length - 1]));
+        this.crossSupports.push(new VerletStick(this.nodes[1], this.nodes[this.nodes.length - 2]));
+
 
         // adds node and stick geometry to scenegraph
-        this.draw(false, true, true);
+        this.draw(true, true, false);
 
         // start Verlet integration
-        this.nudge(0, new Vector3(.5, 0, 0));
+        for (let i = 0; i < this.nodes.length; i++) {
+            this.nudge(i, new Vector3(randFloat(-16, 16), randFloat(-16, 16), randFloat(-16, 16)));
+        }
+    }
+
+    constrainBounds(bounds: Vector3): void {
+        for (let i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].constrainBounds(bounds);
+        }
+
     }
 
 }

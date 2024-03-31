@@ -44,7 +44,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 
 /****************** Enter Custom Geometry *******************/
-let vm: Vman = new Vman(new Vector3(0, 0, 0), new Vector3(100, 100, 0));
+let vm: Vman = new Vman(new Vector3(0, 0, 0), new Vector3(50, 300, 5), 5);
 scene.add(vm);
 /************************************************************/
 
@@ -96,6 +96,11 @@ function animate() {
     const time = Date.now() * 0.007;
     // ascent.move(time, new Vector3(1000, 3500, 1000));
     vm.verlet();
+    let bounds = new Vector3().copy(vm.dim);
+    bounds.x *= 1.2
+    bounds.y *= 1.2
+    bounds.z *= 2
+    vm.constrainBounds(bounds);
     render();
 }
 
