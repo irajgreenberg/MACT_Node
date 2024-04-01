@@ -11,6 +11,7 @@ import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI } from "../libPByte_3/IJGUtils";
 import { Verletion } from './Verletion';
 import { Vman } from './VMan';
+import { VMan_2 } from './VMan_2';
 
 // create and position camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
@@ -45,7 +46,8 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 /****************** Enter Custom Geometry *******************/
 let vm: Vman = new Vman(new Vector3(0, 0, 0), new Vector3(50, 300, 5), 5);
-scene.add(vm);
+let vm2: VMan_2 = new VMan_2(new Vector3(0, 0, 0), new Vector3(50, 300, 5), 5);
+scene.add(vm2);
 /************************************************************/
 
 
@@ -95,12 +97,14 @@ function animate() {
 
     const time = Date.now() * 0.007;
     // ascent.move(time, new Vector3(1000, 3500, 1000));
-    vm.verlet();
+    // vm.verlet();
+    vm2.verlet();
     let bounds = new Vector3().copy(vm.dim);
     bounds.x *= 1.2
     bounds.y *= 1.2
     bounds.z *= 2
-    vm.constrainBounds(bounds);
+    // vm.constrainBounds(bounds);
+    // vm2.constrainBounds(bounds);
     render();
 }
 
