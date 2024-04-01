@@ -56,6 +56,8 @@ export class Vman extends VerletBase {
                 this.sticks.push(new VerletStick(this.nodes[j - 2], this.nodes[j - 2 + 1]));
                 this.sticks.push(new VerletStick(this.nodes[j - 2], this.nodes[j]));
                 this.sticks.push(new VerletStick(this.nodes[j - 1], this.nodes[j + 1]));
+                this.crossSupports.push(new VerletStick(this.nodes[j - 2], this.nodes[j + 1]));
+                this.crossSupports.push(new VerletStick(this.nodes[j - 1], this.nodes[j]));
             } else if (j > 0 && j <= this.nodes.length) {
                 this.sticks.push(new VerletStick(this.nodes[j - 2], this.nodes[j - 2 + 1]));
             }
@@ -68,11 +70,11 @@ export class Vman extends VerletBase {
 
 
         // adds node and stick geometry to scenegraph
-        this.draw(true, true, false);
+        this.draw(false, true, false);
 
         // start Verlet integration
         for (let i = 0; i < this.nodes.length; i++) {
-            this.nudge(i, new Vector3(randFloat(-16, 16), randFloat(-16, 16), randFloat(-16, 16)));
+            this.nudge(i, new Vector3(randFloat(-6, 6), randFloat(-6, 6), randFloat(-6, 6)));
         }
     }
 
