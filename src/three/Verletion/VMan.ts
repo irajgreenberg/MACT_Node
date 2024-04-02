@@ -3,7 +3,7 @@
 // Santa Fe, NM | Dallas, TX
 // 2024
 
-import { BufferAttribute, BufferGeometry, Color, Group, MeshBasicMaterial, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Color, Group, MeshBasicMaterial, Vector2, Vector3, Vector4 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, cos, sin } from "../libPByte_3/IJGUtils";
 import { VerletFace4 } from "../libPByte_3/VerletFace4";
@@ -193,7 +193,7 @@ export class VMan extends VerletBase {
         }
 
         // adds node and stick geometry to scenegraph
-        this.draw(false, true, false);
+        this.draw(false, false, false);
 
         let pts: number[] = [];
 
@@ -211,6 +211,31 @@ export class VMan extends VerletBase {
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].constrainBounds(bounds);
         }
+    }
+
+    // returns xMin, xMax, yMin, yMax
+    getMinMaxNodeXYPos(): Vector4 {
+        // just begin with suitably high and low vals
+        let xMin = 10000, xMax = -10000, yMin = 10000, yMax = -10000;
+
+        for (let i = 0; i < this.nodes.length; i++) {
+            if (this.nodes[i].position.x < xMin) {
+                xMin = this.nodes[i].position.x
+            }
+
+            if (this.nodes[i].position.x > xMax) {
+                xMax = this.nodes[i].position.x
+            }
+
+            if (this.nodes[i].position.y < yMin) {
+                yMin = this.nodes[i].position.y
+            }
+
+            if (this.nodes[i].position.y > yMax) {
+                yMax = this.nodes[i].position.y
+            }
+        }
+        return new Vector4(xMin, xMax, yMin, yMax);
     }
 
     drawMan() {

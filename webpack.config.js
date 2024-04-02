@@ -31,7 +31,7 @@ module.exports = {
     devServer: {
         static: path.join(__dirname, "dist"),
         compress: true,
-        port: 8082
+        port: 8080
     },
     // externals: {
     //     p5: 'p5'//
