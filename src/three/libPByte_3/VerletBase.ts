@@ -60,6 +60,13 @@ export abstract class VerletBase extends Group {
         this.nodes[nodeID].position.add(offset);
     }
 
+    // starts Verlet Integration
+    jitter(offset: Vector3): void {
+        for (let i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].position.add(offset);
+        }
+    }
+
     verlet(): void {
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].verlet();
