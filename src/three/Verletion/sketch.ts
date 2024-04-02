@@ -8,7 +8,7 @@
 import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI } from "../libPByte_3/IJGUtils";
+import { FuncType, saveImage, PI, TWO_PI, sin } from "../libPByte_3/IJGUtils";
 import { Verletion } from './Verletion';
 // import { Vman } from './old_VMan';
 import { VMan } from './VMan';
@@ -43,7 +43,6 @@ document.title = "Verletion | Ira Greenberg.2024"
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-
 /****************** Enter Custom Geometry *******************/
 let vm: VMan = new VMan(new Vector3(0, 0, 0), new Vector3(50, 300, 5), 5);
 let ver: Verletion = new Verletion(vm);
@@ -51,8 +50,12 @@ scene.add(vm);
 scene.add(ver);
 
 let frameCounter = 0;
-/************************************************************/
 
+let bounds = new Vector3().copy(vm.dim);
+bounds.x *= 10.2
+bounds.y *= 1.9
+bounds.z *= 2
+/************************************************************/
 
 const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .6));
 scene.add(ambientTexturesLight);
@@ -99,21 +102,12 @@ function animate() {
     // controls.autoRotate = true;
 
     const time = Date.now() * 0.007;
-    // ascent.move(time, new Vector3(1000, 3500, 1000));
-    // vm.verlet();
+
     vm.verlet();
+    vm.jitter(new Vector3(0, sin(frameCounter++ * PI / 60) * .1, 0));
     ver.draw();
 
-    if (frameCounter++ % 21 == 0) {
-        // vm2.jitter(new Vector3(randFloat(.2, 1.5), randFloat(.2, 1.5), randFloat(.2, 1.5)));
-    }
-
-    let bounds = new Vector3().copy(vm.dim);
-    bounds.x *= 1.2
-    bounds.y *= 1.2
-    bounds.z *= 2
-    // vm.constrainBounds(bounds);
-    // vm2.constrainBounds(bounds);
+    vm.constrainBounds(bounds);
     render();
 }
 

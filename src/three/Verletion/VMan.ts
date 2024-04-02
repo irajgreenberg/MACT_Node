@@ -174,7 +174,7 @@ export class VMan extends VerletBase {
     _init(): void {
 
         for (let i = 0; i < this.pts.length - 1; i++) {
-            this.nodes.push(new VerletNode(new Vector3((this.pts[i].x - 787.5) * .45, (-this.pts[i].y + 680.75) * .45, this.pts[i].z), 5, new Color(.3, .3, 1)));
+            this.nodes.push(new VerletNode(new Vector3(this.pos.x + (this.pts[i].x - 787.5) * .45, this.pos.y + (-this.pts[i].y + 680.75) * .45, this.pos.z + this.pts[i].z), 5, new Color(.3, .3, 1)));
         }
 
         for (let i = 0; i < this.nodes.length; i++) {
@@ -238,9 +238,6 @@ export class VMan extends VerletBase {
         return new Vector4(xMin, xMax, yMin, yMax);
     }
 
-    drawMan() {
-
-    }
 
 }
 
