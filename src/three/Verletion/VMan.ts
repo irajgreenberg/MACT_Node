@@ -187,13 +187,14 @@ export class VMan extends VerletBase {
         for (let i = 0, k = 0; i < this.nodes.length; i++) {
             for (let j = i; j < this.nodes.length; j++) {
                 if (i != j && k++ % 14 == 0) {
-                    this.crossSupports.push(new VerletStick(this.nodes[i], this.nodes[j], .9));
+                    this.crossSupports.push(new VerletStick(this.nodes[i], this.nodes[j], .003));
+                    this.crossSupports[this.crossSupports.length - 1].setOpacity(.3);
                 }
             }
         }
 
         // adds node and stick geometry to scenegraph
-        this.draw(false, false, false);
+        this.draw(false, false, true);
 
         let pts: number[] = [];
 

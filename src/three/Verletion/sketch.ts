@@ -8,7 +8,7 @@
 import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, sin } from "../libPByte_3/IJGUtils";
+import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../libPByte_3/IJGUtils";
 import { Verletion } from './Verletion';
 // import { Vman } from './old_VMan';
 import { VMan } from './VMan';
@@ -21,9 +21,9 @@ camera.position.z = 400;
 
 const scene = new Scene();
 let greyCol = randFloat(.1, .3);
-let greyColR = randFloat(.01, .15);
-let greyColG = randFloat(.01, .15);
-let greyColB = randFloat(.01, .15);
+let greyColR = randFloat(.01, .05);
+let greyColG = randFloat(.01, .05);
+let greyColB = randFloat(.01, .05);
 let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
 scene.background = myColor;
@@ -54,7 +54,7 @@ let frameCounter = 0;
 let bounds = new Vector3().copy(vm.dim);
 bounds.x *= 10.2
 bounds.y *= 1.9
-bounds.z *= 2
+bounds.z *= 18
 /************************************************************/
 
 const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .6));
@@ -104,10 +104,11 @@ function animate() {
     const time = Date.now() * 0.007;
 
     vm.verlet();
-    vm.jitter(new Vector3(0, sin(frameCounter++ * PI / 60) * .1, 0));
+    vm.jitter(new Vector3(sin(frameCounter++ * PI / 180) * .1, sin(frameCounter++ * PI / 320) * .1, sin(frameCounter++ * PI / 720) * .1));
     ver.draw();
 
     vm.constrainBounds(bounds);
+
     render();
 }
 
