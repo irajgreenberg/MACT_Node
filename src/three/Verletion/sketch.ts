@@ -49,7 +49,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 let vm: VMan = new VMan(new Vector3(0, 0, 0), new Vector3(50, 300, 5), 5);
 let ver: Verletion = new Verletion(vm);
 //scene.add(vm);
-scene.add(ver);
+//scene.add(ver);
 
 let frameCounter = 0;
 
