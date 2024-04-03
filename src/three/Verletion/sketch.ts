@@ -28,6 +28,7 @@ let greyColG = randFloat(.01, .05);
 let greyColB = randFloat(.01, .05);
 let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
+//const myColor = new Color(.8, .8, .8);
 scene.background = myColor;
 document.body.style.backgroundColor = '#' + myColor.getHexString();
 let fogFactor = 0.00024;
@@ -49,7 +50,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 let vm: VMan = new VMan(new Vector3(0, 0, 0), new Vector3(50, 300, 5), 5);
 let ver: Verletion = new Verletion(vm);
 //scene.add(vm);
-//scene.add(ver);
+scene.add(ver);
 
 let frameCounter = 0;
 
@@ -58,8 +59,9 @@ bounds.x *= 10.2
 bounds.y *= 1.9
 bounds.z *= 18
 
-//const img: Texture = new TextureLoader().load('data/woman_001_UV_map.png');
-let vPlane = new VerletPlane2(200, 300, 10, 10, "data/man_001_noBG.png");
+//const img: Texture = new TextureLoader().load('data/Verletion/woman_001_UV_map.png');
+let vPlane = new VerletPlane2(500, 300, 10, 10, "data/Verletion/man_001_noBG.png");
+//let vPlane = new VerletPlane2(600, 300, 10, 10, "data/Verletion/morpho_010.png");
 scene.add(vPlane);
 vPlane.moveNode(50, new Vector3(115, 15, 15));
 vPlane.renderVerletGeometry(false, false);
@@ -110,7 +112,7 @@ scene.add(pointLt2);
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    controls.autoRotate = true;
+    //controls.autoRotate = true;
 
     const time = Date.now() * 0.007;
 
