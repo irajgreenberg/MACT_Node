@@ -5,13 +5,15 @@
 // Project Description: 
 // Verletion explores...
 
-import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Vector3, WebGLRenderer } from 'three'
+import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../libPByte_3/IJGUtils";
 import { Verletion } from './Verletion';
 // import { Vman } from './old_VMan';
 import { VMan } from './VMan';
+import { VerletPlane } from '../libPByte_3/VerletPlane';
+import { VerletPlane2 } from '../libPByte_3/VerletPlane2';
 
 // create and position camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
@@ -32,7 +34,7 @@ let fogFactor = 0.00024;
 scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
 
 // main renderer
-let renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
+let renderer = new WebGLRenderer({ alpha: true, antialias: true, logarithmicDepthBuffer: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -46,7 +48,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 /****************** Enter Custom Geometry *******************/
 let vm: VMan = new VMan(new Vector3(0, 0, 0), new Vector3(50, 300, 5), 5);
 let ver: Verletion = new Verletion(vm);
-scene.add(vm);
+//scene.add(vm);
 scene.add(ver);
 
 let frameCounter = 0;
@@ -55,6 +57,15 @@ let bounds = new Vector3().copy(vm.dim);
 bounds.x *= 10.2
 bounds.y *= 1.9
 bounds.z *= 18
+
+//const img: Texture = new TextureLoader().load('data/woman_001_UV_map.png');
+let vPlane = new VerletPlane2(200, 300, 10, 10, "data/man_001_noBG.png");
+scene.add(vPlane);
+vPlane.moveNode(50, new Vector3(115, 15, 15));
+vPlane.renderVerletGeometry(false, false);
+
+
+
 /************************************************************/
 
 const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .6));
@@ -99,15 +110,16 @@ scene.add(pointLt2);
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    // controls.autoRotate = true;
+    controls.autoRotate = true;
 
     const time = Date.now() * 0.007;
 
     vm.verlet();
-    vm.jitter(new Vector3(sin(frameCounter++ * PI / 180) * .1, sin(frameCounter++ * PI / 320) * .1, sin(frameCounter++ * PI / 720) * .1));
+    //  vm.jitter(new Vector3(sin(frameCounter++ * PI / 180) * .1, sin(frameCounter++ * PI / 320) * .1, sin(frameCounter++ * PI / 720) * .1));
     ver.draw();
-
     vm.constrainBounds(bounds);
+
+    vPlane.verlet();
 
     render();
 }
