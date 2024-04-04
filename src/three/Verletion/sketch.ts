@@ -5,7 +5,7 @@
 // Project Description: 
 // Verletion explores...
 
-import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector3, WebGLRenderer } from 'three'
+import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SkinnedMesh, SpotLight, Texture, TextureLoader, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../libPByte_3/IJGUtils";
@@ -59,12 +59,46 @@ bounds.x *= 10.2
 bounds.y *= 1.9
 bounds.z *= 18
 
+const skins = ["man_001_noBG.png", "clown_001.png", "alien_001.png", "hamster_001.png",
+    "man_002.png", "man_003.png", "man_004.png", "man_005.png", "man_007.png", "woman_003.png", "woman_004.png",
+    "viking_001.png"]
+
+let planes: VerletPlane2[] = [];
+for (let i = 0; i < skins.length; i++) {
+    planes.push(new VerletPlane2(300, 500, 15, 15, "data/Verletion/" + skins[i]));
+}
 //const img: Texture = new TextureLoader().load('data/Verletion/woman_001_UV_map.png');
-let vPlane = new VerletPlane2(500, 300, 10, 10, "data/Verletion/man_001_noBG.png");
-//let vPlane = new VerletPlane2(600, 300, 10, 10, "data/Verletion/morpho_010.png");
+let vPlane = new VerletPlane2(300, 500, 15, 15, "data/Verletion/man_001_noBG.png");
+let vPlane2 = new VerletPlane2(300, 500, 15, 15, "data/Verletion/clown_001.png");
+let vPlane3 = new VerletPlane2(300, 500, 15, 15, "data/Verletion/alien_001.png");
+let vPlane4 = new VerletPlane2(300, 500, 15, 15, "data/Verletion/hamster_001.png");
+
 scene.add(vPlane);
+scene.add(vPlane2);
+scene.add(vPlane3);
+scene.add(vPlane4);
+scene.position.setZ(-500);
+
+vPlane.position.setZ(randFloat(-600, 600));
+vPlane2.position.setZ(randFloat(-600, 600));
+vPlane3.position.setZ(randFloat(-600, 600));
+vPlane4.position.setZ(randFloat(-600, 600));
+
+vPlane.position.setX(randFloat(-500, 500));
+vPlane2.position.setX(randFloat(-500, 500));
+vPlane3.position.setX(randFloat(-500, 500));
+vPlane4.position.setX(randFloat(-500, 500));
+
+
 vPlane.moveNode(50, new Vector3(115, 15, 15));
+vPlane2.moveNode(50, new Vector3(115, 15, 15));
+vPlane3.moveNode(50, new Vector3(115, 15, 15));
+vPlane4.moveNode(50, new Vector3(115, 15, 15));
+
 vPlane.renderVerletGeometry(false, false);
+vPlane2.renderVerletGeometry(false, false);
+vPlane3.renderVerletGeometry(false, false);
+vPlane4.renderVerletGeometry(false, false);
 
 
 
@@ -112,7 +146,7 @@ scene.add(pointLt2);
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    //controls.autoRotate = true;
+    // controls.autoRotate = true;
 
     const time = Date.now() * 0.007;
 
@@ -122,6 +156,14 @@ function animate() {
     vm.constrainBounds(bounds);
 
     vPlane.verlet();
+    vPlane2.verlet();
+    vPlane3.verlet();
+    vPlane4.verlet();
+
+    vPlane.moveNode(randInt(0, vPlane.nodes.length - 1), new Vector3(randFloat(.5, 1.5), randFloat(.5, 1.5), randFloat(.5, 1.5)));
+    vPlane2.moveNode(randInt(0, vPlane.nodes.length - 1), new Vector3(randFloat(.5, 1.5), randFloat(.5, 1.5), randFloat(.5, 1.5)));
+    vPlane3.moveNode(randInt(0, vPlane.nodes.length - 1), new Vector3(randFloat(.5, 1.5), randFloat(.5, 1.5), randFloat(.5, 1.5)));
+    vPlane4.moveNode(randInt(0, vPlane.nodes.length - 1), new Vector3(randFloat(.5, 1.5), randFloat(.5, 1.5), randFloat(.5, 1.5)));
 
     render();
 }
