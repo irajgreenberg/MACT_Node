@@ -1,19 +1,15 @@
-// Verletion
+// ProtoMorph_001
 // Ira Greenberg
 // Santa Fe, NM | Dallas, TX
+// 2024
 
 // Project Description: 
-// Verletion explores...
 
-import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SkinnedMesh, SpotLight, Texture, TextureLoader, Vector3, WebGLRenderer } from 'three'
+import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../libPByte_3/IJGUtils";
-import { Verletion } from './Verletion';
-// import { Vman } from './old_VMan';
-import { VMan } from './VMan';
-import { VerletPlane } from '../libPByte_3/VerletPlane';
-import { VerletPlane2 } from '../libPByte_3/VerletPlane2';
+import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../../libPByte_3/IJGUtils";
+import { ProtoMorph_001 } from './ProtoMorph_001';
 
 // create and position camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
@@ -22,13 +18,12 @@ camera.position.y = 0;
 camera.position.z = 400;
 
 const scene = new Scene();
-let greyCol = randFloat(.1, .3);
+
 let greyColR = randFloat(.01, .05);
 let greyColG = randFloat(.01, .05);
 let greyColB = randFloat(.01, .05);
 let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
-//const myColor = new Color(.8, .8, .8);
 scene.background = myColor;
 document.body.style.backgroundColor = '#' + myColor.getHexString();
 let fogFactor = 0.00024;
@@ -47,21 +42,12 @@ document.title = "Verletion | Ira Greenberg.2024"
 const controls = new OrbitControls(camera, renderer.domElement);
 
 /****************** Enter Custom Geometry *******************/
-let vm: VMan = new VMan(new Vector3(0, 0, 0), new Vector3(50, 300, 5), 5);
-let ver: Verletion = new Verletion(vm);
-//scene.add(vm);
-scene.add(ver);
+// let bounds = new Vector3().copy(new Vector3(1200, 800, 0));
+// bounds.x *= 10.2
+// bounds.y *= 1.9
+// bounds.z *= 18
 
-let frameCounter = 0;
-
-let bounds = new Vector3().copy(vm.dim);
-bounds.x *= 10.2
-bounds.y *= 1.9
-bounds.z *= 18
-
-const skins = ["man_001_noBG.png", "clown_001.png", "alien_001.png", "hamster_001.png",
-    "man_002.png", "man_003.png", "man_004.png", "man_005.png", "man_007.png", "woman_003.png", "woman_004.png",
-    "viking_001.png"];
+const skins = ["Proto_Org_0001.png", "Proto_BG_0001.png"];
 
 let peopleCount = randInt(1, skins.length)
 peopleCount = 1;
@@ -92,7 +78,6 @@ light.position.set(randFloat(-30, 30), randFloat(400, 900), randFloat(-50, 50));
 light.castShadow = true;
 scene.add(light);
 
-
 const spot = new SpotLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.3, 1.5));
 spot.position.set(randFloat(-10, 10), randFloat(50, 160), randFloat(500, 550));
 spot.castShadow = true;
@@ -121,20 +106,9 @@ scene.add(pointLt2);
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    // controls.autoRotate = true;
+    controls.autoRotate = true;
 
     const time = Date.now() * 0.007;
-
-    vm.verlet();
-    //  vm.jitter(new Vector3(sin(frameCounter++ * PI / 180) * .1, sin(frameCounter++ * PI / 320) * .1, sin(frameCounter++ * PI / 720) * .1));
-    ver.draw();
-    vm.constrainBounds(bounds);
-
-    for (let i = 0; i < peopleCount; i++) {
-        planes[i].verlet();
-        planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.1, .9), randFloat(.1, .9), randFloat(.1, .9)));
-    }
-
     render();
 }
 

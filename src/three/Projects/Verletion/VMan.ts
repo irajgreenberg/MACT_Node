@@ -5,13 +5,13 @@
 
 import { BufferAttribute, BufferGeometry, Color, Group, MeshBasicMaterial, Vector2, Vector3, Vector4 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, cos, sin } from "../libPByte_3/IJGUtils";
-import { VerletFace4 } from "../libPByte_3/VerletFace4";
-import { VerletFace3 } from "../libPByte_3/VerletFace3";
-import { VerletGeometryBase } from "../libPByte_3/VerletGeometryBase";
-import { VerletNode } from "../libPByte_3/VerletNode";
-import { VerletStick } from "../libPByte_3/VerletStick";
-import { VerletBase } from "../libPByte_3/VerletBase";
+import { FuncType, saveImage, PI, TWO_PI, cos, sin } from "../../libPByte_3/IJGUtils";
+import { VerletFace4 } from "../../libPByte_3/VerletFace4";
+import { VerletFace3 } from "../../libPByte_3/VerletFace3";
+import { VerletGeometryBase } from "../../libPByte_3/VerletGeometryBase";
+import { VerletNode } from "../../libPByte_3/VerletNode";
+import { VerletStick } from "../../libPByte_3/VerletStick";
+import { VerletBase } from "../../libPByte_3/VerletBase";
 
 export class VMan extends VerletBase {
 

@@ -5,11 +5,11 @@
 
 import { BufferAttribute, BufferGeometry, DoubleSide, Group, Mesh, MeshBasicMaterial, Texture, TextureLoader, Vector3, Vector4 } from "three";
 import { mapLinear, randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, cos, sin } from "../libPByte_3/IJGUtils";
-import { VerletFace4 } from "../libPByte_3/VerletFace4";
-import { VerletFace3 } from "../libPByte_3/VerletFace3";
+import { FuncType, saveImage, PI, TWO_PI, cos, sin } from "../../libPByte_3/IJGUtils";
+import { VerletFace4 } from "../../libPByte_3/VerletFace4";
+import { VerletFace3 } from "../../libPByte_3/VerletFace3";
 import { VMan } from "./VMan";
-import { VerletPlane } from "../libPByte_3/VerletPlane";
+import { VerletPlane } from "../../libPByte_3/VerletPlane";
 
 export class RipplePlane extends Group {
 
