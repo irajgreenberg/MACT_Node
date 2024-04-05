@@ -61,19 +61,22 @@ bounds.z *= 18
 
 const skins = ["man_001_noBG.png", "clown_001.png", "alien_001.png", "hamster_001.png",
     "man_002.png", "man_003.png", "man_004.png", "man_005.png", "man_007.png", "woman_003.png", "woman_004.png",
-    "viking_001.png"]
+    "viking_001.png"];
+
+let peopleCount = randInt(1, skins.length)
+peopleCount = 1;
 
 let planes: VerletPlane2[] = [];
-for (let i = 0; i < skins.length; i++) {
-    planes.push(new VerletPlane2(300, 500, 15, 15, "data/Verletion/" + skins[i]));
+for (let i = 0; i < peopleCount; i++) {
+    planes.push(new VerletPlane2(300, 500, randInt(10, 16), randInt(10, 16), "data/Verletion/" + skins[6]));
     scene.add(scene.add(planes[i]));
-    planes[i].position.setZ(randFloat(-600, 600));
-    planes[i].position.setX(randFloat(-500, 500));
+    planes[i].position.setZ(randFloat(-600, 400));
+    planes[i].position.setX(randFloat(-650, 650));
     planes[i].moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
     planes[i].renderVerletGeometry(false, false);
 }
 
-scene.position.setZ(-500);
+scene.position.setZ(-600);
 /************************************************************/
 
 const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .6));
@@ -127,9 +130,9 @@ function animate() {
     ver.draw();
     vm.constrainBounds(bounds);
 
-    for (let i = 0; i < skins.length; i++) {
+    for (let i = 0; i < peopleCount; i++) {
         planes[i].verlet();
-        planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.5, 1.5), randFloat(.5, 1.5), randFloat(.5, 1.5)));
+        planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.1, .9), randFloat(.1, .9), randFloat(.1, .9)));
     }
 
     render();
