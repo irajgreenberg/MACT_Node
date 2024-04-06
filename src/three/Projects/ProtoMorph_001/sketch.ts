@@ -10,6 +10,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../../libPByte_3/IJGUtils";
 import { ProtoMorph_001 } from './ProtoMorph_001';
+import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 
 // create and position camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
@@ -47,22 +48,25 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // bounds.y *= 1.9
 // bounds.z *= 18
 
-const skins = ["Proto_Org_0001.png", "Proto_BG_0001.png"];
+const skins = ["Proto_BG_003.png", "Proto_Org_003.png"];
 
 let peopleCount = randInt(1, skins.length)
 peopleCount = 1;
 
 let planes: VerletPlane2[] = [];
-for (let i = 0; i < peopleCount; i++) {
-    planes.push(new VerletPlane2(300, 500, randInt(10, 16), randInt(10, 16), "data/Verletion/" + skins[6]));
+planes.push(new VerletPlane2(3200, 2500, 24, 24, "data/ProtoMorph_001/" + skins[0]));
+planes.push(new VerletPlane2(700, 500, 40, 40, "data/ProtoMorph_001/" + skins[1]));
+planes[0].position.setZ(-400);
+planes[1].position.setZ(100);
+
+planes[1].moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
+for (let i = 0; i < 2; i++) {
     scene.add(scene.add(planes[i]));
-    planes[i].position.setZ(randFloat(-600, 400));
-    planes[i].position.setX(randFloat(-650, 650));
-    planes[i].moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
+    // planes[i].position.setX(randFloat(-650, 650));
     planes[i].renderVerletGeometry(false, false);
 }
 
-scene.position.setZ(-600);
+scene.position.setZ(-300);
 /************************************************************/
 
 const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .6));
@@ -106,9 +110,23 @@ scene.add(pointLt2);
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    controls.autoRotate = true;
-
+    // controls.autoRotate = true;
     const time = Date.now() * 0.007;
+
+
+    for (let i = 0; i < planes.length; i++) {
+        planes[i].verlet();
+        // planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.1, .9), randFloat(.1, .9), randFloat(.1, .9)));
+    }
+
+    planes[0].moveNode(randInt(0, planes[0].nodes.length - 1), new Vector3(randFloat(.05, 3.5), randFloat(.05, 3.5), randFloat(.05, 3.5)));
+    planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.5, 2.5), randFloat(.5, 2.5), randFloat(.5, 2.5)));
+
+    planes[1].position.setX(sin(renderer.info.render.frame * PI / 2780) * 200);
+    planes[1].position.setY(sin(renderer.info.render.frame * PI / 2280) * 145);
+    planes[1].position.setZ(sin(renderer.info.render.frame * PI / 3780) * 245 + 100);
+    planes[1].rotateZ(sin(.002) * .5);
+
     render();
 }
 
