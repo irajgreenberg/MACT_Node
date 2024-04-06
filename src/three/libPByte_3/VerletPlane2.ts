@@ -20,7 +20,7 @@ export class VerletPlane2 extends VerletGeometryBase {
     axisPlane: AxesPlane;
 
     planeGeom: PlaneGeometry;
-    // planeMat: MeshPhongMaterial;
+    planePhongMat: MeshPhongMaterial;
     planeBasicMat: MeshBasicMaterial;
     // planeMesh: Mesh;
 
@@ -65,12 +65,18 @@ export class VerletPlane2 extends VerletGeometryBase {
 
         this.planeGeom = new PlaneGeometry(width, height, widthSegs, heightSegs);
         const tex = new TextureLoader().load(diffuseImage);
-        this.planeBasicMat = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide, map: tex, transparent: true, opacity: .99, wireframe: false });
-        //   this.planeMat = new MeshPhongMaterial({ color: 0xffffff, map: tex, side: DoubleSide, transparent: true, opacity: .99, wireframe: false });
+        this.planeBasicMat = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide, map: tex, transparent: true, opacity: .69, wireframe: false });
+        this.planePhongMat = new MeshPhongMaterial(
+            {
+                color: 0xffffff, side: DoubleSide, map: tex, transparent: true, opacity: 1, wireframe: false, specular: 0xffffff,
+                reflectivity: 5,
+
+            });
         this.colCount = widthSegs + 1;
         this.rowCount = heightSegs + 1;
         this.geometry = this.planeGeom;
         this.material = this.planeBasicMat;
+        //this.material = this.planePhongMat;
 
         this._init();
     }

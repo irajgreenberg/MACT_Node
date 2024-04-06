@@ -27,7 +27,7 @@ let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
 scene.background = myColor;
 document.body.style.backgroundColor = '#' + myColor.getHexString();
-let fogFactor = 0.00024;
+let fogFactor = 0.00004;
 scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
 
 // main renderer
@@ -38,7 +38,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
-document.title = "Verletion | Ira Greenberg.2024"
+document.title = "[Proto]morphogenesis] | Ira Greenberg.2024"
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -48,16 +48,20 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // bounds.y *= 1.9
 // bounds.z *= 18
 
-const skins = ["Proto_BG_003.png", "Proto_Org_003.png"];
+const skins = ["Proto_BG_005.png", "Proto_Org_005.png"];
 
 let peopleCount = randInt(1, skins.length)
 peopleCount = 1;
 
 let planes: VerletPlane2[] = [];
-planes.push(new VerletPlane2(3200, 2500, 24, 24, "data/ProtoMorph_001/" + skins[0]));
+planes.push(new VerletPlane2(4200, 2500, 30, 30, "data/ProtoMorph_001/" + skins[0]));
 planes.push(new VerletPlane2(700, 500, 40, 40, "data/ProtoMorph_001/" + skins[1]));
-planes[0].position.setZ(-400);
-planes[1].position.setZ(100);
+planes[0].position.setZ(-600);
+planes[1].position.setZ(150);
+planes[0].receiveShadow = true;
+planes[1].castShadow = true;
+
+
 
 planes[1].moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
 for (let i = 0; i < 2; i++) {
@@ -65,6 +69,8 @@ for (let i = 0; i < 2; i++) {
     // planes[i].position.setX(randFloat(-650, 650));
     planes[i].renderVerletGeometry(false, false);
 }
+
+console.log(planes[1].nodes.length);
 
 scene.position.setZ(-300);
 /************************************************************/
@@ -75,10 +81,10 @@ scene.add(ambientTexturesLight);
 const hemiLt = new HemisphereLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.01, .3));
 scene.add(hemiLt);
 
-const col2 = new Color(randFloat(.3, .8), randFloat(.3, .8), randFloat(.3, .8));
-const intensity = randFloat(.2, .6);
+const col2 = new Color(1, 1, 1);
+const intensity = .2;
 const light = new DirectionalLight(col2, intensity);
-light.position.set(randFloat(-30, 30), randFloat(400, 900), randFloat(-50, 50));
+light.position.set(0, 0, 600);
 light.castShadow = true;
 scene.add(light);
 
@@ -89,7 +95,7 @@ spot.shadow.radius = 12; //doesn't work with PCFsoftshadows
 spot.shadow.bias = -0.0001;
 spot.shadow.mapSize.width = 1024 * 4;
 spot.shadow.mapSize.height = 1024 * 4;
-//scene.add(spot);
+scene.add(spot);
 
 const pointLt = new PointLight(new Color(randFloat(.3, 1), randFloat(.3, 1), randFloat(.3, 1)), randFloat(.5, 1.2), randFloat(4000, 4000));
 pointLt.translateX(randFloat(0, 0));
@@ -102,9 +108,9 @@ scene.add(pointLt);
 const pointLt2 = new PointLight(new Color(randFloat(.8, 1), randFloat(.8, 1), randFloat(.8, 1)), randFloat(.8, 1.5), randFloat(3000, 3000));
 pointLt2.translateX(randFloat(0, 0));
 pointLt2.translateY(randFloat(0, 0));
-pointLt2.translateZ(randFloat(0, 0));
+pointLt2.translateZ(800);
 pointLt2.castShadow = true;
-scene.add(pointLt2);
+//scene.add(pointLt2);
 
 
 function animate() {
@@ -119,13 +125,18 @@ function animate() {
         // planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.1, .9), randFloat(.1, .9), randFloat(.1, .9)));
     }
 
-    planes[0].moveNode(randInt(0, planes[0].nodes.length - 1), new Vector3(randFloat(.05, 3.5), randFloat(.05, 3.5), randFloat(.05, 3.5)));
-    planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.5, 2.5), randFloat(.5, 2.5), randFloat(.5, 2.5)));
+    planes[0].moveNode(randInt(0, planes[0].nodes.length - 1), new Vector3(randFloat(.02, .75), randFloat(.02, .75), randFloat(.02, .75)));
+    planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.1, 1.2), randFloat(.1, 1.2), randFloat(.1, 1.2)));
 
-    planes[1].position.setX(sin(renderer.info.render.frame * PI / 2780) * 200);
-    planes[1].position.setY(sin(renderer.info.render.frame * PI / 2280) * 145);
+    //  planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.5, 2.5), randFloat(.5, 2.5), randFloat(.5, 2.5)));
+    //planes[1].moveNode(Math.round(planes[1].nodes.length / 2 + planes[1].colCount / 2), new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
+    planes[1].moveNode(800, new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
+
+
+    planes[1].position.setX(sin(renderer.info.render.frame * PI / 2780) * 150);
+    planes[1].position.setY(sin(renderer.info.render.frame * PI / 2280) * 105);
     planes[1].position.setZ(sin(renderer.info.render.frame * PI / 3780) * 245 + 100);
-    planes[1].rotateZ(sin(.002) * .5);
+    planes[1].rotateZ(sin(.05 * PI / 180) * 1);
 
     render();
 }
@@ -145,7 +156,7 @@ function onWindowResize() {
 window.addEventListener('keydown', (event) => {
     if (event.key == 'p') {
         const uid = new Date().getTime();
-        saveImage(renderer, scene, camera, "Verletion" + uid, 1, 1);
+        saveImage(renderer, scene, camera, "[Proto]morphogenesis" + uid, 1, 1);
     }
 })
 
