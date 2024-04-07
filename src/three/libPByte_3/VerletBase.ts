@@ -11,7 +11,7 @@
 // VerletBase.ts
 // Simple Base Verlet class
 
-import { Group, Vector3 } from "three";
+import { Group, Triangle, Vector3 } from "three";
 import { VerletNode } from "./VerletNode";
 import { VerletStick } from "./VerletStick";
 
@@ -20,6 +20,17 @@ export abstract class VerletBase extends Group {
     sticks: VerletStick[] = [];
     nodes: VerletNode[] = [];
     crossSupports: VerletStick[] = [];
+
+    // conveneince node refernces
+    bodyNodes: VerletNode[] = [];
+    edgeNodes: VerletNode[] = [];
+    cornerNodes: VerletNode[] = [];
+    nodes2D: VerletNode[][] = [];
+    rowSticks: VerletStick[] = [];
+    colSticks: VerletStick[] = [];
+
+    // triangles for collisions
+    tris: Triangle[] = [];
 
     areNodesDrawable: boolean = false;
     areSticksDrawable: boolean = false;

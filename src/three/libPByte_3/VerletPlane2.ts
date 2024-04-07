@@ -65,7 +65,7 @@ export class VerletPlane2 extends VerletGeometryBase {
 
         this.planeGeom = new PlaneGeometry(width, height, widthSegs, heightSegs);
         const tex = new TextureLoader().load(diffuseImage);
-        this.planeBasicMat = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide, map: tex, transparent: true, opacity: .69, wireframe: false });
+        this.planeBasicMat = new MeshBasicMaterial({ color: 0xeeddff, side: DoubleSide, map: tex, transparent: true, opacity: .99, wireframe: false });
         this.planePhongMat = new MeshPhongMaterial(
             {
                 color: 0xffffff, side: DoubleSide, map: tex, transparent: true, opacity: 1, wireframe: false, specular: 0xffffff,
