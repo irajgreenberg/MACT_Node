@@ -1,6 +1,6 @@
 import { timeStamp } from "console";
-import { BufferAttribute, BufferGeometry, Color, DoubleSide, Group, InterleavedBufferAttribute, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, PlaneGeometry, Texture, TextureLoader, Triangle, Vector2, Vector3 } from "three";
-import { AnchorPlane, AxesPlane } from "./IJGUtils";
+import { BufferAttribute, BufferGeometry, Color, DoubleSide, Group, InterleavedBufferAttribute, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, PlaneGeometry, Texture, TextureLoader, Triangle, Vector2, Vector3, Vector4 } from "three";
+import { AnchorPlane, AxesPlane, TWO_PI } from "./IJGUtils";
 import { VerletGeometryBase } from "./VerletGeometryBase";
 import { VerletNode } from "./VerletNode";
 import { VerletStick } from "./VerletStick";
@@ -13,7 +13,7 @@ export class VerletSurface extends VerletBase {
 
     pos: Vector3;
     dim: Vector2;
-    detail: number | Vector2 | Vector3;
+    detail: number | Vector2 | Vector3 | Vector4;
     mat: Material;
     anchor: AnchorPlane;
     elasticity: number;
@@ -26,7 +26,7 @@ export class VerletSurface extends VerletBase {
     mesh!: Mesh;
 
 
-    constructor(pos: Vector3, dim: Vector2, detail: number | Vector2 | Vector3, mat: Material, anchor: AnchorPlane = AnchorPlane.NONE, elasticity: number = .05, axisPlane: AxesPlane = AxesPlane.ZX_AXIS) {
+    constructor(pos: Vector3, dim: Vector2, detail: number | Vector2 | Vector3 | Vector4, mat: Material, anchor: AnchorPlane = AnchorPlane.NONE, elasticity: number = .05, axisPlane: AxesPlane = AxesPlane.ZX_AXIS) {
 
         // constructor(width: number, height: number, widthSegs: number, heightSegs: number, diffuseImage: string, anchor: AnchorPlane = AnchorPlane.NONE, elasticity: number = .5, axisPlane: AxesPlane = AxesPlane.ZX_AXIS) {
         super();
@@ -44,33 +44,42 @@ export class VerletSurface extends VerletBase {
     }
 
     _init(): void {
-        let segs1 = 0;
-        let segs2 = 0;
-        let extra = 0;
+        let detailX = 0;
+        let detailY = 0;
+        let detailZ = 0;
+        let detailW = 0;
 
         if (this.detail instanceof Vector2) {
-            segs1 = this.detail.x;
-            segs2 = this.detail.y;
+            detailX = this.detail.x;
+            detailY = this.detail.y;
         } else if (this.detail instanceof Vector3) {
-            segs1 = this.detail.x;
-            segs2 = this.detail.y;
-            extra = this.detail.z;
+            detailX = this.detail.x;
+            detailY = this.detail.y;
+            detailZ = this.detail.z;
+        } else if (this.detail instanceof Vector4) {
+            detailX = this.detail.x;
+            detailY = this.detail.y;
+            detailZ = this.detail.z;
+            detailW = this.detail.w;
         } else {
-            segs1 = segs2 = this.detail;
+            detailX = detailY = this.detail;
         }
 
         // elliptical
-        for (let i = 0; i < segs1; i++) {
-            for (let j = 0; j < segs2; j++) {
+        const stepArc = TWO_PI / detailX;
+        const stepSlice = this.dim.y / detailY;
+        const _vecs: number[] = [];
+        for (let i = 0; i < detailX; i++) {
+            for (let j = 0; j < detailY; j++) {
             }
         }
 
         // rectangular
-        const stepW = this.dim.x / segs1;
-        const stepH = this.dim.y / segs2;
+        const stepW = this.dim.x / detailX;
+        const stepH = this.dim.y / detailY;
         const _vecs: number[] = [];
-        for (let i = 0; i < segs1; i++) {
-            for (let j = 0; j < segs2; j++) {
+        for (let i = 0; i < detailX; i++) {
+            for (let j = 0; j < detailY; j++) {
                 _vecs.push(stepW * i);
                 _vecs.push(stepH * j);
                 _vecs.push(0);
