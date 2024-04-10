@@ -54,14 +54,14 @@ let peopleCount = randInt(1, skins.length)
 peopleCount = 1;
 
 let planes: VerletPlane2[] = [];
-planes.push(new VerletPlane2(4200, 2500, 30, 30, "data/ProtoMorph_001/" + skins[0]));
-planes.push(new VerletPlane2(700, 500, 40, 40, "data/ProtoMorph_001/" + skins[1]));
+planes.push(new VerletPlane2(4200, 2500, 30, 30, "data/ProtoMorph/" + skins[0]));
+planes.push(new VerletPlane2(700, 500, 40, 40, "data/ProtoMorph/" + skins[1]));
 planes[0].position.setZ(-600);
 planes[1].position.setZ(150);
 // planes[0].receiveShadow = true;
 // planes[1].castShadow = true;
 
-planes.push(new VerletPlane2(300, 300, 8, 8, "data/ProtoMorph_001/" + skins[1]));
+planes.push(new VerletPlane2(300, 300, 8, 8, "data/ProtoMorph/" + skins[1]));
 planes[2].position.setX(1350);
 planes[2].position.setZ(50);
 

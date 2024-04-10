@@ -1,6 +1,6 @@
 import { timeStamp } from "console";
 import { BufferAttribute, BufferGeometry, Color, DoubleSide, Group, InterleavedBufferAttribute, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, PlaneGeometry, Texture, TextureLoader, Triangle, Vector2, Vector3, Vector4 } from "three";
-import { AnchorPlane, AxesPlane, TWO_PI, cos, sin } from "./IJGUtils";
+import { AnchorPlane, AxesPlane, TWO_PI, cos, getNormalizedUVArr, sin } from "./IJGUtils";
 import { VerletGeometryBase } from "./VerletGeometryBase";
 import { VerletNode } from "./VerletNode";
 import { VerletStick } from "./VerletStick";
@@ -75,8 +75,10 @@ export class VerletSurface extends VerletBase {
         const sliceXStep = this.dim.x / 2.0 / detail1;
         const sliceYStep = this.dim.y / 2.0 / detail1;
         let _vecs3: Vector3[][] = [];
+        let _vecs3_1D: Vector3[] = [];
         let _vecs: number[] = [];
         let _inds: number[] = [];
+        let _UVs: number[] = [];
         let theta = 0.0;
 
         // vertices
@@ -91,7 +93,8 @@ export class VerletSurface extends VerletBase {
                 _vecs.push(y);
                 _vecs.push(z);
                 // for convenience
-                _vecs3[i].push(new Vector3(x, y, z));
+                _vecs3[i].push(new Vector3(x, y, z)); // 2D
+                _vecs3_1D.push(new Vector3(x, y, z)); // 1D
                 this.nodes.push(new VerletNode(new Vector3(x, y, z)));
             }
             theta += thetaStep;
@@ -100,6 +103,7 @@ export class VerletSurface extends VerletBase {
         _vecs.push(this.pos.x);
         _vecs.push(this.pos.y);
         _vecs.push(this.pos.z);
+        _vecs3_1D.push(this.pos);
         this.nodes.push(new VerletNode(new Vector3(this.pos.x, this.pos.y, this.pos.z)));
 
         // indices
@@ -150,9 +154,15 @@ export class VerletSurface extends VerletBase {
                 }
             }
         }
-        let _verts = new Float32Array(_vecs);
+
+        // create surface geometry
+        const verts = new Float32Array(_vecs);
+        const _uvs = getNormalizedUVArr(_vecs3_1D);
+        const UVs = new Float32Array(_uvs);
+        const geometry = new BufferGeometry();
         this.mesh = new Mesh();
-        this.mesh.geometry.setAttribute('position', new BufferAttribute(_verts, 3));
+        this.mesh.geometry.setAttribute('position', new BufferAttribute(verts, 3));
+        this.mesh.geometry.setAttribute('uv', new BufferAttribute(UVs, 2));
         this.mesh.geometry.setIndex(_inds);
         this.mesh.material = this.mat;
         this.add(this.mesh);

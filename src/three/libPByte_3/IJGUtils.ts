@@ -1,10 +1,11 @@
-import { BoxGeometry, Face, ImageLoader, Line3, MeshBasicMaterial, PerspectiveCamera, Plane, Scene, TetrahedronGeometry, Triangle, Vector2, WebGLRenderer } from 'three';
+import { BoxGeometry, Face, ImageLoader, Line3, MeshBasicMaterial, PerspectiveCamera, Plane, Scene, TetrahedronGeometry, Triangle, Vector2, Vector4, WebGLRenderer } from 'three';
 
 import {
     Color, BufferGeometry, Group, Line, LineBasicMaterial,
     Mesh, MeshPhongMaterial, SphereGeometry, Vector3, BufferAttribute, DoubleSide
 } from 'three';
-import { randFloat } from 'three/src/math/MathUtils';
+import { mapLinear, randFloat } from 'three/src/math/MathUtils';
+import { VerletNode } from './VerletNode';
 //import { Frequency } from 'tone';
 
 export function simpleSaveImage(renderer: WebGLRenderer, scene: Scene, camera: PerspectiveCamera, fileName: string, w: number, h: number) {
@@ -1233,6 +1234,51 @@ export function shuffleArray(array: number[]) {
     }
 }
 
+
+
+// Required input: Vector3 array
+// Returns xMin, xMax, yMin, yMax
+// Added 4/10/2024
+export function getMinMaxXYPos(vecs: Vector3[]): Vector4 {
+    // just begin with suitably high and low vals
+    let xMin = 10000, xMax = -10000, yMin = 10000, yMax = -10000;
+
+    for (let i = 0; i < vecs.length; i++) {
+        if (vecs[i].x < xMin) {
+            xMin = vecs[i].x
+        }
+
+        if (vecs[i].x > xMax) {
+            xMax = vecs[i].x
+        }
+
+        if (vecs[i].y < yMin) {
+            yMin = vecs[i].y
+        }
+
+        if (vecs[i].y > yMax) {
+            yMax = vecs[i].y
+        }
+    }
+    return new Vector4(xMin, xMax, yMin, yMax);
+}
+
+
+// Required input: Vector3 array
+// Returns array of normalized UV's as number[]
+// Added 4/10/2024
+export function getNormalizedUVArr(vecs: Vector3[]): number[] {
+    const _UVs: number[] = [];
+    const xyMinMax = getMinMaxXYPos(vecs);
+
+    for (let i = 0; i < vecs.length; i++) {
+        const x = mapLinear(vecs[i].x, xyMinMax.x, xyMinMax.y, 0, 1);
+        const y = mapLinear(vecs[i].y, xyMinMax.z, xyMinMax.w, 0, 1)
+        _UVs.push(x);
+        _UVs.push(y);
+    }
+    return _UVs;
+}
 
 
 

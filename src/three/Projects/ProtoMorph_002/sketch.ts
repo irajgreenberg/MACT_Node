@@ -51,41 +51,17 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 const skins = ["Proto_BG_006.png", "Proto_Org_006.png"];
 
-let peopleCount = randInt(1, skins.length)
-peopleCount = 1;
-
-let planes: VerletPlane2[] = [];
-planes.push(new VerletPlane2(4200, 2500, 30, 30, "data/ProtoMorph_001/" + skins[0]));
-planes.push(new VerletPlane2(700, 500, 40, 40, "data/ProtoMorph_001/" + skins[1]));
-planes[0].position.setZ(-600);
-planes[1].position.setZ(150);
-// planes[0].receiveShadow = true;
-// planes[1].castShadow = true;
-
-planes.push(new VerletPlane2(300, 300, 8, 8, "data/ProtoMorph_001/" + skins[1]));
-planes[2].position.setX(1350);
-planes[2].position.setZ(50);
-
-
-
-planes[1].moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
-for (let i = 0; i < planes.length; i++) {
-    // scene.add(scene.add(planes[i]));
-    // planes[i].position.setX(randFloat(-650, 650));
-    planes[i].renderVerletGeometry(false, false);
-}
-
-//console.log(planes[1].nodes.length);
 
 scene.position.setZ(-300);
 
-
-
-// test
-let mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: 100, side: DoubleSide })
+// VerletSurface test
+const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_006.png');
+let mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: 100, side: DoubleSide, map: texture })
 let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(500, 500), new Vector2(11, 7), mat);
 scene.add(vs);
 /************************************************************/
+
+
 
 const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .6));
 //scene.add(ambientTexturesLight);
@@ -132,34 +108,34 @@ function animate() {
     const time = Date.now() * 0.007;
 
 
-    for (let i = 0; i < planes.length; i++) {
-        planes[i].verlet();
-        // planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.1, .9), randFloat(.1, .9), randFloat(.1, .9)));
-    }
+    // for (let i = 0; i < planes.length; i++) {
+    //     planes[i].verlet();
+    //     // planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.1, .9), randFloat(.1, .9), randFloat(.1, .9)));
+    // }
 
-    planes[0].moveNode(randInt(0, planes[0].nodes.length - 1), new Vector3(randFloat(.3, 4), randFloat(.3, 4), randFloat(.01, .2)));
-    planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.1, 1.2), randFloat(.1, 1.2), randFloat(.1, 1.2)));
+    // planes[0].moveNode(randInt(0, planes[0].nodes.length - 1), new Vector3(randFloat(.3, 4), randFloat(.3, 4), randFloat(.01, .2)));
+    // planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.1, 1.2), randFloat(.1, 1.2), randFloat(.1, 1.2)));
 
-    // planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.02, .07), randFloat(.02, .07), randFloat(1.02, 2.07)));
-    //planes[1].moveNode(Math.round(planes[1].nodes.length / 2 + planes[1].colCount / 2), new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
-    // planes[1].moveNode(800, new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
-
-
-    planes[1].position.setX(sin(renderer.info.render.frame * PI / 2780) * 150);
-    planes[1].position.setY(sin(renderer.info.render.frame * PI / 2280) * 105);
-    planes[1].position.setZ(sin(renderer.info.render.frame * PI / 3780) * 245 + 100);
-    planes[1].rotateZ(sin(.05 * PI / 180) * 1);
+    // // planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.02, .07), randFloat(.02, .07), randFloat(1.02, 2.07)));
+    // //planes[1].moveNode(Math.round(planes[1].nodes.length / 2 + planes[1].colCount / 2), new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
+    // // planes[1].moveNode(800, new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
 
 
-    planes[2].moveNode(randInt(0, planes[2].nodes.length - 1), new Vector3(randFloat(.5, 1.5), randFloat(.5, 1.5), randFloat(.5, 1.5)));
-    //planes[1].moveNode(Math.round(planes[1].nodes.length / 2 + planes[1].colCount / 2), new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
-    // planes[1].moveNode(800, new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
+    // planes[1].position.setX(sin(renderer.info.render.frame * PI / 2780) * 150);
+    // planes[1].position.setY(sin(renderer.info.render.frame * PI / 2280) * 105);
+    // planes[1].position.setZ(sin(renderer.info.render.frame * PI / 3780) * 245 + 100);
+    // planes[1].rotateZ(sin(.05 * PI / 180) * 1);
 
 
-    planes[2].position.setX(-600 + sin(renderer.info.render.frame * PI / 3780) * -150);
-    planes[2].position.setY(sin(renderer.info.render.frame * PI / 1280) * -105);
-    planes[2].position.setZ(sin(renderer.info.render.frame * PI / 1780) * 145 + 10);
-    //planes[2].rotateZ(cos(.05 * PI / 180) * 1);
+    // planes[2].moveNode(randInt(0, planes[2].nodes.length - 1), new Vector3(randFloat(.5, 1.5), randFloat(.5, 1.5), randFloat(.5, 1.5)));
+    // //planes[1].moveNode(Math.round(planes[1].nodes.length / 2 + planes[1].colCount / 2), new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
+    // // planes[1].moveNode(800, new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
+
+
+    // planes[2].position.setX(-600 + sin(renderer.info.render.frame * PI / 3780) * -150);
+    // planes[2].position.setY(sin(renderer.info.render.frame * PI / 1280) * -105);
+    // planes[2].position.setZ(sin(renderer.info.render.frame * PI / 1780) * 145 + 10);
+    // //planes[2].rotateZ(cos(.05 * PI / 180) * 1);
 
     render();
 }
