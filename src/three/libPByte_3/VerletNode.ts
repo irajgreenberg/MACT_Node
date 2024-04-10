@@ -83,7 +83,7 @@ export class VerletNode extends Mesh {
       case GeometryDetail.SPHERE_LOW:
         geom = new SphereGeometry(radius, 8, 8);
         mat = new MeshPhongMaterial({ color: color });
-        console.log(color);
+        //console.log(color);
         break;
       case GeometryDetail.SPHERE_MED:
         geom = new SphereGeometry(radius, 12, 12);
