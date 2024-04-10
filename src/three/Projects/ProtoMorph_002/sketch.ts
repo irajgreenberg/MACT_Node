@@ -39,7 +39,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
-document.title = "[Proto]morphogenesis] | Ira Greenberg.2024"
+document.title = "[Proto]morphogenesis_02] | Ira Greenberg.2024"
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -82,8 +82,8 @@ scene.position.setZ(-300);
 
 
 // test
-let mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: true, opacity: 100, side: DoubleSide })
-let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(500, 500), new Vector2(6, 4), mat);
+let mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: 100, side: DoubleSide })
+let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(500, 500), new Vector2(11, 7), mat);
 scene.add(vs);
 /************************************************************/
 

@@ -76,10 +76,8 @@ export class VerletSurface extends VerletBase {
         const sliceYStep = this.dim.y / 2.0 / detail1;
         let _vecs3: Vector3[][] = [];
         let _vecs: number[] = [];
-        let _inds3: Vector3[] = [];
         let _inds: number[] = [];
         let theta = 0.0;
-
 
         // vertices
         for (let i = 0; i < detail0; i++) {
@@ -94,39 +92,70 @@ export class VerletSurface extends VerletBase {
                 _vecs.push(z);
                 // for convenience
                 _vecs3[i].push(new Vector3(x, y, z));
+                this.nodes.push(new VerletNode(new Vector3(x, y, z)));
             }
             theta += thetaStep;
-
         }
+        // add final center point
+        _vecs.push(this.pos.x);
+        _vecs.push(this.pos.y);
+        _vecs.push(this.pos.z);
+        this.nodes.push(new VerletNode(new Vector3(this.pos.x, this.pos.y, this.pos.z)));
 
+        // indices
+        for (let i = 0; i < detail0; i++) {
+            for (let j = 0; j < detail1 - 2; j++) {
+                if (i < detail0 - 1) {
+                    let a = (detail1 - 1) * i + j;
+                    let b = (detail1 - 1) * i + j + (detail1 - 1);
+                    let c = (detail1 - 1) * i + j + (detail1);
+                    let d = (detail1 - 1) * i + j + 1;
 
+                    //tri1                    
+                    _inds.push(a);
+                    _inds.push(b);
+                    _inds.push(c);
+                    //tri2
+                    _inds.push(a);
+                    _inds.push(c);
+                    _inds.push(d);
+
+                    // close center
+                    if (j == detail1 - 3) {
+                        _inds.push(d);
+                        _inds.push(_vecs.length / 3 - 1);
+                        _inds.push(c);
+                    }
+                } else {
+                    let a = (detail1 - 1) * i + j;
+                    let b = (detail1 - 1) * 0 + j + 0;
+                    let c = (detail1 - 1) * 0 + j + 1;
+                    let d = (detail1 - 1) * i + j + 1;
+
+                    //tri1
+                    _inds.push(a);
+                    _inds.push(b);
+                    _inds.push(c);
+                    //tri2
+                    _inds.push(a);
+                    _inds.push(c);
+                    _inds.push(d);
+
+                    // close center
+                    if (j == detail1 - 3) {
+                        _inds.push(d);
+                        _inds.push(_vecs.length / 3 - 1);
+                        _inds.push(c);
+                    }
+                }
+            }
+        }
         let _verts = new Float32Array(_vecs);
         this.mesh = new Mesh();
         this.mesh.geometry.setAttribute('position', new BufferAttribute(_verts, 3));
+        this.mesh.geometry.setIndex(_inds);
         this.mesh.material = this.mat;
         this.add(this.mesh);
-
-        // indices
-        const slices = _vecs3[0].length;
-        for (let i = 0, k = 0; i < _vecs3.length; i++) {
-            _inds3[i] = [];
-            for (let j = 0; j < _vecs3[i].length; j++) {
-                // tri 1
-                const ind0 = slices * k;
-                const ind1 = slices * k + k;
-                const ind2 = slices * k + k + 1;
-                _inds3.push(new Vector3(ind0, ind1, ind2));
-
-                // tri 2
-                const ind3 = slices * k;
-                const ind4 = slices * k + k + 1;
-                const ind5 = slices * k + 1;
-                _inds3.push(new Vector3(ind3, ind4, ind5));
-                console.log(_inds[k]);
-                k += slices;
-
-            }
-        }
 
 
         // rectangular
