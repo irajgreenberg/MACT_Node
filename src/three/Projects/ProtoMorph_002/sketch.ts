@@ -21,9 +21,16 @@ camera.position.z = 400;
 
 const scene = new Scene();
 
-let greyColR = randFloat(.01, .05);
-let greyColG = randFloat(.01, .05);
-let greyColB = randFloat(.01, .05);
+// dark
+// let greyColR = randFloat(.01, .05);
+// let greyColG = randFloat(.01, .05);
+// let greyColB = randFloat(.01, .05);
+
+//light
+let greyColR = randFloat(.4, .8);
+let greyColG = randFloat(.4, .8);
+let greyColB = randFloat(.4, .8);
+
 let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
 scene.background = myColor;
@@ -56,9 +63,13 @@ scene.position.setZ(-300);
 
 // VerletSurface test
 const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_006.png');
-let mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: 100, side: DoubleSide, map: texture })
+let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
 let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(500, 500), new Vector2(11, 7), mat);
 scene.add(vs);
+vs.draw(true, true, false);
+
+// start surface deformation
+vs.centroidNode.moveNode(new Vector3(0, 0, 1));
 /************************************************************/
 
 
@@ -107,7 +118,8 @@ function animate() {
     // controls.autoRotate = true;
     const time = Date.now() * 0.007;
 
-
+    vs.verlet();
+    vs.update();
     // for (let i = 0; i < planes.length; i++) {
     //     planes[i].verlet();
     //     // planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.1, .9), randFloat(.1, .9), randFloat(.1, .9)));

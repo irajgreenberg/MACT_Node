@@ -28,6 +28,7 @@ export abstract class VerletBase extends Group {
     nodes2D: VerletNode[][] = [];
     rowSticks: VerletStick[] = [];
     colSticks: VerletStick[] = [];
+    centroidNode!: VerletNode;
 
     // triangles for collisions
     tris: Triangle[] = [];
@@ -42,7 +43,7 @@ export abstract class VerletBase extends Group {
 
     protected abstract _init(): void;
 
-    draw(areNodesDrawable: boolean = true, areSticksDrawable: boolean = true, areCrossSupportsDrawable: boolean = false): void {
+    draw(areNodesDrawable: boolean = false, areSticksDrawable: boolean = false, areCrossSupportsDrawable: boolean = false): void {
         this.areNodesDrawable = areNodesDrawable;
         this.areSticksDrawable = areSticksDrawable;
         this.areCrossSupportsDrawable = areCrossSupportsDrawable;

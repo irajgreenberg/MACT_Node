@@ -95,7 +95,7 @@ export class VerletSurface extends VerletBase {
                 // for convenience
                 _vecs3[i].push(new Vector3(x, y, z)); // 2D
                 _vecs3_1D.push(new Vector3(x, y, z)); // 1D
-                this.nodes.push(new VerletNode(new Vector3(x, y, z)));
+                this.nodes.push(new VerletNode(new Vector3(x, y, z), 3, new Color(1, 1, 1)));
             }
             theta += thetaStep;
         }
@@ -104,16 +104,18 @@ export class VerletSurface extends VerletBase {
         _vecs.push(this.pos.y);
         _vecs.push(this.pos.z);
         _vecs3_1D.push(this.pos);
-        this.nodes.push(new VerletNode(new Vector3(this.pos.x, this.pos.y, this.pos.z)));
+        this.centroidNode = new VerletNode(new Vector3(this.pos.x, this.pos.y, this.pos.z), 3, new Color(1, 1, 1));
+        this.nodes.push(this.centroidNode);
+
 
         // indices
         for (let i = 0; i < detail0; i++) {
             for (let j = 0; j < detail1 - 2; j++) {
                 if (i < detail0 - 1) {
-                    let a = (detail1 - 1) * i + j;
-                    let b = (detail1 - 1) * i + j + (detail1 - 1);
-                    let c = (detail1 - 1) * i + j + (detail1);
-                    let d = (detail1 - 1) * i + j + 1;
+                    let a = (detail1 - 1) * i + j; //0
+                    let b = (detail1 - 1) * i + j + (detail1 - 1); //3
+                    let c = (detail1 - 1) * i + j + (detail1); //4
+                    let d = (detail1 - 1) * i + j + 1; //1
 
                     //tri1                    
                     _inds.push(a);
@@ -124,11 +126,24 @@ export class VerletSurface extends VerletBase {
                     _inds.push(c);
                     _inds.push(d);
 
+                    //spines
+                    this.sticks.push(new VerletStick(this.nodes[a], this.nodes[d]));
+                    //circumference
+                    this.sticks.push(new VerletStick(this.nodes[a], this.nodes[b]));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+
+
+
+
                     // close center
                     if (j == detail1 - 3) {
                         _inds.push(d);
                         _inds.push(_vecs.length / 3 - 1);
                         _inds.push(c);
+
+                        //spines
+                        this.sticks.push(new VerletStick(this.nodes[c], this.centroidNode));
+                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                     }
                 } else {
                     let a = (detail1 - 1) * i + j;
@@ -145,46 +160,69 @@ export class VerletSurface extends VerletBase {
                     _inds.push(c);
                     _inds.push(d);
 
+                    //circumference
+                    this.sticks.push(new VerletStick(this.nodes[a], this.nodes[b]));
+
                     // close center
                     if (j == detail1 - 3) {
                         _inds.push(d);
                         _inds.push(_vecs.length / 3 - 1);
                         _inds.push(c);
+
+                        //spines
+                        this.sticks.push(new VerletStick(this.nodes[d], this.centroidNode));
+                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                     }
                 }
             }
+
+
+
+            // create surface geometry
+            const verts = new Float32Array(_vecs);
+            const _uvs = getNormalizedUVArr(_vecs3_1D);
+            const UVs = new Float32Array(_uvs);
+            const geometry = new BufferGeometry();
+            this.mesh = new Mesh();
+            this.mesh.geometry.setAttribute('position', new BufferAttribute(verts, 3));
+            this.mesh.geometry.setAttribute('uv', new BufferAttribute(UVs, 2));
+            this.mesh.geometry.setIndex(_inds);
+            this.mesh.material = this.mat;
+            //  this.add(this.mesh);
+
+
+            // rectangular
+            // const stepW = this.dim.x / detail0;
+            // const stepH = this.dim.y / detail1;
+            // const _vecs: number[] = [];
+            // for (let i = 0; i < detail0; i++) {
+            //     for (let j = 0; j < detail1; j++) {
+            //         _vecs.push(stepW * i);
+            //         _vecs.push(stepH * j);
+            //         _vecs.push(0);
+            //     }
+            // }
+            // let rectVerts = new Float32Array(_vecs);
+            // this.mesh = new Mesh();
+            // this.mesh.geometry.setAttribute('position', new BufferAttribute(rectVerts, 3));
+            // this.mesh.material = this.mat;
+
+            // disk
+
         }
+    }
 
-        // create surface geometry
-        const verts = new Float32Array(_vecs);
-        const _uvs = getNormalizedUVArr(_vecs3_1D);
-        const UVs = new Float32Array(_uvs);
-        const geometry = new BufferGeometry();
-        this.mesh = new Mesh();
-        this.mesh.geometry.setAttribute('position', new BufferAttribute(verts, 3));
-        this.mesh.geometry.setAttribute('uv', new BufferAttribute(UVs, 2));
-        this.mesh.geometry.setIndex(_inds);
-        this.mesh.material = this.mat;
-        this.add(this.mesh);
+    update(): void {
+        // get geom data form mesh
+        let pos = this.mesh.geometry.attributes.position;
+        pos.needsUpdate = true;
+        //update surface vertex date based on node position
+        for (let i = 0; i < pos.count; i++) {
+            pos.setX(i, this.nodes[i].position.x)
+            pos.setY(i, this.nodes[i].position.y)
+            pos.setZ(i, this.nodes[i].position.z)
 
-
-        // rectangular
-        // const stepW = this.dim.x / detail0;
-        // const stepH = this.dim.y / detail1;
-        // const _vecs: number[] = [];
-        // for (let i = 0; i < detail0; i++) {
-        //     for (let j = 0; j < detail1; j++) {
-        //         _vecs.push(stepW * i);
-        //         _vecs.push(stepH * j);
-        //         _vecs.push(0);
-        //     }
-        // }
-        // let rectVerts = new Float32Array(_vecs);
-        // this.mesh = new Mesh();
-        // this.mesh.geometry.setAttribute('position', new BufferAttribute(rectVerts, 3));
-        // this.mesh.material = this.mat;
-
-        // disk
+        }
 
     }
 }
