@@ -5,7 +5,7 @@
 
 // Project Description: 
 
-import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, MeshBasicMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderer } from 'three'
+import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, MeshBasicMaterial, MeshPhongMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../../libPByte_3/IJGUtils";
@@ -36,7 +36,7 @@ const myColor = new Color(greyColR, greyColG, greyColB);
 scene.background = myColor;
 document.body.style.backgroundColor = '#' + myColor.getHexString();
 let fogFactor = 0.00004;
-scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
+//scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
 
 // main renderer
 let renderer = new WebGLRenderer({ alpha: true, antialias: true, logarithmicDepthBuffer: true });
@@ -62,40 +62,43 @@ const skins = ["Proto_BG_006.png", "Proto_Org_006.png"];
 scene.position.setZ(-300);
 
 // VerletSurface test
-const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_002.png');
+const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_005.png');
 let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
-let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(1200, 1200), new Vector2(12, 6), mat);
+
+let matPhong = new MeshPhongMaterial({ color: 0xffffff, specular: 0xffffff, shininess: .9, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture });
+
+let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(1200, 1200), new Vector2(16, 12), mat, .002);
 scene.add(vs);
-vs.draw(false, false, false);
+vs.draw(false, false, true);
 
 // start surface deformation
-//vs.centroidNode.moveNode(new Vector3(0, 0, 18));
+vs.centroidNode.moveNode(new Vector3(0, 0, 12));
 //console.log(vs.sticks.length);
 /************************************************************/
 
 
 
-const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .6));
-//scene.add(ambientTexturesLight);
+const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .1));
+scene.add(ambientTexturesLight);
 
 const hemiLt = new HemisphereLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.01, .3));
-//scene.add(hemiLt);
+scene.add(hemiLt);
 
 const col2 = new Color(1, 1, 1);
-const intensity = .2;
+const intensity = .9;
 const light = new DirectionalLight(col2, intensity);
 light.position.set(0, 0, 600);
 light.castShadow = true;
-//scene.add(light);
+scene.add(light);
 
-const spot = new SpotLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.3, 1.5));
+const spot = new SpotLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.5, .5));
 spot.position.set(randFloat(-10, 10), randFloat(50, 160), randFloat(500, 550));
 spot.castShadow = true;
 spot.shadow.radius = 12; //doesn't work with PCFsoftshadows
 spot.shadow.bias = -0.0001;
 spot.shadow.mapSize.width = 1024 * 4;
 spot.shadow.mapSize.height = 1024 * 4;
-//scene.add(spot);
+scene.add(spot);
 
 const pointLt = new PointLight(new Color(randFloat(.3, 1), randFloat(.3, 1), randFloat(.3, 1)), randFloat(.5, 1.2), randFloat(4000, 4000));
 pointLt.translateX(randFloat(0, 0));
@@ -121,34 +124,6 @@ function animate() {
 
     vs.verlet();
     vs.update();
-    // for (let i = 0; i < planes.length; i++) {
-    //     planes[i].verlet();
-    //     // planes[i].moveNode(randInt(0, planes[i].nodes.length - 1), new Vector3(randFloat(.1, .9), randFloat(.1, .9), randFloat(.1, .9)));
-    // }
-
-    // planes[0].moveNode(randInt(0, planes[0].nodes.length - 1), new Vector3(randFloat(.3, 4), randFloat(.3, 4), randFloat(.01, .2)));
-    // planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.1, 1.2), randFloat(.1, 1.2), randFloat(.1, 1.2)));
-
-    // // planes[1].moveNode(randInt(0, planes[1].nodes.length - 1), new Vector3(randFloat(.02, .07), randFloat(.02, .07), randFloat(1.02, 2.07)));
-    // //planes[1].moveNode(Math.round(planes[1].nodes.length / 2 + planes[1].colCount / 2), new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
-    // // planes[1].moveNode(800, new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
-
-
-    // planes[1].position.setX(sin(renderer.info.render.frame * PI / 2780) * 150);
-    // planes[1].position.setY(sin(renderer.info.render.frame * PI / 2280) * 105);
-    // planes[1].position.setZ(sin(renderer.info.render.frame * PI / 3780) * 245 + 100);
-    // planes[1].rotateZ(sin(.05 * PI / 180) * 1);
-
-
-    // planes[2].moveNode(randInt(0, planes[2].nodes.length - 1), new Vector3(randFloat(.5, 1.5), randFloat(.5, 1.5), randFloat(.5, 1.5)));
-    // //planes[1].moveNode(Math.round(planes[1].nodes.length / 2 + planes[1].colCount / 2), new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
-    // // planes[1].moveNode(800, new Vector3(0, 0, sin(renderer.info.render.frame * PI / 90) * randFloat(.7, 1.2)));
-
-
-    // planes[2].position.setX(-600 + sin(renderer.info.render.frame * PI / 3780) * -150);
-    // planes[2].position.setY(sin(renderer.info.render.frame * PI / 1280) * -105);
-    // planes[2].position.setZ(sin(renderer.info.render.frame * PI / 1780) * 145 + 10);
-    // //planes[2].rotateZ(cos(.05 * PI / 180) * 1);
 
     render();
 }

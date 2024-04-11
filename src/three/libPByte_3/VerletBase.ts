@@ -20,6 +20,8 @@ export abstract class VerletBase extends Group {
     sticks: VerletStick[] = [];
     nodes: VerletNode[] = [];
     crossSupports: VerletStick[] = [];
+    // outer node cage to control overall deformation
+    armatureNodes: VerletNode[] = [];
 
     // conveneince node refernces
     bodyNodes: VerletNode[] = [];
@@ -63,6 +65,9 @@ export abstract class VerletBase extends Group {
         if (this.areCrossSupportsDrawable) {
             for (let i = 0; i < this.crossSupports.length; i++) {
                 this.add(this.crossSupports[i]);
+            }
+            for (let i = 0; i < this.armatureNodes.length; i++) {
+                this.add(this.armatureNodes[i]);
             }
         }
     }
