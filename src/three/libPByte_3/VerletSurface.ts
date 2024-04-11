@@ -237,6 +237,7 @@ export class VerletSurface extends VerletBase {
 
     }
 
+
     update(): void {
 
         for (let i = 0; i < this.bodyNodes.length; i++) {
