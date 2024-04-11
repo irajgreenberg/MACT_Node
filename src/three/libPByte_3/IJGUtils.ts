@@ -1260,6 +1260,7 @@ export function getMinMaxXYPos(vecs: Vector3[]): Vector4 {
             yMax = vecs[i].y
         }
     }
+
     return new Vector4(xMin, xMax, yMin, yMax);
 }
 
@@ -1269,6 +1270,7 @@ export function getMinMaxXYPos(vecs: Vector3[]): Vector4 {
 // Added 4/10/2024
 export function getNormalizedUVArr(vecs: Vector3[]): number[] {
     const _UVs: number[] = [];
+
     const xyMinMax = getMinMaxXYPos(vecs);
 
     for (let i = 0; i < vecs.length; i++) {
@@ -1277,6 +1279,7 @@ export function getNormalizedUVArr(vecs: Vector3[]): number[] {
         _UVs.push(x);
         _UVs.push(y);
     }
+
     return _UVs;
 }
 

@@ -1,10 +1,11 @@
 import { timeStamp } from "console";
 import { BufferAttribute, BufferGeometry, Color, DoubleSide, Group, InterleavedBufferAttribute, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, PlaneGeometry, Texture, TextureLoader, Triangle, Vector2, Vector3, Vector4 } from "three";
-import { AnchorPlane, AxesPlane, TWO_PI, cos, getNormalizedUVArr, sin } from "./IJGUtils";
+import { AnchorPlane, AxesPlane, PI, TWO_PI, cos, getMinMaxXYPos, getNormalizedUVArr, sin } from "./IJGUtils";
 import { VerletGeometryBase } from "./VerletGeometryBase";
 import { VerletNode } from "./VerletNode";
 import { VerletStick } from "./VerletStick";
 import { VerletBase } from "./VerletBase";
+import { mapLinear, randFloat } from "three/src/math/MathUtils";
 
 // includes mapped texture
 // VerletPlane just includes Verlet grid
@@ -25,8 +26,8 @@ export class VerletSurface extends VerletBase {
     // mesh not initialized in cstr
     mesh!: Mesh;
 
-
-    constructor(pos: Vector3, dim: Vector2, detail: number | Vector2 | Vector3 | Vector4, mat: Material, anchor: AnchorPlane = AnchorPlane.NONE, elasticity: number = .05, axisPlane: AxesPlane = AxesPlane.ZX_AXIS) {
+    counter = 0;
+    constructor(pos: Vector3, dim: Vector2, detail: number | Vector2 | Vector3 | Vector4, mat: Material, anchor: AnchorPlane = AnchorPlane.NONE, elasticity: number = .005, axisPlane: AxesPlane = AxesPlane.ZX_AXIS) {
 
         // constructor(width: number, height: number, widthSegs: number, heightSegs: number, diffuseImage: string, anchor: AnchorPlane = AnchorPlane.NONE, elasticity: number = .5, axisPlane: AxesPlane = AxesPlane.ZX_AXIS) {
         super();
@@ -74,7 +75,7 @@ export class VerletSurface extends VerletBase {
         const thetaStep = TWO_PI / detail0;
         const sliceXStep = this.dim.x / 2.0 / detail1;
         const sliceYStep = this.dim.y / 2.0 / detail1;
-        let _vecs3: Vector3[][] = [];
+        let _vecs3_2D: Vector3[][] = [];
         let _vecs3_1D: Vector3[] = [];
         let _vecs: number[] = [];
         let _inds: number[] = [];
@@ -83,7 +84,8 @@ export class VerletSurface extends VerletBase {
 
         // vertices
         for (let i = 0; i < detail0; i++) {
-            _vecs3[i] = [];
+            _vecs3_2D[i] = [];
+            this.nodes2D[i] = [];
             for (let j = 1; j < detail1; j++) {
                 const x = this.pos.x + cos(theta) * sliceXStep * j;
                 const y = this.pos.y + sin(theta) * sliceYStep * j;
@@ -93,9 +95,20 @@ export class VerletSurface extends VerletBase {
                 _vecs.push(y);
                 _vecs.push(z);
                 // for convenience
-                _vecs3[i].push(new Vector3(x, y, z)); // 2D
+                _vecs3_2D[i].push(new Vector3(x, y, z)); // 2D
                 _vecs3_1D.push(new Vector3(x, y, z)); // 1D
-                this.nodes.push(new VerletNode(new Vector3(x, y, z), 3, new Color(1, 1, 1)));
+                const node = new VerletNode(new Vector3(x, y, z), 3, new Color(1, 1, 1));
+                this.nodes.push(node);
+
+                this.nodes2D[i].push(node);
+
+                // capture edge nodes
+                if (j == detail1 - 1) {
+                    node.isVerletable = false;
+                    this.edgeNodes.push(node);
+                } else {
+                    this.bodyNodes.push(node);
+                }
             }
             theta += thetaStep;
         }
@@ -126,24 +139,11 @@ export class VerletSurface extends VerletBase {
                     _inds.push(c);
                     _inds.push(d);
 
-                    //spines
-                    this.sticks.push(new VerletStick(this.nodes[a], this.nodes[d]));
-                    //circumference
-                    this.sticks.push(new VerletStick(this.nodes[a], this.nodes[b]));
-                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
-
-
-
-
                     // close center
                     if (j == detail1 - 3) {
                         _inds.push(d);
                         _inds.push(_vecs.length / 3 - 1);
                         _inds.push(c);
-
-                        //spines
-                        this.sticks.push(new VerletStick(this.nodes[c], this.centroidNode));
-                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                     }
                 } else {
                     let a = (detail1 - 1) * i + j;
@@ -160,68 +160,113 @@ export class VerletSurface extends VerletBase {
                     _inds.push(c);
                     _inds.push(d);
 
-                    //circumference
-                    this.sticks.push(new VerletStick(this.nodes[a], this.nodes[b]));
-
                     // close center
                     if (j == detail1 - 3) {
                         _inds.push(d);
                         _inds.push(_vecs.length / 3 - 1);
                         _inds.push(c);
 
-                        //spines
-                        this.sticks.push(new VerletStick(this.nodes[d], this.centroidNode));
-                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                     }
                 }
             }
-
-
-
-            // create surface geometry
-            const verts = new Float32Array(_vecs);
-            const _uvs = getNormalizedUVArr(_vecs3_1D);
-            const UVs = new Float32Array(_uvs);
-            const geometry = new BufferGeometry();
-            this.mesh = new Mesh();
-            this.mesh.geometry.setAttribute('position', new BufferAttribute(verts, 3));
-            this.mesh.geometry.setAttribute('uv', new BufferAttribute(UVs, 2));
-            this.mesh.geometry.setIndex(_inds);
-            this.mesh.material = this.mat;
-            //  this.add(this.mesh);
-
-
-            // rectangular
-            // const stepW = this.dim.x / detail0;
-            // const stepH = this.dim.y / detail1;
-            // const _vecs: number[] = [];
-            // for (let i = 0; i < detail0; i++) {
-            //     for (let j = 0; j < detail1; j++) {
-            //         _vecs.push(stepW * i);
-            //         _vecs.push(stepH * j);
-            //         _vecs.push(0);
-            //     }
-            // }
-            // let rectVerts = new Float32Array(_vecs);
-            // this.mesh = new Mesh();
-            // this.mesh.geometry.setAttribute('position', new BufferAttribute(rectVerts, 3));
-            // this.mesh.material = this.mat;
-
-            // disk
-
         }
+
+        for (let i = 0; i < this.nodes2D.length; i++) {
+            for (let j = 0; j < this.nodes2D[i].length; j++) {
+                // perimeter
+                if (i < this.nodes2D.length - 1) {
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j], this.elasticity));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+
+                    // diagonals
+                    if (j > 0) {
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i + 1][j], .7));
+                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j - 1], .7));
+                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+
+                    }
+                } else {
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j], this.elasticity));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                }
+                // slices
+                if (j > 0) {
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i][j], this.elasticity));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                } else {
+                    this.sticks.push(new VerletStick(this.nodes2D[i][0], this.centroidNode, this.elasticity));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                }
+            }
+        }
+
+
+
+        // create surface geometry
+        const verts = new Float32Array(_vecs);
+        const _uvs = getNormalizedUVArr(_vecs3_1D);
+        const UVs = new Float32Array(_uvs);
+        const geometry = new BufferGeometry();
+        this.mesh = new Mesh();
+        this.mesh.geometry.setAttribute('position', new BufferAttribute(verts, 3));
+        this.mesh.geometry.setAttribute('uv', new BufferAttribute(UVs, 2));
+        this.mesh.geometry.setIndex(_inds);
+        this.mesh.material = this.mat;
+        this.add(this.mesh);
+
+
+        // rectangular
+        // const stepW = this.dim.x / detail0;
+        // const stepH = this.dim.y / detail1;
+        // const _vecs: number[] = [];
+        // for (let i = 0; i < detail0; i++) {
+        //     for (let j = 0; j < detail1; j++) {
+        //         _vecs.push(stepW * i);
+        //         _vecs.push(stepH * j);
+        //         _vecs.push(0);
+        //     }
+        // }
+        // let rectVerts = new Float32Array(_vecs);
+        // this.mesh = new Mesh();
+        // this.mesh.geometry.setAttribute('position', new BufferAttribute(rectVerts, 3));
+        // this.mesh.material = this.mat;
+
+        // disk
+
+
     }
 
     update(): void {
+
+        for (let i = 0; i < this.bodyNodes.length; i++) {
+            this.bodyNodes[i].moveNode(new Vector3(randFloat(-1.6, 1.6), randFloat(-1.6, 1.6), randFloat(-.1, .1)));
+        }
+        this.centroidNode.position.z = sin(this.counter++ * PI / 180) * 50;
         // get geom data form mesh
         let pos = this.mesh.geometry.attributes.position;
         pos.needsUpdate = true;
         //update surface vertex date based on node position
+
+        const tempVecs: Vector3[] = [];
         for (let i = 0; i < pos.count; i++) {
             pos.setX(i, this.nodes[i].position.x)
             pos.setY(i, this.nodes[i].position.y)
             pos.setZ(i, this.nodes[i].position.z)
+        }
 
+
+        // for calculating new UV vals
+        for (let i = 0; i < this.nodes.length; i++) {
+            tempVecs.push(this.nodes[i].position);
+        }
+        const xyMinMax = getMinMaxXYPos(tempVecs);
+        let uvs = this.mesh.geometry.attributes.uv;
+        uvs.needsUpdate = true;
+        //update surface vertex date based on node position
+        for (let i = 0; i < uvs.count; i++) {
+            uvs.setX(i, mapLinear(this.nodes[i].position.x, xyMinMax.x, xyMinMax.y, 0, 1));
+            uvs.setY(i, mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, 0, 1));
         }
 
     }

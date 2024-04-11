@@ -62,14 +62,15 @@ const skins = ["Proto_BG_006.png", "Proto_Org_006.png"];
 scene.position.setZ(-300);
 
 // VerletSurface test
-const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_006.png');
+const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_002.png');
 let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
-let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(500, 500), new Vector2(11, 7), mat);
+let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(1200, 1200), new Vector2(12, 6), mat);
 scene.add(vs);
-vs.draw(true, true, false);
+vs.draw(false, false, false);
 
 // start surface deformation
-vs.centroidNode.moveNode(new Vector3(0, 0, 1));
+//vs.centroidNode.moveNode(new Vector3(0, 0, 18));
+//console.log(vs.sticks.length);
 /************************************************************/
 
 
@@ -115,7 +116,7 @@ pointLt2.castShadow = true;
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    // controls.autoRotate = true;
+    //controls.autoRotate = true;
     const time = Date.now() * 0.007;
 
     vs.verlet();
