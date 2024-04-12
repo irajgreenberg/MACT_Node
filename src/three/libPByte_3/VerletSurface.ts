@@ -176,35 +176,35 @@ export class VerletSurface extends VerletBase {
             for (let j = 0; j < this.nodes2D[i].length; j++) {
                 // perimeter sticks
                 if (i < this.nodes2D.length - 1) {
-                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j], randFloat(this.elasticity, .003)));
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j], randFloat(this.elasticity, this.elasticity)));
                     this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
 
                     // diagonals
                     if (j > 0) {
-                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i + 1][j], .003));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i + 1][j], this.elasticity));
                         this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
-                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j - 1], .003));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j - 1], this.elasticity));
                         this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                     }
                     // close perimeter
                 } else {
-                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j], randFloat(this.elasticity, .003)));
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j], randFloat(this.elasticity, this.elasticity)));
                     this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
 
                     // diagonals
                     if (j > 0) {
-                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[0][j], .003));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[0][j], this.elasticity));
                         this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
-                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j - 1], .003));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j - 1], this.elasticity));
                         this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                     }
                 }
                 // slices
                 if (j > 0) {
-                    this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i][j], randFloat(this.elasticity, .003)));
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i][j], randFloat(this.elasticity, this.elasticity)));
                     this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                 } else {
-                    this.sticks.push(new VerletStick(this.nodes2D[i][0], this.centroidNode, randFloat(this.elasticity, .003)));
+                    this.sticks.push(new VerletStick(this.nodes2D[i][0], this.centroidNode, randFloat(this.elasticity, this.elasticity)));
                     this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                 }
             }
@@ -294,7 +294,7 @@ export class VerletSurface extends VerletBase {
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].moveNode(new Vector3(randFloat(-.4, .4), randFloat(-.4, .4), randFloat(-.4, .4)));
         }
-        //this.centroidNode.position.z = sin(this.counter++ * PI / 180) * 150;
+        this.nodes[this.nodes.length - 1].position.z = sin(this.counter++ * PI / 45) * 30;
         // get geom data form mesh
         let pos = this.mesh.geometry.attributes.position;
         pos.needsUpdate = true;
@@ -322,8 +322,7 @@ export class VerletSurface extends VerletBase {
             const v = mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, 0, 1);
             uvs.setXY(i, u, v);
         }
-        uvs.needsUpdate = true;
-
+        // uvs.needsUpdate = true;
         this.mesh.geometry.computeVertexNormals();
         this.mesh.geometry.computeTangents()
 
