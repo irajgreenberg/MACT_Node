@@ -14,7 +14,7 @@ import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 import { VerletSurface } from '../../libPByte_3/VerletSurface';
 
 // create and position camera
-const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
+const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 10000);
 camera.position.x = 0;
 camera.position.y = 0;
 camera.position.z = 400;
@@ -62,17 +62,17 @@ const skins = ["Proto_BG_006.png", "Proto_Org_006.png"];
 scene.position.setZ(-300);
 
 // VerletSurface test
-const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_005.png');
-let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
+const texture = new TextureLoader().load('data/ProtoMorph/Proto_BG_003.png');
+let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: .9, side: DoubleSide, map: texture })
 
 let matPhong = new MeshPhongMaterial({ color: 0xffffff, specular: 0xffffff, shininess: .9, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture });
 
 let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(1200, 1200), new Vector2(16, 12), mat, .002);
 scene.add(vs);
-vs.draw(false, false, true);
+vs.draw(false, true, true);
 
 // start surface deformation
-vs.centroidNode.moveNode(new Vector3(0, 0, 12));
+//vs.centroidNode.moveNode(new Vector3(0, 0, 12));
 //console.log(vs.sticks.length);
 /************************************************************/
 

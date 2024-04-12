@@ -24,7 +24,11 @@ export class VerletSurface extends VerletBase {
     // mesh not initialized in cstr
     mesh!: Mesh;
 
+    //needed for uv updates at requestAnimationFrame
+    MinMaxXYPos!: Vector4
+
     counter = 0;
+
     constructor(pos: Vector3, dim: Vector2, detail: number | Vector2 | Vector3 | Vector4, mat: Material, elasticity: number = .005) {
 
         // constructor(width: number, height: number, widthSegs: number, heightSegs: number, diffuseImage: string, anchor: AnchorPlane = AnchorPlane.NONE, elasticity: number = .5, axisPlane: AxesPlane = AxesPlane.ZX_AXIS) {
@@ -228,7 +232,11 @@ export class VerletSurface extends VerletBase {
         this.mesh.geometry.setIndex(_inds);
         this.mesh.material = this.mat;
         this.mesh.geometry.computeVertexNormals();
+        this.mesh.geometry.computeTangents()
         this.add(this.mesh);
+
+        // capture min, max
+        this.MinMaxXYPos = getMinMaxXYPos(_vecs3_1D);
 
 
         // rectangular
@@ -255,7 +263,45 @@ export class VerletSurface extends VerletBase {
 
     update(): void {
 
-        const tempVecs: Vector3[] = [];
+        // // start Verlet integration
+        // let pts: number[] = [];
+
+        // for (let i = 0; i < this.nodes.length; i++) {
+        //     //populate vecs
+        //     pts.push(this.nodes[i].position.x);
+        //     pts.push(this.nodes[i].position.y);
+        //     pts.push(this.nodes[i].position.z);
+        // }
+        // // this.mesh.material.needsUpdate
+        // let vs = new Float32Array(pts);
+        // const geometry = new BufferGeometry();
+        // this.mesh.geometry.setAttribute('position', new BufferAttribute(vs, 3));
+
+
+        // const tempVecs: Vector3[] = [];
+        // for (let i = 0; i < this.nodes.length; i++) {
+        //     tempVecs.push(this.nodes[i].position);
+        // }
+        // const xyMinMax = getMinMaxXYPos(tempVecs);
+        // let uvs = this.mesh.geometry.attributes.uv;
+
+        // // //update surface vertex date based on node position
+        // for (let i = 0; i < uvs.count; i++) {
+        //     uvs.setX(i, mapLinear(this.nodes[i].position.x, xyMinMax.x, xyMinMax.y, -.2, 1.2));
+        //     uvs.setY(i, mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, -.2, 1.2));
+        // }
+        // uvs.needsUpdate = true;
+
+
+
+
+        // for (let i = 0; i < this.nodes.length; i++) {
+        //     this.nodes[i].moveNode(new Vector3(randFloat(-.4, .4), randFloat(-.4, .4), 0));
+        // }
+
+
+
+
 
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].moveNode(new Vector3(randFloat(-.4, .4), randFloat(-.4, .4), 0));
@@ -264,30 +310,37 @@ export class VerletSurface extends VerletBase {
         // get geom data form mesh
         let pos = this.mesh.geometry.attributes.position;
         pos.needsUpdate = true;
+
+
+
         //update surface vertex date based on node position
 
+
+        const tempVecs: Vector3[] = [];
 
         for (let i = 0; i < pos.count; i++) {
             pos.setX(i, this.nodes[i].position.x)
             pos.setY(i, this.nodes[i].position.y)
             pos.setZ(i, this.nodes[i].position.z)
+
+            //   tempVecs.push(new Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
         }
 
 
-        // for calculating new UV vals
-        for (let i = 0; i < this.nodes.length; i++) {
-            tempVecs.push(this.nodes[i].position);
-        }
-        const xyMinMax = getMinMaxXYPos(tempVecs);
+        //const xyMinMax = getMinMaxXYPos(tempVecs);
         let uvs = this.mesh.geometry.attributes.uv;
 
+        // this.MinMaxXYPos
         //update surface vertex date based on node position
         for (let i = 0; i < uvs.count; i++) {
-            uvs.setX(i, mapLinear(this.nodes[i].position.x, xyMinMax.x, xyMinMax.y, -.2, 1.2));
-            uvs.setY(i, mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, -.2, 1.2));
+            const u = mapLinear(this.nodes[i].position.x, this.MinMaxXYPos.x, this.MinMaxXYPos.y, -.02, 1.2);
+            const v = mapLinear(this.nodes[i].position.y, this.MinMaxXYPos.z, this.MinMaxXYPos.w, -.02, 1.2);
+            uvs.setXY(i, u, v);
         }
         uvs.needsUpdate = true;
-        //this.mesh.geometry.computeVertexNormals();
+
+        this.mesh.geometry.computeVertexNormals();
+        this.mesh.geometry.computeTangents()
 
     }
 }
