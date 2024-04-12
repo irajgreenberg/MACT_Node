@@ -70,8 +70,6 @@ export class VerletSurface extends VerletBase {
         // created on XY-plane
         /* detail0 = arcStep, detail1 = sliceStep, detail2, detail3 
          */
-
-
         const thetaStep = TWO_PI / detail0;
         const sliceXStep = this.dim.x / 2.0 / detail1;
         const sliceYStep = this.dim.y / 2.0 / detail1;
@@ -178,37 +176,35 @@ export class VerletSurface extends VerletBase {
             for (let j = 0; j < this.nodes2D[i].length; j++) {
                 // perimeter sticks
                 if (i < this.nodes2D.length - 1) {
-                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j], randFloat(this.elasticity, .1)));
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j], randFloat(this.elasticity, .003)));
                     this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
 
                     // diagonals
                     if (j > 0) {
-                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i + 1][j], .7));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i + 1][j], .003));
                         this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
-                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j - 1], .7));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j - 1], .003));
                         this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                     }
                     // close perimeter
                 } else {
-                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j], randFloat(this.elasticity, .1)));
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j], randFloat(this.elasticity, .003)));
                     this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
 
                     // diagonals
                     if (j > 0) {
-                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[0][j], .7));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[0][j], .003));
                         this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
-                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j - 1], .7));
+                        this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j - 1], .003));
                         this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                     }
-
-
                 }
                 // slices
                 if (j > 0) {
-                    this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i][j], randFloat(this.elasticity, .1)));
+                    this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i][j], randFloat(this.elasticity, .003)));
                     this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                 } else {
-                    this.sticks.push(new VerletStick(this.nodes2D[i][0], this.centroidNode, randFloat(this.elasticity, .1)));
+                    this.sticks.push(new VerletStick(this.nodes2D[i][0], this.centroidNode, randFloat(this.elasticity, .003)));
                     this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
                 }
             }
@@ -218,8 +214,6 @@ export class VerletSurface extends VerletBase {
         for (let i = 0; i < this.edgeNodes.length; i++) {
             this.crossSupports.push(new VerletStick(this.edgeNodes[i], this.armatureNodes[i], randFloat(.001, .9), 2));
         }
-
-
 
         // create surface geometry
         const verts = new Float32Array(_vecs);
@@ -237,8 +231,6 @@ export class VerletSurface extends VerletBase {
 
         // capture min, max
         this.MinMaxXYPos = getMinMaxXYPos(_vecs3_1D);
-
-
         // rectangular
         // const stepW = this.dim.x / detail0;
         // const stepH = this.dim.y / detail1;
@@ -256,7 +248,6 @@ export class VerletSurface extends VerletBase {
         // this.mesh.material = this.mat;
 
         // disk
-
 
     }
 
@@ -300,41 +291,35 @@ export class VerletSurface extends VerletBase {
         // }
 
 
-
-
-
         for (let i = 0; i < this.nodes.length; i++) {
-            this.nodes[i].moveNode(new Vector3(randFloat(-.4, .4), randFloat(-.4, .4), 0));
+            this.nodes[i].moveNode(new Vector3(randFloat(-.4, .4), randFloat(-.4, .4), randFloat(-.4, .4)));
         }
-        this.centroidNode.position.z = sin(this.counter++ * PI / 180) * 150;
+        //this.centroidNode.position.z = sin(this.counter++ * PI / 180) * 150;
         // get geom data form mesh
         let pos = this.mesh.geometry.attributes.position;
         pos.needsUpdate = true;
 
-
-
         //update surface vertex date based on node position
-
-
         const tempVecs: Vector3[] = [];
-
         for (let i = 0; i < pos.count; i++) {
             pos.setX(i, this.nodes[i].position.x)
             pos.setY(i, this.nodes[i].position.y)
             pos.setZ(i, this.nodes[i].position.z)
 
-            //   tempVecs.push(new Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
+            tempVecs.push(new Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
         }
 
-
-        //const xyMinMax = getMinMaxXYPos(tempVecs);
+        const xyMinMax = getMinMaxXYPos(tempVecs);
         let uvs = this.mesh.geometry.attributes.uv;
 
         // this.MinMaxXYPos
         //update surface vertex date based on node position
         for (let i = 0; i < uvs.count; i++) {
-            const u = mapLinear(this.nodes[i].position.x, this.MinMaxXYPos.x, this.MinMaxXYPos.y, -.02, 1.2);
-            const v = mapLinear(this.nodes[i].position.y, this.MinMaxXYPos.z, this.MinMaxXYPos.w, -.02, 1.2);
+            // const u = mapLinear(this.nodes[i].position.x, this.MinMaxXYPos.x, this.MinMaxXYPos.y, 0, 1);
+            // const v = mapLinear(this.nodes[i].position.y, this.MinMaxXYPos.z, this.MinMaxXYPos.w, 0, 1);
+
+            const u = mapLinear(this.nodes[i].position.x, xyMinMax.x, xyMinMax.y, 0, 1);
+            const v = mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, 0, 1);
             uvs.setXY(i, u, v);
         }
         uvs.needsUpdate = true;
