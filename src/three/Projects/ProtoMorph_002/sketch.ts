@@ -62,15 +62,16 @@ const skins = ["Proto_BG_006.png", "Proto_Org_006.png"];
 scene.position.setZ(-300);
 
 // VerletSurface test
-const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_006.png');
+//const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_005.png');
+const texture = new TextureLoader().load('data/ProtoMorph/people_test_002.png');
 
-// let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
+let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
 
-let mat = new MeshPhongMaterial({ color: 0xffffff, specular: 0xffffff, shininess: .9, transparent: true, wireframe: false, opacity: .9, side: DoubleSide, map: texture });
+// let mat = new MeshPhongMaterial({ color: 0xffffff, specular: 0xffffff, shininess: .9, transparent: true, wireframe: false, opacity: .9, side: DoubleSide, map: texture });
 
-let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(1200, 1200), new Vector2(24, 24), mat, .2);
+let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(1200, 1200), new Vector2(24, 24), mat, .65);
 scene.add(vs);
-vs.draw(false, true, true);
+vs.draw(false, false, false);
 
 // start surface deformation
 //vs.centroidNode.moveNode(new Vector3(0, 0, 12));

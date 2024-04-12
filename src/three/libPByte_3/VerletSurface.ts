@@ -5,7 +5,7 @@ import { VerletGeometryBase } from "./VerletGeometryBase";
 import { VerletNode } from "./VerletNode";
 import { VerletStick } from "./VerletStick";
 import { VerletBase } from "./VerletBase";
-import { mapLinear, randFloat } from "three/src/math/MathUtils";
+import { mapLinear, randFloat, randInt } from "three/src/math/MathUtils";
 
 // includes mapped texture
 // VerletPlane just includes Verlet grid
@@ -106,7 +106,7 @@ export class VerletSurface extends VerletBase {
                     this.edgeNodes.push(node);
 
                     let v = new Vector3().copy(node.position).multiplyScalar(1.2);
-                    this.armatureNodes.push(new VerletNode(v, 6, new Color(0, 0, 1)));
+                    this.armatureNodes.push(new VerletNode(v, 3, new Color(.5, .5, 0)));
                 } else {
                     this.bodyNodes.push(node);
                 }
@@ -132,19 +132,21 @@ export class VerletSurface extends VerletBase {
                     let d = (detail1 - 1) * i + j + 1; //1
 
                     //tri1                    
-                    _inds.push(a);
+                    _inds.push(c);
                     _inds.push(b);
-                    _inds.push(c);
-                    //tri2
                     _inds.push(a);
-                    _inds.push(c);
+                    //tri2
                     _inds.push(d);
+                    _inds.push(c);
+                    _inds.push(a);
 
                     // close center
-                    if (j == detail1 - 3) {
-                        _inds.push(d);
-                        _inds.push(_vecs.length / 3 - 1);
+                    //if (j == detail1 - 3) {
+                    if (j == 0) {
+                        // console.log("test");
                         _inds.push(c);
+                        _inds.push(_vecs.length / 3 - 1);
+                        _inds.push(d);
                     }
                 } else {
                     let a = (detail1 - 1) * i + j;
@@ -153,19 +155,19 @@ export class VerletSurface extends VerletBase {
                     let d = (detail1 - 1) * i + j + 1;
 
                     //tri1
-                    _inds.push(a);
+                    _inds.push(c);
                     _inds.push(b);
-                    _inds.push(c);
-                    //tri2
                     _inds.push(a);
-                    _inds.push(c);
+                    //tri2
                     _inds.push(d);
+                    _inds.push(c);
+                    _inds.push(a);
 
                     // close center
-                    if (j == detail1 - 3) {
-                        _inds.push(d);
-                        _inds.push(_vecs.length / 3 - 1);
+                    if (j == 0) {
                         _inds.push(c);
+                        _inds.push(_vecs.length / 3 - 1);
+                        _inds.push(d);
 
                     }
                 }
@@ -177,56 +179,54 @@ export class VerletSurface extends VerletBase {
                 // perimeter sticks
                 if (i < this.nodes2D.length - 1) {
                     this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j], randFloat(this.elasticity, this.elasticity)));
-                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(.2, .3, .4));
 
                     // diagonals
                     if (j > 0) {
                         this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i + 1][j], this.elasticity));
-                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                        this.sticks[this.sticks.length - 1].setColor(new Color(.2, .3, .4));
                         this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[i + 1][j - 1], this.elasticity));
-                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                        this.sticks[this.sticks.length - 1].setColor(new Color(.2, .3, .4));
                     }
                     // close perimeter
                 } else {
                     this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j], randFloat(this.elasticity, this.elasticity)));
-                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(.2, .3, .4));
 
                     // diagonals
                     if (j > 0) {
                         this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[0][j], this.elasticity));
-                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                        this.sticks[this.sticks.length - 1].setColor(new Color(.2, .3, .4));
                         this.sticks.push(new VerletStick(this.nodes2D[i][j], this.nodes2D[0][j - 1], this.elasticity));
-                        this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                        this.sticks[this.sticks.length - 1].setColor(new Color(.2, .3, .4));
                     }
                 }
                 // slices
                 if (j > 0) {
                     this.sticks.push(new VerletStick(this.nodes2D[i][j - 1], this.nodes2D[i][j], randFloat(this.elasticity, this.elasticity)));
-                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(.2, .3, .4));
                 } else {
                     this.sticks.push(new VerletStick(this.nodes2D[i][0], this.centroidNode, randFloat(this.elasticity, this.elasticity)));
-                    this.sticks[this.sticks.length - 1].setColor(new Color(1, 0, 0));
+                    this.sticks[this.sticks.length - 1].setColor(new Color(.2, .3, .4));
                 }
             }
         }
 
         // attach edge nodes to armature
         for (let i = 0; i < this.edgeNodes.length; i++) {
-            this.crossSupports.push(new VerletStick(this.edgeNodes[i], this.armatureNodes[i], randFloat(.001, .9), 2));
+            this.crossSupports.push(new VerletStick(this.edgeNodes[i], this.armatureNodes[i], randFloat(.001, .7), 2));
         }
 
         // create surface geometry
         const verts = new Float32Array(_vecs);
         const _uvs = getNormalizedUVArr(_vecs3_1D);
         const UVs = new Float32Array(_uvs);
-        //const geometry = new BufferGeometry();
-        this.mesh = new Mesh();
-        this.mesh.geometry.setAttribute('position', new BufferAttribute(verts, 3));
-        this.mesh.geometry.setAttribute('uv', new BufferAttribute(UVs, 2));
-        this.mesh.geometry.setIndex(_inds);
-        this.mesh.material = this.mat;
-        this.mesh.geometry.computeVertexNormals();
-        this.mesh.geometry.computeTangents()
+
+        const geometry = new BufferGeometry();
+        geometry.setAttribute('position', new BufferAttribute(verts, 3));
+        geometry.setAttribute('uv', new BufferAttribute(UVs, 2));
+        geometry.setIndex(_inds);
+        this.mesh = new Mesh(geometry, this.mat)
         this.add(this.mesh);
 
         // capture min, max
@@ -254,47 +254,17 @@ export class VerletSurface extends VerletBase {
 
     update(): void {
 
-        // // start Verlet integration
-        // let pts: number[] = [];
-
-        // for (let i = 0; i < this.nodes.length; i++) {
-        //     //populate vecs
-        //     pts.push(this.nodes[i].position.x);
-        //     pts.push(this.nodes[i].position.y);
-        //     pts.push(this.nodes[i].position.z);
-        // }
-        // // this.mesh.material.needsUpdate
-        // let vs = new Float32Array(pts);
-        // const geometry = new BufferGeometry();
-        // this.mesh.geometry.setAttribute('position', new BufferAttribute(vs, 3));
-
-
-        // const tempVecs: Vector3[] = [];
-        // for (let i = 0; i < this.nodes.length; i++) {
-        //     tempVecs.push(this.nodes[i].position);
-        // }
-        // const xyMinMax = getMinMaxXYPos(tempVecs);
-        // let uvs = this.mesh.geometry.attributes.uv;
-
-        // // //update surface vertex date based on node position
-        // for (let i = 0; i < uvs.count; i++) {
-        //     uvs.setX(i, mapLinear(this.nodes[i].position.x, xyMinMax.x, xyMinMax.y, -.2, 1.2));
-        //     uvs.setY(i, mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, -.2, 1.2));
-        // }
-        // uvs.needsUpdate = true;
-
-
-
-
-        // for (let i = 0; i < this.nodes.length; i++) {
-        //     this.nodes[i].moveNode(new Vector3(randFloat(-.4, .4), randFloat(-.4, .4), 0));
-        // }
-
 
         for (let i = 0; i < this.nodes.length; i++) {
-            this.nodes[i].moveNode(new Vector3(randFloat(-.4, .4), randFloat(-.4, .4), randFloat(-.4, .4)));
+            if (i % 17 == 0) {
+                this.nodes[i].moveNode(new Vector3(randFloat(-1.9, 1.9), randFloat(-1.9, 1.9), randFloat(-1.9, 1.9)));
+            }
         }
-        this.nodes[this.nodes.length - 1].position.z = sin(this.counter++ * PI / 45) * 30;
+
+        this.centroidNode.position.z = sin(this.counter * PI / 125) * 40;
+        //this.nodes[randInt(0, this.nodes.length - 1)].position.z = sin(this.counter * PI / 45) * 50;
+
+        this.counter++;
         // get geom data form mesh
         let pos = this.mesh.geometry.attributes.position;
         pos.needsUpdate = true;
@@ -309,18 +279,18 @@ export class VerletSurface extends VerletBase {
             tempVecs.push(new Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
         }
 
-        const xyMinMax = getMinMaxXYPos(tempVecs);
+        // const xyMinMax = getMinMaxXYPos(tempVecs);
         let uvs = this.mesh.geometry.attributes.uv;
 
         // this.MinMaxXYPos
         //update surface vertex date based on node position
         for (let i = 0; i < uvs.count; i++) {
-            // const u = mapLinear(this.nodes[i].position.x, this.MinMaxXYPos.x, this.MinMaxXYPos.y, 0, 1);
-            // const v = mapLinear(this.nodes[i].position.y, this.MinMaxXYPos.z, this.MinMaxXYPos.w, 0, 1);
+            const u = mapLinear(this.nodes[i].position.x, this.MinMaxXYPos.x, this.MinMaxXYPos.y, 0, 1);
+            const v = mapLinear(this.nodes[i].position.y, this.MinMaxXYPos.z, this.MinMaxXYPos.w, 0, 1);
 
-            const u = mapLinear(this.nodes[i].position.x, xyMinMax.x, xyMinMax.y, 0, 1);
-            const v = mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, 0, 1);
-            uvs.setXY(i, u, v);
+            // const u = mapLinear(this.nodes[i].position.x, xyMinMax.x, xyMinMax.y, 0, 1);
+            // const v = mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, 0, 1);
+            //uvs.setXY(i, u, v);
         }
         // uvs.needsUpdate = true;
         this.mesh.geometry.computeVertexNormals();
