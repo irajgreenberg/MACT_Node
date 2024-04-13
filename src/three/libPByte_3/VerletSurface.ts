@@ -254,15 +254,25 @@ export class VerletSurface extends VerletBase {
 
     update(): void {
 
+        this.centroidNode.position.y = sin(this.counter * PI / 125) * 40;
 
         for (let i = 0; i < this.nodes.length; i++) {
             if (i % 17 == 0) {
-                this.nodes[i].moveNode(new Vector3(randFloat(-1.9, 1.9), randFloat(-1.9, 1.9), randFloat(-1.9, 1.9)));
+                this.nodes[i].moveNode(new Vector3(randFloat(-2.5, 2.5), randFloat(-2.5, 2.5), randFloat(-2.5, 2.5)));
+            }
+
+            if (i < this.nodes.length - 1) {
+                const delta = this.centroidNode.position.distanceTo(this.nodes[i].position);
+                const deltaMapped = mapLinear(delta, 0, this.dim.y / 2, 1, 0);
+                this.nodes[i].position.z += sin(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
+                // this.nodes[i].position.x += cos(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
             }
         }
 
-        this.centroidNode.position.z = sin(this.counter * PI / 125) * 40;
+        this.centroidNode.position.z = sin(this.counter * PI / 45) * 90;
+        // this.centroidNode.position.y = sin(this.counter * PI / 125) * 340;
         //this.nodes[randInt(0, this.nodes.length - 1)].position.z = sin(this.counter * PI / 45) * 50;
+
 
         this.counter++;
         // get geom data form mesh
