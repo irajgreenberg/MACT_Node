@@ -126,7 +126,7 @@ function animate() {
 
     vs.verlet();
     vs.update();
-    vs.rotateZ(.075 * PI / 180);
+    //vs.rotateZ(.075 * PI / 180);
 
     render();
 }

@@ -63,9 +63,9 @@ export class ProtoMorph_003 extends Group {
         let edgeVecs = this.org001.getEdgeVecs();
 
         for (let i = 0; i < this.tendrils.length; i++) {
-
+            this.tendrils[i].setHeadPosition(this.org001.edgeNodes[i].position);
             // this.tendrils[i].setHeadPosition(this.org001.verletNodeEdgesAll2D[0][i].position);
-            this.tendrils[i].setHeadPosition(edgeVecs[i]);
+            // this.tendrils[i].setHeadPosition(edgeVecs[i]);
             this.tendrils[i].verlet();
             // this.tendrils[i].nodes[0].position = this.org001.verletNodeEdgesAll2D[0][i].position;
             // this.tendrils[i].nodes[0].position = this.org001.verletNodeEdgesAll2D[0][i].position;

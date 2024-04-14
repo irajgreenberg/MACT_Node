@@ -112,9 +112,9 @@ export class VerletSurface extends VerletBase {
                     this.bodyNodes.push(node);
                 }
 
-                if (j == detail1 - 5) {
-                    this.verletNodeEdgesAll2D[0].push(node);
-                }
+                // if (j == i - 1) {
+                this.verletNodeEdgesAll2D[i].push(node);
+                // }
             }
             theta += thetaStep;
         }
@@ -273,7 +273,7 @@ export class VerletSurface extends VerletBase {
 
         for (let i = 0; i < this.nodes.length; i++) {
             if (i % 27 == 0) {
-                this.nodes[i].moveNode(new Vector3(randFloat(-2.5, 2.5), randFloat(-2.5, 2.5), randFloat(-2.5, 2.5)));
+                //   this.nodes[i].moveNode(new Vector3(randFloat(-2.5, 2.5), randFloat(-2.5, 2.5), randFloat(-2.5, 2.5)));
             }
 
             if (i < this.nodes.length - 1) {
@@ -284,6 +284,7 @@ export class VerletSurface extends VerletBase {
 
                 //exponential
                 // const deltaMapped = mapLinear(Math.pow((this.dim.x / 2 - this.nodesCentroidDist[i]), 1), 0, Math.pow(this.dim.x / 2, 1), 0, 1.1);
+
 
                 this.nodes[i].position.x += cos(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
                 this.nodes[i].position.y += sin(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);

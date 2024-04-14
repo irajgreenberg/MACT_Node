@@ -33,6 +33,7 @@ export abstract class VerletBase extends Group {
     // conveneince node refernces
     bodyNodes: VerletNode[] = [];
     edgeNodes: VerletNode[] = [];
+    innerEdgeNodes: VerletNode[] = [];
     cornerNodes: VerletNode[] = [];
 
     // collect cols or concentric rings

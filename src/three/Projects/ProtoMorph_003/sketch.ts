@@ -65,11 +65,11 @@ scene.position.setZ(0);
 //const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_005.png');
 const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_007.png');
 
-let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: true, opacity: 1, side: DoubleSide, map: texture })
+let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
 
 let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(300, 300), new Vector2(6, 6), mat, .9);
 let proto001 = new ProtoMorph_003(vs, 2.15);
-vs.draw(true, false, false);
+vs.draw(true, false, true);
 
 scene.add(proto001);
 
@@ -119,14 +119,14 @@ pointLt2.castShadow = true;
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    controls.autoRotate = true;
+    // controls.autoRotate = true;
     const time = Date.now() * 0.007;
 
     proto001.move(time);
 
     vs.verlet();
     vs.update();
-    vs.rotateZ(.075 * PI / 180);
+    // vs.rotateZ(.075 * PI / 180);
 
     render();
 }
