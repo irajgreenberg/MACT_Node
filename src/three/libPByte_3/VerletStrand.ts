@@ -85,6 +85,9 @@ export class VerletStrand extends Group {
                 for (var i = 0; i < this.segments.length; i++) {
                     if (i === 0) {
                         this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.HEAD);
+
+                        // this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, 1);
+
                     } else {
                         this.segments[i] = new VerletStick(this.nodes[i], this.nodes[i + 1], this.elasticity, AnchorPoint.NONE);
                     }
@@ -225,11 +228,16 @@ export class VerletStrand extends Group {
     }
 
     setHeadPosition(pos: Vector3, offsetRatio: number = 1): void {
-        let head = pos.clone();
+        // let head = pos.clone();
+        let head = new Vector3().copy(pos);
         head.multiplyScalar(offsetRatio);
         this.nodes[0].position.x = head.x;
         this.nodes[0].position.y = head.y;
         this.nodes[0].position.z = head.z;
+
+        // this.nodes[0].position.x = pos.x;
+        // this.nodes[0].position.y = pos.y;
+        // this.nodes[0].position.z = pos.z;
     }
 
     setTailPosition(pos: Vector3, offsetRatio: number = 1): void {

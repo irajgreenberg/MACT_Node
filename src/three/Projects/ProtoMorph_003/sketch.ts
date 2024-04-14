@@ -1,4 +1,4 @@
-// ProtoMorph_002
+// ProtoMorph_003
 // Ira Greenberg
 // Santa Fe, NM | Dallas, TX
 // 2024
@@ -9,7 +9,7 @@ import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereL
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../../libPByte_3/IJGUtils";
-import { ProtoMorph_002 } from './ProtoMorph_002';
+import { ProtoMorph_003 } from './ProtoMorph_003';
 import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 import { VerletSurface } from '../../libPByte_3/VerletSurface';
 
@@ -46,7 +46,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
-document.title = "[Proto]morphogenesis_02] | Ira Greenberg.2024"
+document.title = "[Proto]morphogenesis_03] | Ira Greenberg.2024"
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -65,17 +65,15 @@ scene.position.setZ(0);
 //const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_005.png');
 const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_007.png');
 
-let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
+let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: true, opacity: 1, side: DoubleSide, map: texture })
 
-// let mat = new MeshPhongMaterial({ color: 0xffffff, specular: 0xffffff, shininess: .9, transparent: true, wireframe: false, opacity: .9, side: DoubleSide, map: texture });
+let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(300, 300), new Vector2(6, 6), mat, .9);
+let proto001 = new ProtoMorph_003(vs, 2.15);
+vs.draw(true, false, false);
 
-let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(300, 300), new Vector2(36, 16), mat, .9);
-scene.add(vs);
-vs.draw(true, true, true);
+scene.add(proto001);
 
-// start surface deformation
-//vs.centroidNode.moveNode(new Vector3(0, 0, 12));
-//console.log(vs.sticks.length);
+
 /************************************************************/
 
 
@@ -121,8 +119,10 @@ pointLt2.castShadow = true;
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    //controls.autoRotate = true;
+    controls.autoRotate = true;
     const time = Date.now() * 0.007;
+
+    proto001.move(time);
 
     vs.verlet();
     vs.update();

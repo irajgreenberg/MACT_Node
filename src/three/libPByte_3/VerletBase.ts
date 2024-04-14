@@ -23,14 +23,26 @@ export abstract class VerletBase extends Group {
     // outer node cage to control overall deformation
     armatureNodes: VerletNode[] = [];
 
+    // capture original node positions
+    nodesPosInit: Vector3[] = [];
+
+    // capture distance of all nodes from centroid, to determine 
+    // fall-off curves for form deformation
+    nodesCentroidDist: number[] = [];
+
     // conveneince node refernces
     bodyNodes: VerletNode[] = [];
     edgeNodes: VerletNode[] = [];
     cornerNodes: VerletNode[] = [];
+
+    // collect cols or concentric rings
+    verletNodeEdgesAll2D: VerletNode[][] = [];
+
     nodes2D: VerletNode[][] = [];
     rowSticks: VerletStick[] = [];
     colSticks: VerletStick[] = [];
     centroidNode!: VerletNode;
+
 
     // triangles for collisions
     tris: Triangle[] = [];
@@ -82,6 +94,22 @@ export abstract class VerletBase extends Group {
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].position.add(offset);
         }
+    }
+
+    // record original node position
+    // used during animation
+    captureNodesPosInit(): void {
+        for (let n of this.nodes) {
+            this.nodesPosInit.push(n.position);
+        }
+
+    }
+
+    captureNodesCentroidDist(): void {
+        for (let i = 0; i < this.nodes.length - 1; i++) {
+            this.nodesCentroidDist.push(this.centroidNode.position.distanceTo(this.nodes[i].position));
+        }
+
     }
 
     verlet(): void {

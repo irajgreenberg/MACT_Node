@@ -83,6 +83,7 @@ export class VerletSurface extends VerletBase {
         // vertices
         for (let i = 0; i < detail0; i++) {
             _vecs3_2D[i] = [];
+            this.verletNodeEdgesAll2D[i] = [];
             this.nodes2D[i] = [];
             for (let j = 1; j < detail1; j++) {
                 const x = this.pos.x + cos(theta) * sliceXStep * j;
@@ -95,12 +96,12 @@ export class VerletSurface extends VerletBase {
                 // for convenience
                 _vecs3_2D[i].push(new Vector3(x, y, z)); // 2D
                 _vecs3_1D.push(new Vector3(x, y, z)); // 1D
-                const node = new VerletNode(new Vector3(x, y, z), 3, new Color(1, 1, 1));
+                const node = new VerletNode(new Vector3(x, y, z), 1, new Color(1, 1, 1));
                 this.nodes.push(node);
 
                 this.nodes2D[i].push(node);
 
-                // capture edge nodes and turn off their verlet
+                // capture edge nodes
                 if (j == detail1 - 1) {
                     // node.isVerletable = false;
                     this.edgeNodes.push(node);
@@ -110,6 +111,10 @@ export class VerletSurface extends VerletBase {
                 } else {
                     this.bodyNodes.push(node);
                 }
+
+                if (j == detail1 - 5) {
+                    this.verletNodeEdgesAll2D[0].push(node);
+                }
             }
             theta += thetaStep;
         }
@@ -118,9 +123,14 @@ export class VerletSurface extends VerletBase {
         _vecs.push(this.pos.y);
         _vecs.push(this.pos.z);
         this.centroidNode = new VerletNode(new Vector3(this.pos.x, this.pos.y, this.pos.z), 3, new Color(1, 1, 1));
-        this.nodes.push(this.centroidNode);
+        this.nodes.push(this.centroidNode); // last position
         _vecs3_1D.push(this.centroidNode.position);
 
+        // capture all node positions at creation
+        this.captureNodesPosInit();
+
+        // capture deltas of centroid node to all nodes
+        this.captureNodesCentroidDist();
 
         // indices
         for (let i = 0; i < detail0; i++) {
@@ -254,22 +264,33 @@ export class VerletSurface extends VerletBase {
 
     update(): void {
 
-        this.centroidNode.position.y = sin(this.counter * PI / 125) * 40;
+
+        const amp = Math.abs(cos(this.counter * PI / 1325) * 100);
+        const frq = 180 + sin(this.counter * PI / 720) * 10
+        const offset = sin(this.counter * PI / frq) * amp;
+        this.centroidNode.position.z = offset;
+
 
         for (let i = 0; i < this.nodes.length; i++) {
-            if (i % 17 == 0) {
+            if (i % 27 == 0) {
                 this.nodes[i].moveNode(new Vector3(randFloat(-2.5, 2.5), randFloat(-2.5, 2.5), randFloat(-2.5, 2.5)));
             }
 
             if (i < this.nodes.length - 1) {
-                const delta = this.centroidNode.position.distanceTo(this.nodes[i].position);
-                const deltaMapped = mapLinear(delta, 0, this.dim.y / 2, 1, 0);
-                this.nodes[i].position.z += sin(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
-                // this.nodes[i].position.x += cos(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
+                const deltaMapped = mapLinear((this.dim.x / 2 - this.nodesCentroidDist[i]), 0, this.dim.x / 2, 0, 1.1);
+
+                // linear
+                this.nodes[i].position.z = this.centroidNode.position.z * deltaMapped;
+
+                //exponential
+                // const deltaMapped = mapLinear(Math.pow((this.dim.x / 2 - this.nodesCentroidDist[i]), 1), 0, Math.pow(this.dim.x / 2, 1), 0, 1.1);
+
+                this.nodes[i].position.x += cos(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
+                this.nodes[i].position.y += sin(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
             }
         }
 
-        this.centroidNode.position.z = sin(this.counter * PI / 45) * 90;
+
         // this.centroidNode.position.y = sin(this.counter * PI / 125) * 340;
         //this.nodes[randInt(0, this.nodes.length - 1)].position.z = sin(this.counter * PI / 45) * 50;
 
@@ -305,6 +326,26 @@ export class VerletSurface extends VerletBase {
         // uvs.needsUpdate = true;
         this.mesh.geometry.computeVertexNormals();
         this.mesh.geometry.computeTangents()
+    }
 
+    getEdgeVecs(): Vector3[] {
+        const vecs: Vector3[] = [];
+        let pos = this.mesh.geometry.attributes.position;
+
+        // ellipticl surface
+        let k = 0;
+        if (this.detail instanceof Vector2) {
+            for (let i = 0; i < this.detail.x; i++) {
+                for (let j = 1; j < this.detail.y; j++) {
+                    if (j == this.detail.y - 2) {
+                        //console.log(pos.getX(k));
+                        vecs.push(new Vector3(pos.getX(k), pos.getY(k), pos.getZ(k)));
+                    }
+                    k++
+
+                }
+            }
+        }
+        return vecs;
     }
 }

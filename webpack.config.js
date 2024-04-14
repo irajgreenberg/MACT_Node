@@ -12,7 +12,8 @@ module.exports = {
     //entry: "./src/p5/VerletDemo_01/sketch.ts",
     //entry: "./src/three/Verletion/sketch.ts",
     //entry: "./src/three/Projects/ProtoMorph_001/sketch.ts",
-    entry: "./src/three/Projects/ProtoMorph_002/sketch.ts",
+    // entry: "./src/three/Projects/ProtoMorph_002/sketch.ts",
+    entry: "./src/three/Projects/ProtoMorph_003/sketch.ts",
 
     module: {
         rules: [
