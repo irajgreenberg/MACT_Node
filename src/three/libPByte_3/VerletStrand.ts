@@ -63,7 +63,7 @@ export class VerletStrand extends Group {
                 this.head.y + deltaVec.y * i,
                 this.head.z + deltaVec.z * i
             ),
-                nodeRadius,
+                nodeRadius * 5,
                 new Color(1, 1, 1),
                 this.nodeType);
 
@@ -333,6 +333,14 @@ export class VerletStrand extends Group {
 
     enableShadow(isShadowEnabled: boolean = true): void {
         this.tendril.castShadow = isShadowEnabled;
+    }
+
+    getNodeVecs(): Vector3[] {
+        const vecs = [];
+        for (let n of this.nodes) {
+            vecs.push(n.position);
+        }
+        return vecs;
     }
 
     // createSkin() {

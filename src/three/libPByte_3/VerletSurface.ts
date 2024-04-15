@@ -103,18 +103,16 @@ export class VerletSurface extends VerletBase {
 
                 // capture edge nodes
                 if (j == detail1 - 1) {
-                    // node.isVerletable = false;
                     this.edgeNodes.push(node);
-
+                    // node.isVerletable = false;
                     let v = new Vector3().copy(node.position).multiplyScalar(1.2);
                     this.armatureNodes.push(new VerletNode(v, 3, new Color(.5, .5, 0)));
                 } else {
                     this.bodyNodes.push(node);
                 }
-
                 // if (j == i - 1) {
-                this.verletNodeEdgesAll2D[i].push(node);
-                // }
+                //this.verletNodeEdgesAll2D[i].push(node);
+                //}
             }
             theta += thetaStep;
         }

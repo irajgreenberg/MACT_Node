@@ -22,14 +22,14 @@ camera.position.z = 400;
 const scene = new Scene();
 
 // dark
-// let greyColR = randFloat(.01, .05);
-// let greyColG = randFloat(.01, .05);
-// let greyColB = randFloat(.01, .05);
+let greyColR = randFloat(.01, .05);
+let greyColG = randFloat(.01, .05);
+let greyColB = randFloat(.01, .05);
 
 //light
-let greyColR = randFloat(.4, .8);
-let greyColG = randFloat(.4, .8);
-let greyColB = randFloat(.4, .8);
+// let greyColR = randFloat(.4, .8);
+// let greyColG = randFloat(.4, .8);
+// let greyColB = randFloat(.4, .8);
 
 let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
@@ -63,13 +63,13 @@ scene.position.setZ(0);
 
 // VerletSurface test
 //const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_005.png');
-const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_007.png');
+const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_009.png');
 
-let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: 1, side: DoubleSide, map: texture })
+let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
 
-let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(300, 300), new Vector2(6, 6), mat, .9);
+let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(300, 300), new Vector2(72, 6), mat, .9);
 let proto001 = new ProtoMorph_003(vs, 2.15);
-vs.draw(true, false, true);
+vs.draw(false, false, false);
 
 scene.add(proto001);
 
@@ -119,7 +119,7 @@ pointLt2.castShadow = true;
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    // controls.autoRotate = true;
+    controls.autoRotate = true;
     const time = Date.now() * 0.007;
 
     proto001.move(time);

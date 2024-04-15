@@ -1,4 +1,4 @@
-import { BoxGeometry, Face, ImageLoader, Line3, MeshBasicMaterial, PerspectiveCamera, Plane, Scene, TetrahedronGeometry, Triangle, Vector2, Vector4, WebGLRenderer } from 'three';
+import { BoxGeometry, Curve, Face, ImageLoader, Line3, MeshBasicMaterial, PerspectiveCamera, Plane, Scene, TetrahedronGeometry, Triangle, Vector2, Vector4, WebGLRenderer } from 'three';
 
 import {
     Color, BufferGeometry, Group, Line, LineBasicMaterial,
@@ -1281,6 +1281,18 @@ export function getNormalizedUVArr(vecs: Vector3[]): number[] {
     }
 
     return _UVs;
+}
+
+export class SimplCurve extends Curve<Vector3> {
+    vecs: Vector3[] = [];
+    constructor(vecs: Vector3[]) {
+        super();
+        this.vecs = vecs;
+    }
+
+    getVecs(): Vector3[] {
+        return this.vecs;
+    }
 }
 
 
