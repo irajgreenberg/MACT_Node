@@ -35,8 +35,9 @@ let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
 scene.background = myColor;
 document.body.style.backgroundColor = '#' + myColor.getHexString();
-let fogFactor = 0.00004;
+let fogFactor = 0.0011;
 //scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
+scene.fog = new FogExp2(0xff6666, fogFactor)
 
 // main renderer
 let renderer = new WebGLRenderer({ alpha: true, antialias: true, logarithmicDepthBuffer: true });
@@ -64,20 +65,35 @@ scene.position.setZ(0);
 // Organisms
 const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_010.png');
 
-let mat = new MeshBasicMaterial({ color: 0xff6666, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
+//let mat = new MeshBasicMaterial({ color: 0xffaaaa, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
+// let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(200, 200), new Vector2(36, 12), mat, .3);
+//let proto004 = new ProtoMorph_004(vs, 2.3, 20, new Vector2(.1, 1.5), new Color('#ffbbbb'));
+//vs.draw(false, false, false);
 
-let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(300, 300), new Vector2(72, 6), mat, .9);
-let proto004 = new ProtoMorph_004(vs, 1.3);
-vs.draw(false, false, false);
+const orgCount = 10;
+const spds: Vector3[] = [];
+const rotSpds: Vector3[] = [];
+let orgs: ProtoMorph_004[] = [];
+for (let i = 0; i < orgCount; i++) {
+    const col = new Color(randFloat(.7, 1), randFloat(.3, .5), randFloat(.3, .5))
+    let mat = new MeshBasicMaterial({ color: col.getHex(), transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
+    const rad = randFloat(50, 200);
+    let vs = new VerletSurface(new Vector3(randFloat(-300, 300), randFloat(-230, 230), randFloat(-400, 100)), new Vector2(rad, rad), new Vector2(randInt(6, 12), randInt(6, 12)), mat, randFloat(.8, .9));
+    orgs.push(new ProtoMorph_004(vs, randFloat(.2, 1.1), 20, new Vector2(.1, 1.5), col));
+    scene.add(orgs[orgs.length - 1]);
 
-scene.add(proto004);
+    rotSpds.push(new Vector3(randFloat(-.1, .1) * PI / 180, randFloat(-.1, .1) * PI / 180, randFloat(-.1, .1) * PI / 180));
+}
+
+// scene.add(proto004);
 
 // background
 let env = new VerletPlane2(4200, 2500, 30, 30, "data/ProtoMorph/Proto_BG_010.png", AnchorPlane.EDGES_ALL);
-env.position.setZ(-600);
+env.position.setZ(-800);
 env.moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
 scene.add(env);
 env.renderVerletGeometry(false, false);
+env.setNodesOff(AnchorPlane.EDGES_ALL);
 /************************************************************/
 
 
@@ -126,9 +142,14 @@ function animate() {
     //controls.autoRotate = true;
     const time = Date.now() * 0.007;
 
-    proto004.move(time);
-    proto004.rotateZ(.2 * PI / 180);
-    proto004.rotateY(.2 * PI / 180);
+    for (let i = 0; i < orgCount; i++) {
+        orgs[i].rotate(rotSpds[i]);
+        orgs[i].move(time, new Vector3(30 * i, 0, sin(time * PI / 180) * 150));
+        // orgs[i].position.set(30 * i, 0, sin(time * PI / 180) * 150)
+
+
+    }
+
 
 
     // vs.verlet();

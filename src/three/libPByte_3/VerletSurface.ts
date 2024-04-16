@@ -237,6 +237,7 @@ export class VerletSurface extends VerletBase {
         this.mesh = new Mesh(geometry, this.mat)
         this.add(this.mesh);
 
+
         // capture min, max
         this.MinMaxXYPos = getMinMaxXYPos(_vecs3_1D);
         // rectangular
@@ -264,7 +265,7 @@ export class VerletSurface extends VerletBase {
 
 
         const amp = Math.abs(cos(this.counter * PI / 1325) * 100);
-        const frq = 180 + sin(this.counter * PI / 720) * 10
+        const frq = 180 + sin(this.counter * PI / 120) * 10
         const offset = sin(this.counter * PI / frq) * amp;
         this.centroidNode.position.z = offset;
 
@@ -275,7 +276,7 @@ export class VerletSurface extends VerletBase {
             }
 
             if (i < this.nodes.length - 1) {
-                const deltaMapped = mapLinear((this.dim.x / 2 - this.nodesCentroidDist[i]), 0, this.dim.x / 2, 0, 1.1);
+                const deltaMapped = mapLinear((this.dim.x / 2 - this.nodesCentroidDist[i]), 0, this.dim.x / 2, 0, 1.6);
 
                 // linear
                 this.nodes[i].position.z = this.centroidNode.position.z * deltaMapped;
