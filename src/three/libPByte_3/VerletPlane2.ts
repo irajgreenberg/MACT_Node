@@ -1,9 +1,10 @@
 import { timeStamp } from "console";
-import { BufferAttribute, BufferGeometry, Color, DoubleSide, Group, InterleavedBufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, PlaneGeometry, Texture, TextureLoader, Triangle, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Color, DoubleSide, Group, InterleavedBufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, PlaneGeometry, Texture, TextureLoader, Triangle, Vector2, Vector3 } from "three";
 import { AnchorPlane, AxesPlane } from "./IJGUtils";
 import { VerletGeometryBase } from "./VerletGeometryBase";
 import { VerletNode } from "./VerletNode";
 import { VerletStick } from "./VerletStick";
+import { randFloat } from "three/src/math/MathUtils";
 
 // includes mapped texture
 // VerletPlane just includes Verlet grid
@@ -370,6 +371,13 @@ export class VerletPlane2 extends VerletGeometryBase {
         for (let i = 0; i < nodeCount; i++) {
             const id = Math.floor(Math.random() * (this.bodyNodes.length - 1))
             this.moveNode(this.bodyNodes[id], new Vector3(Math.random() * vecMax.x, Math.random() * vecMax.y, Math.random() * vecMax.z));
+        }
+    }
+
+    jitterNodes(vecMinMax: Vector2): void {
+        for (let i = 0; i < this.bodyNodes.length; i++) {
+            const id = Math.floor(Math.random() * (this.bodyNodes.length - 1))
+            this.moveNode(this.bodyNodes[id], new Vector3(randFloat(vecMinMax.x, vecMinMax.y), randFloat(vecMinMax.x, vecMinMax.y), 0));
         }
     }
 

@@ -8,7 +8,7 @@
 import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, MeshBasicMaterial, MeshPhongMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, sin, cos } from "../../libPByte_3/IJGUtils";
+import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPlane } from "../../libPByte_3/IJGUtils";
 import { ProtoMorph_004 } from './ProtoMorph_004';
 import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 import { VerletSurface } from '../../libPByte_3/VerletSurface';
@@ -64,7 +64,7 @@ scene.position.setZ(0);
 // Organisms
 const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_010.png');
 
-let mat = new MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
+let mat = new MeshBasicMaterial({ color: 0xff6666, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
 
 let vs = new VerletSurface(new Vector3(0, 0, 0), new Vector2(300, 300), new Vector2(72, 6), mat, .9);
 let proto004 = new ProtoMorph_004(vs, 1.3);
@@ -73,7 +73,7 @@ vs.draw(false, false, false);
 scene.add(proto004);
 
 // background
-let env = new VerletPlane2(4200, 2500, 30, 30, "data/ProtoMorph/Proto_BG_010.png");
+let env = new VerletPlane2(4200, 2500, 30, 30, "data/ProtoMorph/Proto_BG_010.png", AnchorPlane.EDGES_ALL);
 env.position.setZ(-600);
 env.moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
 scene.add(env);
@@ -127,12 +127,17 @@ function animate() {
     const time = Date.now() * 0.007;
 
     proto004.move(time);
+    proto004.rotateZ(.2 * PI / 180);
+    proto004.rotateY(.2 * PI / 180);
 
-    vs.verlet();
-    vs.update();
+
+    // vs.verlet();
+    // vs.update();
 
     env.verlet();
-    env.moveNode(randInt(0, env.nodes.length - 1), new Vector3(randFloat(.3, 15), randFloat(.3, 15), randFloat(.01, .10)));
+    // env.moveNode(randInt(0, env.bodyNodes.length - 1), new Vector3(randFloat(.3, 15), randFloat(.3, 15), randFloat(.01, .10)));
+
+    env.jitterNodes(new Vector2(-2, 2));
 
 
     render();

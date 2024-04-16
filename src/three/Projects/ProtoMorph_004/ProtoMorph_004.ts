@@ -57,6 +57,7 @@ export class ProtoMorph_004 extends Group {
 
     }
 
+
     move(time: number) {
         this.org001.verlet();
         this.org001.update();
@@ -73,8 +74,6 @@ export class ProtoMorph_004 extends Group {
             const geometry = new TubeGeometry(path, 15, this.tendrilStickRadii[i], 10, false);
             this.tendrilSticks[i].geometry = geometry
         }
-
-
     }
 }
 
