@@ -1,15 +1,16 @@
-// ProtoMorph_004
+// ProtoMorph_005
 // Ira Greenberg
 // Santa Fe, NM | Dallas, TX
 // 2024
 
-// Project Description: 
+/* Project Description: 
+*/
 
 import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, MeshBasicMaterial, MeshPhongMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPlane } from "../../libPByte_3/IJGUtils";
-import { ProtoMorph_004 } from './ProtoMorph_004';
+import { ProtoMorph_005 } from './ProtoMorph_005';
 import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 import { VerletSurface } from '../../libPByte_3/VerletSurface';
 
@@ -47,7 +48,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
-document.title = "[Proto]morphogenesis_004] | Ira Greenberg.2024"
+document.title = "[Proto]morphogenesis_005] | Ira Greenberg.2024"
 
 const controls = new OrbitControls(camera, renderer.domElement);
 

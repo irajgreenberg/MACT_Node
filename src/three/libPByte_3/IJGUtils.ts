@@ -1155,7 +1155,7 @@ export class Orb extends Group {
 // END Orb class
 
 
-// for VereltBodySegment
+// for VerletBodySegment
 export class PhysTrig {
     theta3: Vector3;
     freq3: Vector3;

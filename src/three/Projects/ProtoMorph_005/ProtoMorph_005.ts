@@ -1,9 +1,11 @@
-// ProtoMorph_004
+// ProtoMorph_005
 // Ira Greenberg
 // Santa Fe, NM | Dallas, TX
 // 2024
 
-// Class Description: 
+/* Class Description: 
+ProtoMorph class encapsulates a VerletSurface optionally attached tendrils
+*/
 
 import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, Material, Mesh, MeshBasicMaterial, TubeGeometry, Vector2, Vector3 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
@@ -12,44 +14,39 @@ import { VerletSurface } from "../../libPByte_3/VerletSurface";
 import { VerletStrand } from "../../libPByte_3/VerletStrand";
 import { VerletStick } from "../../libPByte_3/VerletStick";
 import { VerletNode } from "../../libPByte_3/VerletNode";
+import { TendrilDataModel } from "./TendrilDataModel";
 
-export class ProtoMorph_004 extends Group {
-
-    org001: VerletSurface;
-    tendrilLen: number;
-    tendrilSegments: number;
-    tendrilRadiiMinMax: Vector2;
-    col: Color;
+export class ProtoMorph_005 extends Group {
 
     pos: Vector3;
+    org: VerletSurface;
+    tdm: TendrilDataModel
+    col: Color;
 
     tendrils: VerletStrand[] = [];
-
     tendrilSticks: Mesh[] = [];
     tendrilStickRadii: number[] = [];
 
 
-    constructor(org001: VerletSurface, tendrilLen: number = 0, tendrilSegments: number, tendrilRadiiMinMax: Vector2, col: Color) {
+    constructor(pos: Vector3, org: VerletSurface, tdm: TendrilDataModel, col: Color) {
         super();
-
-        this.org001 = org001;
-        this.pos = org001.pos;
-        this.tendrilLen = tendrilLen;
-        this.tendrilSegments = tendrilSegments;
-        this.tendrilRadiiMinMax = tendrilRadiiMinMax;
+        this.pos = pos;
+        this.org = org;
+        this.tdm = tdm
         this.col = col;
 
 
-        this.add(this.org001);
-        this.org001.draw(true);
+        this.add(this.org);
+        this.org.draw(true);
         this.create();
     }
 
     create() {
 
-        for (let i = 0; i < this.org001.edgeNodes.length; i++) {
-            const head = this.org001.edgeNodes[i].position;
-            const tail = new Vector3().copy(this.org001.edgeNodes[i].position).multiplyScalar(this.tendrilLen);
+        //create tendrils
+        for (let i = 0; i < this.org.edgeNodes.length; i++) {
+            const head = this.org.edgeNodes[i].position;
+            const tail = new Vector3().copy(this.org.edgeNodes[i].position).multiplyScalar(this.tendrilLen);
             this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
             //  this.add(this.tendrils[this.tendrils.length - 1]);
 
@@ -66,7 +63,7 @@ export class ProtoMorph_004 extends Group {
             this.add(this.tendrilSticks[this.tendrilSticks.length - 1]);
         }
 
-        //this.org001.getEdgeVecs();
+        //this.org.getEdgeVecs();
         this.position.x += this.pos.x
         this.position.y += this.pos.y
         this.position.z += this.pos.z
@@ -76,12 +73,12 @@ export class ProtoMorph_004 extends Group {
 
 
     move(time: number, spd?: Vector3): void {
-        this.org001.verlet();
-        this.org001.update();
-        // let edgeVecs = this.org001.getEdgeVecs();
+        this.org.verlet();
+        this.org.update();
+        // let edgeVecs = this.org.getEdgeVecs();
 
         for (let i = 0; i < this.tendrils.length; i++) {
-            let input = new Vector3().copy(this.org001.edgeNodes[i].position).multiplyScalar(1);
+            let input = new Vector3().copy(this.org.edgeNodes[i].position).multiplyScalar(1);
             this.tendrils[i].setHeadPosition(input);
             this.tendrils[i].verlet();
 
