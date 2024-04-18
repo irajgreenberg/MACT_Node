@@ -10,7 +10,7 @@ import { mapLinear, randFloat, randInt } from "three/src/math/MathUtils";
 // includes mapped texture
 // VerletPlane just includes Verlet grid
 
-export class VerletSurface extends VerletBase {
+export class VerletSurface2 extends VerletBase {
 
     pos: Vector3;
     dim: Vector2;
