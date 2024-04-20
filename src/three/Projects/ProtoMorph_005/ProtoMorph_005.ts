@@ -46,7 +46,7 @@ export class ProtoMorph_005 extends Group {
         //create tendrils
         for (let i = 0; i < this.org.edgeNodes.length; i++) {
             const head = this.org.edgeNodes[i].position;
-            const tail = new Vector3().copy(this.org.edgeNodes[i].position).multiplyScalar(this.tendrilLen);
+            const tail = new Vector3().copy(this.org.edgeNodes[i].position).multiplyScalar(this.tdm.length);
             this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
             //  this.add(this.tendrils[this.tendrils.length - 1]);
 
@@ -55,8 +55,8 @@ export class ProtoMorph_005 extends Group {
 
 
             const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
-            this.tendrilStickRadii.push(randFloat(this.tendrilRadiiMinMax.x, this.tendrilRadiiMinMax.y));
-            const geometry = new TubeGeometry(path, this.tendrilSegments, randFloat(this.tendrilRadiiMinMax.x, this.tendrilRadiiMinMax.y), 2, false);
+            this.tendrilStickRadii.push(randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y));
+            const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), 2, false);
             const material = new MeshBasicMaterial({ color: this.col, side: DoubleSide, transparent: true, opacity: .8 });
             const mesh = new Mesh(geometry, material);
             this.tendrilSticks.push(new Mesh(geometry, material));
@@ -70,7 +70,6 @@ export class ProtoMorph_005 extends Group {
 
 
     }
-
 
     move(time: number, spd?: Vector3): void {
         this.org.verlet();
@@ -86,7 +85,7 @@ export class ProtoMorph_005 extends Group {
 
             const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
             this.tendrilSticks[i].geometry.dispose();
-            const geometry = new TubeGeometry(path, this.tendrilSegments, this.tendrilStickRadii[i], 12, false);
+            const geometry = new TubeGeometry(path, this.tdm.segments, this.tendrilStickRadii[i], 12, false);
             this.tendrilSticks[i].geometry = geometry
         }
 
