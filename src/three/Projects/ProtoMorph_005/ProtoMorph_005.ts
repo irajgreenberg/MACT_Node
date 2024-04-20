@@ -10,11 +10,26 @@ ProtoMorph class encapsulates a VerletSurface optionally attached tendrils
 import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, Material, Mesh, MeshBasicMaterial, TubeGeometry, Vector2, Vector3 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPoint, SimplCurve } from "../../libPByte_3/IJGUtils";
-import { VerletSurface } from "../../libPByte_3/VerletSurface";
 import { VerletStrand } from "../../libPByte_3/VerletStrand";
 import { VerletStick } from "../../libPByte_3/VerletStick";
 import { VerletNode } from "../../libPByte_3/VerletNode";
 import { TendrilDataModel } from "./TendrilDataModel";
+import { VerletSurface } from "../../libPByte_3/VerletSurface2";
+
+
+/**
+ * Used ONLY be this class so didn't want to put into
+ * IJGUtils.
+ */
+
+enum NodeSelector {
+    TargetNode = 'targetNode',
+    TargetNodes = 'targetNodes',
+    Centroid = 'centroid',
+    SingleRandom = 'singleRandom',
+    MultipleRandom = 'multipleRandom',
+    All = 'all',
+}
 
 export class ProtoMorph_005 extends Group {
 
@@ -42,7 +57,6 @@ export class ProtoMorph_005 extends Group {
     }
 
     create() {
-
         //create tendrils
         for (let i = 0; i < this.org.edgeNodes.length; i++) {
             const head = this.org.edgeNodes[i].position;
@@ -56,18 +70,51 @@ export class ProtoMorph_005 extends Group {
 
             const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
             this.tendrilStickRadii.push(randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y));
-            const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), 2, false);
+            const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y), false);
             const material = new MeshBasicMaterial({ color: this.col, side: DoubleSide, transparent: true, opacity: .8 });
             const mesh = new Mesh(geometry, material);
             this.tendrilSticks.push(new Mesh(geometry, material));
             this.add(this.tendrilSticks[this.tendrilSticks.length - 1]);
         }
 
-        //this.org.getEdgeVecs();
-        this.position.x += this.pos.x
-        this.position.y += this.pos.y
-        this.position.z += this.pos.z
+        // //this.org.getEdgeVecs();
+        // this.position.x += this.pos.x
+        // this.position.y += this.pos.y
+        // this.position.z += this.pos.z
+    }
 
+    /**
+     * Enum Options:
+     * TargetNode = 'targetNode',
+     * TargetNodes = 'targetNodes',
+     * Centroid = 'centroid',
+     * SingleRandom = 'singleRandom',
+     * MultipleRandom = 'multipleRandom',
+     * All = 'all'
+     * 
+     * note: NodeID only used for targetnode/s options
+     */
+    start(node: NodeSelector, vec: Vector3, nodeID?: number | number[]): void {
+        if (node === 'centroid') {
+
+        } else if (node === 'targetNode') {
+
+        } else if (node === 'targetNodes') {
+
+        } else if (node === 'singleRandom') {
+
+        } else if (node === 'multipleRandom') {
+
+        } else if (node === 'all') {
+
+        }
+    }
+
+    verlet(): void {
+        this.org.verlet();
+        for (let i of this.tendrils) {
+            i.verlet();
+        }
 
     }
 
@@ -90,9 +137,9 @@ export class ProtoMorph_005 extends Group {
         }
 
         if (spd) {
-            this.position.x = spd.x
-            this.position.y = spd.y
-            this.position.z = spd.z
+            this.position.x += spd.x
+            this.position.y += spd.y
+            this.position.z += spd.z
 
         }
     }

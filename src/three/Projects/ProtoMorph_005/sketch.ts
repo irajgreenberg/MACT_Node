@@ -57,104 +57,90 @@ const controls = new OrbitControls(camera, renderer.domElement);
 /************************CUstom code*************************/
 const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_010.png');
 
-let mat = new MeshBasicMaterial({ color: 0xffaaaa, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
-let vSurf = new VerletSurface(new Vector2(200, 200), new Vector2(36, 12), mat, .3, true);
+const mat = new MeshBasicMaterial({ color: 0xffaaaa, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
+const vSurf = new VerletSurface(new Vector2(100, 100), new Vector2(36, 12), mat, .3, true);
 const pPhys = new ProtoPhysics(.3, PI / 180);
-const tdm = new TendrilDataModel(8, 12, new Vector2(4, 8), pPhys);
+const tdm = new TendrilDataModel(2, 12, new Vector2(.5, 1), new Vector2(4, 6), pPhys);
 
-let protoOrg = new ProtoMorph_005(new Vector3(-100, 100, 0), vSurf, pPhys, new Color(.7, 1, .2));
-//let proto004 = new ProtoMorph_004(vs, 2.3, 20, new Vector2(.1, 1.5), new Color('#ffbbbb'));
-//vs.draw(false, false, false);
+let protoOrg = new ProtoMorph_005(new Vector3(200, 100, 0), vSurf, tdm, new Color(.7, 1, .2));
+scene.add(protoOrg);
 
-const orgCount = 1;
-const spds: Vector3[] = [];
-const rotSpds: Vector3[] = [];
-let orgs: ProtoMorph_004[] = [];
-for (let i = 0; i < orgCount; i++) {
-    const col = new Color(randFloat(.7, 1), randFloat(.3, .5), randFloat(.3, .5))
-    let mat = new MeshBasicMaterial({ color: col.getHex(), transparent: true, wireframe: false, opacity: .75, side: DoubleSide, map: texture })
-    const rad = randFloat(50, 200);
-    let vs = new VerletSurface(new Vector3(randFloat(-300, 300), randFloat(-230, 230), randFloat(-400, 100)), new Vector2(rad, rad), new Vector2(randInt(6, 12), randInt(6, 12)), mat, randFloat(.8, .9));
-    orgs.push(new ProtoMorph_004(vs, randFloat(.01, .03), 20, new Vector2(.1, .3), col));
-    scene.add(orgs[orgs.length - 1]);
-
-    rotSpds.push(new Vector3(randFloat(-.1, .1) * PI / 180, randFloat(-.1, .1) * PI / 180, randFloat(-.1, .1) * PI / 180));
+/************************************************************/
 
 
+
+const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .1));
+//scene.add(ambientTexturesLight);
+
+const hemiLt = new HemisphereLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.01, .3));
+scene.add(hemiLt);
+
+const col2 = new Color(1, 1, 1);
+const intensity = .9;
+const light = new DirectionalLight(col2, intensity);
+light.position.set(0, 0, 600);
+light.castShadow = true;
+scene.add(light);
+
+const spot = new SpotLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.5, .5));
+spot.position.set(randFloat(-10, 10), randFloat(50, 160), randFloat(500, 550));
+spot.castShadow = true;
+spot.shadow.radius = 12; //doesn't work with PCFsoftshadows
+spot.shadow.bias = -0.0001;
+spot.shadow.mapSize.width = 1024 * 4;
+spot.shadow.mapSize.height = 1024 * 4;
+scene.add(spot);
+
+const pointLt = new PointLight(new Color(randFloat(.3, 1), randFloat(.3, 1), randFloat(.3, 1)), randFloat(.5, 1.2), randFloat(4000, 4000));
+pointLt.translateX(randFloat(0, 0));
+pointLt.translateY(randFloat(0, 0));
+pointLt.translateZ(randFloat(0, 0));
+pointLt.castShadow = true;
+//scene.add(pointLt);
+
+// creates spotlight on floor
+const pointLt2 = new PointLight(new Color(randFloat(.8, 1), randFloat(.8, 1), randFloat(.8, 1)), randFloat(.8, 1.5), randFloat(3000, 3000));
+pointLt2.translateX(randFloat(0, 0));
+pointLt2.translateY(randFloat(0, 0));
+pointLt2.translateZ(800);
+pointLt2.castShadow = true;
+//scene.add(pointLt2);
+
+
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    //controls.autoRotate = true;
+    const time = Date.now() * 0.007;
+
+    /************************CUstom code*************************/
+    protoOrg.verlet();
+    protoOrg.move(.001, new Vector3(0, 0, 3));
+    protoOrg.rotate(new Vector3(PI / 360, PI / 180, PI / 720));
     /************************************************************/
 
 
+    render();
+}
 
-    const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .1));
-    //scene.add(ambientTexturesLight);
+function render() {
+    renderer.render(scene, camera);
+}
+animate();
 
-    const hemiLt = new HemisphereLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.01, .3));
-    scene.add(hemiLt);
+window.addEventListener("resize", onWindowResize)
+function onWindowResize() {
+    (camera.aspect = window.innerWidth / window.innerHeight),
+        camera.updateProjectionMatrix(),
+        renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
-    const col2 = new Color(1, 1, 1);
-    const intensity = .9;
-    const light = new DirectionalLight(col2, intensity);
-    light.position.set(0, 0, 600);
-    light.castShadow = true;
-    scene.add(light);
-
-    const spot = new SpotLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.5, .5));
-    spot.position.set(randFloat(-10, 10), randFloat(50, 160), randFloat(500, 550));
-    spot.castShadow = true;
-    spot.shadow.radius = 12; //doesn't work with PCFsoftshadows
-    spot.shadow.bias = -0.0001;
-    spot.shadow.mapSize.width = 1024 * 4;
-    spot.shadow.mapSize.height = 1024 * 4;
-    scene.add(spot);
-
-    const pointLt = new PointLight(new Color(randFloat(.3, 1), randFloat(.3, 1), randFloat(.3, 1)), randFloat(.5, 1.2), randFloat(4000, 4000));
-    pointLt.translateX(randFloat(0, 0));
-    pointLt.translateY(randFloat(0, 0));
-    pointLt.translateZ(randFloat(0, 0));
-    pointLt.castShadow = true;
-    //scene.add(pointLt);
-
-    // creates spotlight on floor
-    const pointLt2 = new PointLight(new Color(randFloat(.8, 1), randFloat(.8, 1), randFloat(.8, 1)), randFloat(.8, 1.5), randFloat(3000, 3000));
-    pointLt2.translateX(randFloat(0, 0));
-    pointLt2.translateY(randFloat(0, 0));
-    pointLt2.translateZ(800);
-    pointLt2.castShadow = true;
-    //scene.add(pointLt2);
-
-
-    function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        //controls.autoRotate = true;
-        const time = Date.now() * 0.007;
-
-        /************************CUstom code*************************/
-
-        /************************************************************/
-
-
-        render();
+window.addEventListener('keydown', (event) => {
+    if (event.key == 'p') {
+        const uid = new Date().getTime();
+        saveImage(renderer, scene, camera, "[Proto]morphogenesis" + uid, 1, 1);
     }
-
-    function render() {
-        renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener("resize", onWindowResize)
-    function onWindowResize() {
-        (camera.aspect = window.innerWidth / window.innerHeight),
-            camera.updateProjectionMatrix(),
-            renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    window.addEventListener('keydown', (event) => {
-        if (event.key == 'p') {
-            const uid = new Date().getTime();
-            saveImage(renderer, scene, camera, "[Proto]morphogenesis" + uid, 1, 1);
-        }
-    })
+})
 
 
 

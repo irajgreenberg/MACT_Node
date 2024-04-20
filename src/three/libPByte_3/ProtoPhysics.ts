@@ -17,6 +17,7 @@ export class ProtoPhysics {
     }
 
     pulse(): void {
+        this.theta += this.freq;
     }
 
 
