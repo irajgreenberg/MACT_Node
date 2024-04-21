@@ -9,5 +9,10 @@
     "sourceMap": true,
     "strict": true,
     "target": "es6"
-  }
+  },
+"exclude": [
+    "./src/three/spike"
+  ]
+
 }
+

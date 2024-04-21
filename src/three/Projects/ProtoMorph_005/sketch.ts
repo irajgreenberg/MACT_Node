@@ -10,7 +10,7 @@ import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereL
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPlane } from "../../libPByte_3/IJGUtils";
-import { ProtoMorph_005 } from './ProtoMorph_005';
+import { NodeSelector, ProtoMorph_005 } from './ProtoMorph_005';
 import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 import { VerletSurface } from '../../libPByte_3/VerletSurface2';
 import { TendrilDataModel } from './TendrilDataModel';
@@ -54,19 +54,23 @@ document.title = "[Proto]morphogenesis_005] | Ira Greenberg.2024"
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-/************************CUstom code*************************/
+/************************Custom code*************************/
+// single organism
 const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_010.png');
 
-const mat = new MeshBasicMaterial({ color: 0xffaaaa, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
-const vSurf = new VerletSurface(new Vector2(100, 100), new Vector2(36, 12), mat, .3, true);
-const pPhys = new ProtoPhysics(.3, PI / 180);
-const tdm = new TendrilDataModel(2, 12, new Vector2(.5, 1), new Vector2(4, 6), pPhys);
+const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
+const vSurf = new VerletSurface(new Vector2(100, 100), new Vector2(36, 30), mat, .3, true);
+const pPhys = new ProtoPhysics(15.3, PI / 75);
+const tdm = new TendrilDataModel(1.2, 24, new Vector2(.1, .3), new Vector2(4, 6));
 
-let protoOrg = new ProtoMorph_005(new Vector3(200, 100, 0), vSurf, tdm, new Color(.7, 1, .2));
+let protoOrg = new ProtoMorph_005(new Vector3(randFloat(-300, 300), randFloat(-100, 100), randFloat(-50, 50)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
 scene.add(protoOrg);
+protoOrg.start(NodeSelector.Centroid, new Vector3(30, 30, 40));
+
+// multiple organisms
+
 
 /************************************************************/
-
 
 
 const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .1));
@@ -111,12 +115,18 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update();
     //controls.autoRotate = true;
-    const time = Date.now() * 0.007;
+    const time = Date.now();
 
-    /************************CUstom code*************************/
+    /************************Custom code*************************/
     protoOrg.verlet();
-    protoOrg.move(.001, new Vector3(0, 0, 3));
-    protoOrg.rotate(new Vector3(PI / 360, PI / 180, PI / 720));
+    protoOrg.move(
+        new Vector3(
+            sin(time * PI / 10780) * 250,
+            cos(time * PI / 12780) * 150,
+            sin(time * PI / 11780) * 75
+        ));
+    protoOrg.rotate(new Vector3(PI / 860, PI / 780, PI / 820));
+    protoOrg.pulse();
     /************************************************************/
 
 

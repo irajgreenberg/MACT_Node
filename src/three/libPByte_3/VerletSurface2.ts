@@ -244,71 +244,16 @@ export class VerletSurface extends VerletBase {
         // To do: rectangular mesh
 
     }
-
-
     public update(): void {
-        const amp = Math.abs(cos(this.counter * PI / 1325) * 100);
-        const frq = 180 + sin(this.counter * PI / 120) * 10
-        const offset = sin(this.counter * PI / frq) * amp;
-        //this.centroidNode.position.z = offset;
-
-
-        for (let i = 0; i < this.nodes.length; i++) {
-            if (i % 27 == 0) {
-                //   this.nodes[i].moveNode(new Vector3(randFloat(-2.5, 2.5), randFloat(-2.5, 2.5), randFloat(-2.5, 2.5)));
-            }
-
-            if (i < this.nodes.length - 1) {
-                const deltaMapped = mapLinear((this.dim.x / 2 - this.nodesCentroidDist[i]), 0, this.dim.x / 2, 0, 1.6);
-
-                // linear
-                //   this.nodes[i].position.z = this.centroidNode.position.z * deltaMapped;
-
-                //exponential
-                // const deltaMapped = mapLinear(Math.pow((this.dim.x / 2 - this.nodesCentroidDist[i]), 1), 0, Math.pow(this.dim.x / 2, 1), 0, 1.1);
-
-
-                //  this.nodes[i].position.x += cos(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
-                //  this.nodes[i].position.y += sin(this.counter * PI / 125) * 40 * deltaMapped * randFloat(.001, .01);
-            }
-        }
-
-
-        // this.centroidNode.position.y = sin(this.counter * PI / 125) * 340;
-        //this.nodes[randInt(0, this.nodes.length - 1)].position.z = sin(this.counter * PI / 45) * 50;
-
-
-        this.counter++;
-        // get geom data form mesh
         let pos = this.mesh.geometry.attributes.position;
         pos.needsUpdate = true;
 
         //update surface vertex date based on node position
-        const tempVecs: Vector3[] = [];
         for (let i = 0; i < pos.count; i++) {
             pos.setX(i, this.nodes[i].position.x)
             pos.setY(i, this.nodes[i].position.y)
             pos.setZ(i, this.nodes[i].position.z)
-
-            // tempVecs.push(new Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
         }
-
-        // // const xyMinMax = getMinMaxXYPos(tempVecs);
-        // let uvs = this.mesh.geometry.attributes.uv;
-
-        // // this.MinMaxXYPos
-        // //update surface vertex date based on node position
-        // for (let i = 0; i < uvs.count; i++) {
-        //     const u = mapLinear(this.nodes[i].position.x, this.MinMaxXYPos.x, this.MinMaxXYPos.y, 0, 1);
-        //     const v = mapLinear(this.nodes[i].position.y, this.MinMaxXYPos.z, this.MinMaxXYPos.w, 0, 1);
-
-        //     // const u = mapLinear(this.nodes[i].position.x, xyMinMax.x, xyMinMax.y, 0, 1);
-        //     // const v = mapLinear(this.nodes[i].position.y, xyMinMax.z, xyMinMax.w, 0, 1);
-        //     //uvs.setXY(i, u, v);
-        // }
-        // // uvs.needsUpdate = true;
-        // this.mesh.geometry.computeVertexNormals();
-        // this.mesh.geometry.computeTangents()
     }
 
     getEdgeVecs(): Vector3[] {

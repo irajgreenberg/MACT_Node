@@ -58,7 +58,7 @@ export abstract class VerletBase extends Group {
 
     protected abstract _init(): void;
 
-    draw(areNodesDrawable: boolean = false, areSticksDrawable: boolean = false, areCrossSupportsDrawable: boolean = false): void {
+    public setDrawable(areNodesDrawable: boolean = false, areSticksDrawable: boolean = false, areCrossSupportsDrawable: boolean = false): void {
         this.areNodesDrawable = areNodesDrawable;
         this.areSticksDrawable = areSticksDrawable;
         this.areCrossSupportsDrawable = areCrossSupportsDrawable;
