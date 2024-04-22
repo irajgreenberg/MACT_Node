@@ -64,10 +64,36 @@ const pPhys = new ProtoPhysics(15.3, PI / 75);
 const tdm = new TendrilDataModel(1.2, 24, new Vector2(.1, .3), new Vector2(4, 6));
 
 let protoOrg = new ProtoMorph_005(new Vector3(randFloat(-300, 300), randFloat(-100, 100), randFloat(-50, 50)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
-scene.add(protoOrg);
+//scene.add(protoOrg);
 protoOrg.start(NodeSelector.Centroid, new Vector3(30, 30, 40));
 
 // multiple organisms
+const ORG_COUNT = 17;
+const textureStrs = ["Proto_Org_001.png", "Proto_Org_002.png", "Proto_Org_003.png", "Proto_Org_004.png", "Proto_Org_005.png", "Proto_Org_006.png", "Proto_Org_007.png", "Proto_Org_008.png", "Proto_Org_009.png", "Proto_Org_010.png", "Proto_Org_011.png", "Proto_Org_012.png", "Proto_Org_013.png", "Proto_Org_014.png", "Proto_Org_015.png", "Proto_Org_016.png", "Proto_Org_017.png", "Proto_Org_018.png"]
+const hasTendrils = [];
+
+const protoOrgs: ProtoMorph_005[] = [];
+for (let i = 0; i < ORG_COUNT; i++) {
+    const texture = new TextureLoader().load('data/ProtoMorph/' + textureStrs[i]);
+    const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: randFloat(.85, .95), side: DoubleSide, map: texture })
+    const sz = randFloat(70, 180);
+    const detail01 = randInt(8, 24);
+    const detail02 = randInt(8, 12);
+    const vSurf = new VerletSurface(new Vector2(sz, sz), new Vector2(detail01, detail02), mat, randFloat(.1, .8), true);
+    const pPhys = new ProtoPhysics(randFloat(3, 20), PI / randFloat(35, 180));
+    const tdm = new TendrilDataModel(1.2, randInt(6, 24), new Vector2(.1, .3), new Vector2(4, 6));
+
+    const posX = randFloat(100, 400);
+    const posY = randFloat(50, 125);
+    const posZ = randFloat(40, 125);
+    protoOrgs[i] = new ProtoMorph_005(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
+    scene.add(protoOrgs[i]);
+    protoOrgs[i].start(NodeSelector.Centroid, new Vector3(30, 30, 40));
+
+}
+
+
+
 
 
 /************************************************************/
@@ -118,15 +144,27 @@ function animate() {
     const time = Date.now();
 
     /************************Custom code*************************/
-    protoOrg.verlet();
-    protoOrg.move(
-        new Vector3(
-            sin(time * PI / 10780) * 250,
-            cos(time * PI / 12780) * 150,
-            sin(time * PI / 11780) * 75
-        ));
-    protoOrg.rotate(new Vector3(PI / 860, PI / 780, PI / 820));
-    protoOrg.pulse();
+    // protoOrg.verlet();
+    // protoOrg.move(
+    //     new Vector3(
+    //         sin(time * PI / 10780) * 250,
+    //         cos(time * PI / 12780) * 150,
+    //         sin(time * PI / 11780) * 75
+    //     ));
+    // protoOrg.rotate(new Vector3(PI / 860, PI / 780, PI / 820));
+    // protoOrg.pulse();
+
+    for (let i = 0; i < ORG_COUNT; i++) {
+        protoOrgs[i].verlet();
+        protoOrgs[i].move(
+            new Vector3(
+                sin(time * PI / 10780) * 250,
+                cos(time * PI / 12780) * 150,
+                sin(time * PI / 11780) * 75
+            ));
+        protoOrgs[i].rotate(new Vector3(PI / 860, PI / 780, PI / 820));
+        protoOrgs[i].pulse();
+    }
     /************************************************************/
 
 
