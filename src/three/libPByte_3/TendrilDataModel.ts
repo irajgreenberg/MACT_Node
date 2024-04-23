@@ -7,7 +7,6 @@ export class TendrilDataModel {
     radiiMinMax: Vector2;
     radialSegsmentsMinMax: Vector2;
 
-
     constructor(length: number, segments: number, radiiMinMax: Vector2, radialSegsmentsMinMax: Vector2) {
         this.length = length;
         this.segments = segments;

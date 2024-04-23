@@ -1,4 +1,4 @@
-// ProtoMorph_005
+// ProtoMorphogenesis
 // Ira Greenberg
 // Santa Fe, NM | Dallas, TX
 // 2024
@@ -10,10 +10,10 @@ import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereL
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPlane } from "../../libPByte_3/IJGUtils";
-import { NodeSelector, ProtoMorph_005 } from './ProtoMorph_005';
+import { NodeSelector, ProtoOrganism } from './ProtoOrganism';
 import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 import { VerletSurface } from '../../libPByte_3/VerletSurface2';
-import { TendrilDataModel } from './TendrilDataModel';
+import { TendrilDataModel } from '../../libPByte_3/TendrilDataModel';
 import { ProtoPhysics } from '../../libPByte_3/ProtoPhysics';
 
 // create and position camera
@@ -63,7 +63,7 @@ const vSurf = new VerletSurface(new Vector2(100, 100), new Vector2(36, 30), mat,
 const pPhys = new ProtoPhysics(15.3, PI / 75);
 const tdm = new TendrilDataModel(1.2, 24, new Vector2(.1, .3), new Vector2(4, 6));
 
-let protoOrg = new ProtoMorph_005(new Vector3(randFloat(-300, 300), randFloat(-100, 100), randFloat(-50, 50)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
+let protoOrg = new ProtoOrganism(new Vector3(randFloat(-300, 300), randFloat(-100, 100), randFloat(-50, 50)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
 //scene.add(protoOrg);
 protoOrg.start(NodeSelector.Centroid, new Vector3(30, 30, 40));
 
@@ -72,7 +72,7 @@ const ORG_COUNT = 17;
 const textureStrs = ["Proto_Org_001.png", "Proto_Org_002.png", "Proto_Org_003.png", "Proto_Org_004.png", "Proto_Org_005.png", "Proto_Org_006.png", "Proto_Org_007.png", "Proto_Org_008.png", "Proto_Org_009.png", "Proto_Org_010.png", "Proto_Org_011.png", "Proto_Org_012.png", "Proto_Org_013.png", "Proto_Org_014.png", "Proto_Org_015.png", "Proto_Org_016.png", "Proto_Org_017.png", "Proto_Org_018.png"]
 const hasTendrils = [];
 
-const protoOrgs: ProtoMorph_005[] = [];
+const protoOrgs: ProtoOrganism[] = [];
 for (let i = 0; i < ORG_COUNT; i++) {
     const texture = new TextureLoader().load('data/ProtoMorph/' + textureStrs[i]);
     const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: randFloat(.85, .95), side: DoubleSide, map: texture })
@@ -86,7 +86,7 @@ for (let i = 0; i < ORG_COUNT; i++) {
     const posX = randFloat(100, 400);
     const posY = randFloat(50, 125);
     const posZ = randFloat(40, 125);
-    protoOrgs[i] = new ProtoMorph_005(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
+    protoOrgs[i] = new ProtoOrganism(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
     scene.add(protoOrgs[i]);
     protoOrgs[i].start(NodeSelector.Centroid, new Vector3(30, 30, 40));
 

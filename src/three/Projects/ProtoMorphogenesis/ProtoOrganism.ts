@@ -1,10 +1,10 @@
-// ProtoMorph_005
+// ProtoMorphogenesis
 // Ira Greenberg
 // Santa Fe, NM | Dallas, TX
 // 2024
 
 /* Class Description: 
-ProtoMorph class encapsulates a VerletSurface optionally attached tendrils
+Class encapsulates a VerletSurface with optionally attached tendrils
 */
 
 import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, Material, Mesh, MeshBasicMaterial, TubeGeometry, Vector2, Vector3 } from "three";
@@ -13,7 +13,7 @@ import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPoint, SimplCurve } fr
 import { VerletStrand } from "../../libPByte_3/VerletStrand";
 import { VerletStick } from "../../libPByte_3/VerletStick";
 import { VerletNode } from "../../libPByte_3/VerletNode";
-import { TendrilDataModel } from "./TendrilDataModel";
+import { TendrilDataModel } from "../../libPByte_3/TendrilDataModel";
 import { VerletSurface } from "../../libPByte_3/VerletSurface2";
 import { ProtoPhysics } from "../../libPByte_3/ProtoPhysics";
 
@@ -22,7 +22,6 @@ import { ProtoPhysics } from "../../libPByte_3/ProtoPhysics";
  * Used ONLY be this class so didn't want to put into
  * IJGUtils.
  */
-
 export enum NodeSelector {
     TargetNode = 'targetNode',
     TargetNodes = 'targetNodes',
@@ -32,10 +31,10 @@ export enum NodeSelector {
     All = 'all',
 }
 
-export class ProtoMorph_005 extends Group {
+export class ProtoOrganism extends Group {
 
     pos: Vector3;
-    org: VerletSurface;
+    body: VerletSurface;
     tdm: TendrilDataModel
     col: Color;
     physics: ProtoPhysics;
@@ -45,24 +44,24 @@ export class ProtoMorph_005 extends Group {
     tendrilStickRadii: number[] = [];
 
 
-    constructor(pos: Vector3, org: VerletSurface, tdm: TendrilDataModel, col: Color, physics: ProtoPhysics) {
+    constructor(pos: Vector3, body: VerletSurface, tdm: TendrilDataModel, col: Color, physics: ProtoPhysics) {
         super();
         this.pos = pos;
-        this.org = org;
+        this.body = body;
         this.tdm = tdm
         this.col = col;
         this.physics = physics;
 
 
-        this.add(this.org);
+        this.add(this.body);
         this.create();
     }
 
     create() {
         //create tendrils
-        for (let i = 0; i < this.org.edgeNodes.length; i++) {
-            const head = this.org.edgeNodes[i].position;
-            const tail = new Vector3().copy(this.org.edgeNodes[i].position).multiplyScalar(this.tdm.length);
+        for (let i = 0; i < this.body.edgeNodes.length; i++) {
+            const head = this.body.edgeNodes[i].position;
+            const tail = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(this.tdm.length);
             this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
             //  this.add(this.tendrils[this.tendrils.length - 1]);
 
@@ -79,7 +78,7 @@ export class ProtoMorph_005 extends Group {
             this.add(this.tendrilSticks[this.tendrilSticks.length - 1]);
         }
 
-        // //this.org.getEdgeVecs();
+        // //this.body.getEdgeVecs();
         // this.position.x += this.pos.x
         // this.position.y += this.pos.y
         // this.position.z += this.pos.z
@@ -98,42 +97,42 @@ export class ProtoMorph_005 extends Group {
      */
     start(node: NodeSelector, vec: Vector3, nodeID?: number | number[], randintCount?: number): void {
         if (node === 'centroid') {
-            this.org.centroidNode.moveNode(vec);
+            this.body.centroidNode.moveNode(vec);
         } else if (node === 'targetNode') {
             if (typeof nodeID == 'number') {
-                this.org.bodyNodes[nodeID].moveNode(vec);
+                this.body.bodyNodes[nodeID].moveNode(vec);
             }
         } else if (node === 'targetNodes') {
             if (nodeID instanceof Array) {
                 for (let i = 0; i < nodeID.length; i++) {
-                    this.org.bodyNodes[nodeID[i]].moveNode(vec);
+                    this.body.bodyNodes[nodeID[i]].moveNode(vec);
                 }
             }
         } else if (node === 'singleRandom') {
-            const n = randInt(0, this.org.bodyNodes.length - 1);
-            this.org.bodyNodes[n].moveNode(vec);
+            const n = randInt(0, this.body.bodyNodes.length - 1);
+            this.body.bodyNodes[n].moveNode(vec);
         } else if (node === 'multipleRandom') {
             if (randintCount !== undefined) {
                 for (let i = 0; i < randintCount; i++) {
-                    const n = randInt(0, this.org.bodyNodes.length - 1);
-                    this.org.bodyNodes[n].moveNode(vec);
+                    const n = randInt(0, this.body.bodyNodes.length - 1);
+                    this.body.bodyNodes[n].moveNode(vec);
                 }
             }
         } else if (node === 'all') {
-            for (let i = 0; i < this.org.bodyNodes.length; i++) {
-                this.org.bodyNodes[i].moveNode(vec);
+            for (let i = 0; i < this.body.bodyNodes.length; i++) {
+                this.body.bodyNodes[i].moveNode(vec);
             }
         }
     }
 
     public setSurfaceDrawable(areNodesDrawable: boolean = false, areSticksDrawable: boolean = false, areCrossSupportsDrawable: boolean = false): void {
-        this.org.setDrawable(areNodesDrawable, areSticksDrawable, areCrossSupportsDrawable);
+        this.body.setDrawable(areNodesDrawable, areSticksDrawable, areCrossSupportsDrawable);
     }
 
     private _update(): void {
-        this.org.update();
+        this.body.update();
         for (let i = 0; i < this.tendrils.length; i++) {
-            let input = new Vector3().copy(this.org.edgeNodes[i].position).multiplyScalar(1);
+            let input = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(1);
             this.tendrils[i].setHeadPosition(input);
             this.tendrils[i].nodes[this.tendrils[i].nodes.length - 1].position.multiplyScalar(randFloat(1.00005, 1.0004));
             const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
@@ -145,7 +144,7 @@ export class ProtoMorph_005 extends Group {
     }
 
     verlet(): void {
-        this.org.verlet();
+        this.body.verlet();
         // move tendrils based on VerletSurface
         this._update();
         for (let i of this.tendrils) {
@@ -155,7 +154,7 @@ export class ProtoMorph_005 extends Group {
 
     pulse(): void {
         // just centroid for now
-        this.org.centroidNode.position.z = sin(this.physics.theta) * this.physics.amp;
+        this.body.centroidNode.position.z = sin(this.physics.theta) * this.physics.amp;
         this.physics.theta += this.physics.freq;
     }
 
