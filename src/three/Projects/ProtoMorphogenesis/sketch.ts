@@ -15,6 +15,14 @@ import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 import { VerletSurface } from '../../libPByte_3/VerletSurface2';
 import { TendrilDataModel } from '../../libPByte_3/TendrilDataModel';
 import { ProtoPhysics } from '../../libPByte_3/ProtoPhysics';
+import { ProtoPlasm } from './ProtoPlasm';
+
+// enum HasTendrils {
+//     NO,
+//     EDGES,
+//     EDGES_INNER,
+//     CENTER
+// }
 
 // create and position camera
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 10000);
@@ -38,9 +46,9 @@ let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
 scene.background = myColor;
 document.body.style.backgroundColor = '#' + myColor.getHexString();
-let fogFactor = 0.0011;
+let fogFactor = 0.0005;
 //scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
-scene.fog = new FogExp2(0xfaa6666, fogFactor)
+scene.fog = new FogExp2(0x8888AA, fogFactor)
 
 // main renderer
 let renderer = new WebGLRenderer({ alpha: true, antialias: true, logarithmicDepthBuffer: true });
@@ -56,44 +64,92 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 /************************Custom code*************************/
 // single organism
-const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_010.png');
+// const texture = new TextureLoader().load('data/ProtoMorph/Proto_Org_010.png');
 
-const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
-const vSurf = new VerletSurface(new Vector2(100, 100), new Vector2(36, 30), mat, .3, true);
-const pPhys = new ProtoPhysics(15.3, PI / 75);
-const tdm = new TendrilDataModel(1.2, 24, new Vector2(.1, .3), new Vector2(4, 6));
+// const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: .95, side: DoubleSide, map: texture })
+// const vSurf = new VerletSurface(new Vector2(100, 100), new Vector2(36, 30), mat, .3, true);
+// const pPhys = new ProtoPhysics(15.3, PI / 75);
+// const tdm = new TendrilDataModel(1.2, 24, new Vector2(.1, .3), new Vector2(4, 6));
 
-let protoOrg = new ProtoOrganism(new Vector3(randFloat(-300, 300), randFloat(-100, 100), randFloat(-50, 50)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
-//scene.add(protoOrg);
-protoOrg.start(NodeSelector.Centroid, new Vector3(30, 30, 40));
+// let protoOrg = new ProtoOrganism(new Vector3(randFloat(-300, 300), randFloat(-100, 100), randFloat(-50, 50)), vSurf, new Color(.7, .6, .6), pPhys, tdm);
+// //scene.add(protoOrg);
+// protoOrg.start(NodeSelector.Centroid, new Vector3(30, 30, 40));
 
 // multiple organisms
-const ORG_COUNT = 17;
-const textureStrs = ["Proto_Org_001.png", "Proto_Org_002.png", "Proto_Org_003.png", "Proto_Org_004.png", "Proto_Org_005.png", "Proto_Org_006.png", "Proto_Org_007.png", "Proto_Org_008.png", "Proto_Org_009.png", "Proto_Org_010.png", "Proto_Org_011.png", "Proto_Org_012.png", "Proto_Org_013.png", "Proto_Org_014.png", "Proto_Org_015.png", "Proto_Org_016.png", "Proto_Org_017.png", "Proto_Org_018.png"]
-const hasTendrils = [];
+// const ORG_COUNT = 17;
+// const textureStrs = ["Proto_Org_001.png", "Proto_Org_002.png", "Proto_Org_003.png", "Proto_Org_004.png", "Proto_Org_005.png", "Proto_Org_006.png", "Proto_Org_007.png", "Proto_Org_008.png", "Proto_Org_009.png", "Proto_Org_010.png", "Proto_Org_011.png", "Proto_Org_012.png", "Proto_Org_013.png", "Proto_Org_014.png", "Proto_Org_015.png", "Proto_Org_016.png", "Proto_Org_017.png", "Proto_Org_018.png"]
+// const hasTendrils = [];
+
+interface ImageMap {
+    imageStr: string;
+    hasTendrils: boolean;
+}
+const imageMaps: ImageMap[] = [];
+imageMaps.push({ imageStr: "Proto_Org_001.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_002.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_003.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_004.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_005.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_006.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_007.png", hasTendrils: true });
+imageMaps.push({ imageStr: "Proto_Org_008.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_009.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_010.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_011.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_012.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_013.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_014.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_015.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_016.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_017.png", hasTendrils: true });
+imageMaps.push({ imageStr: "Proto_Org_018.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_019.png", hasTendrils: false });
+imageMaps.push({ imageStr: "Proto_Org_020.png", hasTendrils: true });
+imageMaps.push({ imageStr: "Proto_Org_021.png", hasTendrils: true });
+imageMaps.push({ imageStr: "Proto_Org_022.png", hasTendrils: true });
 
 const protoOrgs: ProtoOrganism[] = [];
-for (let i = 0; i < ORG_COUNT; i++) {
-    const texture = new TextureLoader().load('data/ProtoMorph/' + textureStrs[i]);
-    const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: randFloat(.85, .95), side: DoubleSide, map: texture })
-    const sz = randFloat(70, 180);
-    const detail01 = randInt(8, 24);
+for (let i = 0; i < imageMaps.length / 3; i++) {
+    const texture = new TextureLoader().load('data/ProtoMorph/' + imageMaps[i].imageStr);
+    const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: randFloat(.49, .6), side: DoubleSide, map: texture })
+    const sz = randFloat(170, 280);
+    const detail01 = randInt(16, 24);
     const detail02 = randInt(8, 12);
     const vSurf = new VerletSurface(new Vector2(sz, sz), new Vector2(detail01, detail02), mat, randFloat(.1, .8), true);
-    const pPhys = new ProtoPhysics(randFloat(3, 20), PI / randFloat(35, 180));
-    const tdm = new TendrilDataModel(1.2, randInt(6, 24), new Vector2(.1, .3), new Vector2(4, 6));
+    const pPhys = new ProtoPhysics(
+        randFloat(10, 15), //amp
+        PI / randFloat(20, 90), //freq
+        new Vector2(randFloat(-.35, .35), randFloat(-.35, .35)), //spd
+        new Vector3(randFloat(PI / -1200, PI / 1200), randFloat(PI / -1200, PI / 1200), randFloat(PI / -1200, PI / 1200)) //rotSpd
+    );
+    const tdm = new TendrilDataModel(randFloat(1, 1.5), randInt(12, 24), new Vector2(.1, .8), new Vector2(4, 6));
 
     const posX = randFloat(100, 400);
     const posY = randFloat(50, 125);
-    const posZ = randFloat(40, 125);
-    protoOrgs[i] = new ProtoOrganism(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurf, tdm, new Color(.7, .6, .6), pPhys);
-    scene.add(protoOrgs[i]);
-    protoOrgs[i].start(NodeSelector.Centroid, new Vector3(30, 30, 40));
+    const posZ = 0;
+    if (imageMaps[i].hasTendrils) {
+        protoOrgs[i] = new ProtoOrganism(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurf, new Color(.7, .6, .6), pPhys, tdm);
+    } else {
+        protoOrgs[i] = new ProtoOrganism(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurf, new Color(.7, .6, .6), pPhys);
+    }
+
+    //scene.add(protoOrgs[i]);
+    //protoOrgs[i].start(NodeSelector.Centroid, new Vector3(30, 30, 40));
 
 }
+const pp = new ProtoPlasm(protoOrgs, 65, new Vector3(1000, 600, 100));
+pp.start();
+
+scene.add(pp);
 
 
-
+// background
+let env = new VerletPlane2(5200, 2500, 30, 30, "data/ProtoMorph/Proto_BG_006.png", AnchorPlane.EDGES_ALL);
+env.position.setZ(-1200);
+env.moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
+scene.add(env);
+env.renderVerletGeometry(false, false);
+env.setNodesOff(AnchorPlane.EDGES_ALL);
 
 
 /************************************************************/
@@ -154,17 +210,23 @@ function animate() {
     // protoOrg.rotate(new Vector3(PI / 860, PI / 780, PI / 820));
     // protoOrg.pulse();
 
-    for (let i = 0; i < ORG_COUNT; i++) {
-        protoOrgs[i].verlet();
-        protoOrgs[i].move(
-            new Vector3(
-                sin(time * PI / 10780) * 250,
-                cos(time * PI / 12780) * 150,
-                sin(time * PI / 11780) * 75
-            ));
-        protoOrgs[i].rotate(new Vector3(PI / 860, PI / 780, PI / 820));
-        protoOrgs[i].pulse();
-    }
+    // for (let i = 0; i < ORG_COUNT; i++) {
+    //     protoOrgs[i].verlet();
+    //     protoOrgs[i].move(
+    //         new Vector3(
+    //             sin(time * PI / 10780) * 250,
+    //             cos(time * PI / 12780) * 150,
+    //             sin(time * PI / 11780) * 75
+    //         ));
+    //     protoOrgs[i].rotate(new Vector3(PI / 860, PI / 780, PI / 820));
+    //     protoOrgs[i].pulse();
+    // }
+
+
+    pp.run(time);
+
+    env.verlet();
+    env.jitterNodes(new Vector2(-2, 2));
     /************************************************************/
 
 

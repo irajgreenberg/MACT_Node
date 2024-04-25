@@ -35,7 +35,7 @@ export class ProtoOrganism extends Group {
 
     pos: Vector3;
     body: VerletSurface;
-    tdm: TendrilDataModel
+    tdm?: TendrilDataModel;
     col: Color;
     physics: ProtoPhysics;
 
@@ -44,40 +44,43 @@ export class ProtoOrganism extends Group {
     tendrilStickRadii: number[] = [];
 
 
-    constructor(pos: Vector3, body: VerletSurface, tdm: TendrilDataModel, col: Color, physics: ProtoPhysics) {
+    constructor(pos: Vector3, body: VerletSurface, col: Color, physics: ProtoPhysics, tdm?: TendrilDataModel) {
         super();
         this.pos = pos;
         this.body = body;
-        this.tdm = tdm
         this.col = col;
         this.physics = physics;
-
-
         this.add(this.body);
-        this.create();
+
+        if (tdm) {
+            this.tdm = tdm;
+            this.create();
+        }
+
     }
 
     create() {
         //create tendrils
-        for (let i = 0; i < this.body.edgeNodes.length; i++) {
-            const head = this.body.edgeNodes[i].position;
-            const tail = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(this.tdm.length);
-            this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
-            //  this.add(this.tendrils[this.tendrils.length - 1]);
+        if (this.tdm) {
+            for (let i = 0; i < this.body.edgeNodes.length; i++) {
+                const head = this.body.edgeNodes[i].position;
+                const tail = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(this.tdm.length);
+                this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
+                //  this.add(this.tendrils[this.tendrils.length - 1]);
 
-            //   this.tendrils[i].setStrandColor(new Color("0xff6666"));
-            this.tendrils[i].nodes[0].isVerletable = false;
+                //   this.tendrils[i].setStrandColor(new Color("0xff6666"));
+                this.tendrils[i].nodes[0].isVerletable = false;
 
 
-            const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
-            this.tendrilStickRadii.push(randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y));
-            const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y), false);
-            const material = new MeshBasicMaterial({ color: this.col, side: DoubleSide, transparent: true, opacity: .5 });
-            const mesh = new Mesh(geometry, material);
-            this.tendrilSticks.push(new Mesh(geometry, material));
-            this.add(this.tendrilSticks[this.tendrilSticks.length - 1]);
+                const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
+                this.tendrilStickRadii.push(randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y));
+                const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y), false);
+                const material = new MeshBasicMaterial({ color: this.col, side: DoubleSide, transparent: true, opacity: .5 });
+                const mesh = new Mesh(geometry, material);
+                this.tendrilSticks.push(new Mesh(geometry, material));
+                this.add(this.tendrilSticks[this.tendrilSticks.length - 1]);
+            }
         }
-
         // //this.body.getEdgeVecs();
         // this.position.x += this.pos.x
         // this.position.y += this.pos.y
@@ -131,14 +134,17 @@ export class ProtoOrganism extends Group {
 
     private _update(): void {
         this.body.update();
-        for (let i = 0; i < this.tendrils.length; i++) {
-            let input = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(1);
-            this.tendrils[i].setHeadPosition(input);
-            this.tendrils[i].nodes[this.tendrils[i].nodes.length - 1].position.multiplyScalar(randFloat(1.00005, 1.0004));
-            const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
-            this.tendrilSticks[i].geometry.dispose();
-            const geometry = new TubeGeometry(path, this.tdm.segments, this.tendrilStickRadii[i], 12, false);
-            this.tendrilSticks[i].geometry = geometry
+
+        if (this.tdm) {
+            for (let i = 0; i < this.tendrils.length; i++) {
+                let input = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(1);
+                this.tendrils[i].setHeadPosition(input);
+                this.tendrils[i].nodes[this.tendrils[i].nodes.length - 1].position.multiplyScalar(randFloat(1.00005, 1.0004));
+                const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
+                this.tendrilSticks[i].geometry.dispose();
+                const geometry = new TubeGeometry(path, this.tdm.segments, this.tendrilStickRadii[i], 12, false);
+                this.tendrilSticks[i].geometry = geometry
+            }
         }
 
     }
@@ -158,18 +164,21 @@ export class ProtoOrganism extends Group {
         this.physics.theta += this.physics.freq;
     }
 
-    move(spd?: Vector3): void {
-        if (spd) {
-            console.log(spd.x);
-            this.position.x = this.pos.x + spd.x
-            this.position.y = this.pos.y + spd.y
-            this.position.z = this.pos.z + spd.z
+    move(spd?: Vector2 | Vector3): void {
+        if (spd instanceof Vector3) {
+            this.position.x = this.pos.x + spd.x;
+            this.position.y = this.pos.y + spd.y;
+            this.position.z = this.pos.z + spd.z;
+        } else if (spd instanceof Vector2) {
+            this.position.x += this.physics.spd.x;
+            this.position.y += this.physics.spd.y;
         }
     }
 
+
     rotate(rotSpd: Vector3): void {
-        this.rotateX(rotSpd.x);
-        this.rotateY(rotSpd.y);
+        // this.rotateX(rotSpd.x);
+        //  this.rotateY(rotSpd.y);
         this.rotateZ(rotSpd.z);
     }
 }
