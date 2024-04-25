@@ -111,7 +111,8 @@ imageMaps.push({ imageStr: "Proto_Org_022.png", hasTendrils: true });
 const protoOrgs: ProtoOrganism[] = [];
 for (let i = 0; i < imageMaps.length / 3; i++) {
     const texture = new TextureLoader().load('data/ProtoMorph/' + imageMaps[i].imageStr);
-    const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: randFloat(.49, .6), side: DoubleSide, map: texture })
+    // const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: randFloat(.49, .6), side: DoubleSide, map: texture })
+    const mat = new MeshPhongMaterial({ color: 0xffffff, transparent: true, flatShading: true, wireframe: false, opacity: randFloat(.95, .99), specular: 0x444444, side: DoubleSide, map: texture })
     const sz = randFloat(170, 280);
     const detail01 = randInt(16, 24);
     const detail02 = randInt(8, 12);
