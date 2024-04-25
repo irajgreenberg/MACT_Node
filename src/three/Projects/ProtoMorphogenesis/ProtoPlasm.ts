@@ -32,6 +32,10 @@ export class ProtoPlasm extends Group {
     */
     bounds: Vector3;
 
+    /**
+     * Moves all nodes, default is 0,0,0
+    */
+    jitterMinMax: Vector3 = new Vector3();
 
     constructor(orgs: ProtoOrganism[], zIndexDepthMin: number = 100, bounds: Vector3 = new Vector3(1400, 1000, 500)) {
         super();
@@ -73,6 +77,10 @@ export class ProtoPlasm extends Group {
         }
     }
 
+    public setJitter(vec: Vector3) {
+        this.jitterMinMax = vec;
+    }
+
     public run(time: number): void {
         for (let i = 0; i < this.orgs.length; i++) {
             this.orgs[i].verlet();
@@ -80,6 +88,7 @@ export class ProtoPlasm extends Group {
             this.orgs[i].move(this.orgs[i].physics.spd);
             this.orgs[i].rotate(this.orgs[i].physics.rotSpd);
             this.orgs[i].pulse();
+            this.orgs[i].jitter(this.jitterMinMax);
 
             if (this.orgs[i].position.x > this.bounds.x / 2 - this.orgs[i].body.dim.x) {
                 this.orgs[i].position.x = this.bounds.x / 2 - this.orgs[i].body.dim.x;

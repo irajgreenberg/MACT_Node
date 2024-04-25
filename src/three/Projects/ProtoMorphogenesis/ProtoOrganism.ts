@@ -14,7 +14,7 @@ import { VerletStrand } from "../../libPByte_3/VerletStrand";
 import { VerletStick } from "../../libPByte_3/VerletStick";
 import { VerletNode } from "../../libPByte_3/VerletNode";
 import { TendrilDataModel } from "../../libPByte_3/TendrilDataModel";
-import { VerletSurface } from "../../libPByte_3/VerletSurface2";
+import { VerletSurface } from "../../libPByte_3/VerletSurface";
 import { ProtoPhysics } from "../../libPByte_3/ProtoPhysics";
 
 
@@ -158,10 +158,28 @@ export class ProtoOrganism extends Group {
         }
     }
 
+
+    /**
+    * just centroid for now
+    */
     pulse(): void {
-        // just centroid for now
         this.body.centroidNode.position.z = sin(this.physics.theta) * this.physics.amp;
         this.physics.theta += this.physics.freq;
+    }
+
+    /**
+    * Randomly jiggle all bodynodes
+    * with optional fixed passed values
+    */
+    jitter(vecMax?: Vector3 | Vector3[]): void {
+        if (vecMax instanceof Vector3) {
+            for (let i = 0; i < this.body.nodes.length; i++) {
+                const v = new Vector3(randFloat(-vecMax.x, vecMax.x), randFloat(-vecMax.y, vecMax.y), randFloat(-vecMax.z, vecMax.z));
+                this.body.nodes[i].position.add(v);
+            }
+        } else {
+
+        }
     }
 
     move(spd?: Vector2 | Vector3): void {
@@ -177,8 +195,8 @@ export class ProtoOrganism extends Group {
 
 
     rotate(rotSpd: Vector3): void {
-        // this.rotateX(rotSpd.x);
-        //  this.rotateY(rotSpd.y);
+        this.rotateX(rotSpd.x);
+        this.rotateY(rotSpd.y);
         this.rotateZ(rotSpd.z);
     }
 }
