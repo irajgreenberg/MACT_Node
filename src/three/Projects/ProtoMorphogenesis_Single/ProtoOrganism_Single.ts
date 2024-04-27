@@ -43,6 +43,7 @@ export class ProtoOrganism_Single extends Group {
     tendrilSticks: Mesh[] = [];
     tendrilStickRadii: number[] = [];
 
+    private substructure!: VerletSurface;
     private substructureZIndex: number = 0;
     private substructureZIndexDepth: number = 30;
 
@@ -137,6 +138,9 @@ export class ProtoOrganism_Single extends Group {
 
     private _update(): void {
         this.body.update();
+        if (this.substructure) {
+            this.substructure.update();
+        }
 
         if (this.tdm) {
             for (let i = 0; i < this.tendrils.length; i++) {
@@ -154,6 +158,9 @@ export class ProtoOrganism_Single extends Group {
 
     verlet(): void {
         this.body.verlet();
+        if (this.substructure) {
+            this.substructure.verlet();
+        }
         // move tendrils based on VerletSurface
         this._update();
         for (let i of this.tendrils) {
@@ -166,7 +173,11 @@ export class ProtoOrganism_Single extends Group {
     * just centroid for now
     */
     pulse(): void {
-        this.body.centroidNode.position.z = sin(this.physics.theta) * this.physics.amp;
+        this.body.centroidNode.position.z = sin(this.physics.theta * .5) * this.physics.amp;
+
+        if (this.substructure) {
+            this.substructure.centroidNode.position.z = sin(this.physics.theta * 1.5) * this.physics.amp;
+        }
         this.physics.theta += this.physics.freq;
     }
 
@@ -197,19 +208,23 @@ export class ProtoOrganism_Single extends Group {
     }
 
     rotate(rotSpd: Vector3): void {
-        this.rotateX(rotSpd.x);
-        this.rotateY(rotSpd.y);
+        // this.rotateX(rotSpd.x);
+        // this.rotateY(rotSpd.y);
         this.rotateZ(rotSpd.z);
     }
 
-    addSubStructure(substructure: VerletSurface): void {
+    public addSubStructure(substructure: VerletSurface): void {
         // increase with each substructure addition
         this.substructureZIndex++;
         // add to scenegraph
+        this.substructure = substructure;
         this.add(substructure);
+        substructure.scale.x = .8
+        substructure.scale.y = .8
+
         substructure.position.x = this.position.x;
         substructure.position.y = this.position.y;
-        substructure.position.x = this.position.z + this.substructureZIndexDepth * this.substructureZIndex;
+        substructure.position.z = this.position.z + this.substructureZIndexDepth * this.substructureZIndex;
 
     }
 

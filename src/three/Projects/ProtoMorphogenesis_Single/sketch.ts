@@ -6,7 +6,7 @@
 /* Project Description: 
 */
 
-import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, MeshBasicMaterial, MeshPhongMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderer } from 'three'
+import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPlane } from "../../libPByte_3/IJGUtils";
@@ -28,7 +28,7 @@ import { ProtoPlasm } from './ProtoPlasm';
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 10000);
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 400;
+camera.position.z = 800;
 
 const scene = new Scene();
 
@@ -46,8 +46,8 @@ let colVal = (greyColR + greyColG + greyColB) / 3
 const myColor = new Color(greyColR, greyColG, greyColB);
 scene.background = myColor;
 document.body.style.backgroundColor = '#' + myColor.getHexString();
-let fogFactor = 0.0001;
-scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
+let fogFactor = 0.0002;
+//scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
 //scene.fog = new FogExp2(0x8888AA, fogFactor)
 
 // main renderer
@@ -94,43 +94,49 @@ const imageMaps: ImageMap[] = [
     { imageStr: "Proto_Org_022.png", hasTendrils: true }
 ];
 
-const protoOrgs: ProtoOrganism_Single[] = [];
+let protoOrg: ProtoOrganism_Single;
 
-for (let i = 0; i < imageMaps.length; i++) {
-    const texture = new TextureLoader().load('data/ProtoMorph/' + imageMaps[i].imageStr);
-    const mat = new MeshBasicMaterial({ color: 0xffffff, transparent: true, wireframe: false, opacity: randFloat(.35, .7), side: DoubleSide, map: texture });
-    //mat.depthWrite = false;
-    // const mat = new MeshPhongMaterial({ color: 0xffffff, transparent: true, flatShading: false, wireframe: false, opacity: randFloat(.95, .99), emissive: 0xffffff, specular: 0xffffff, shininess: 30, side: DoubleSide, map: texture })
-    const sz = randFloat(170, 280);
-    const detail01 = randInt(16, 24);
-    const detail02 = randInt(8, 12);
-    const vSurf = new VerletSurface(new Vector2(sz, sz), new Vector2(detail01, detail02), mat, randFloat(.1, .8), true);
-    const pPhys = new ProtoPhysics(
-        randFloat(10, 15), //amp
-        PI / randFloat(20, 90), //freq
-        new Vector2(randFloat(-.35, .35), randFloat(-.35, .35)), //spd
-        new Vector3(randFloat(PI / -1200, PI / 1200), randFloat(PI / -1200, PI / 1200), randFloat(PI / -900, PI / 900)) //rotSpd
-    );
-    const tdm = new TendrilDataModel(randFloat(.5, 3.5), randInt(16, 24), new Vector2(.1, .4), new Vector2(4, 6));
 
-    const posX = randFloat(100, 400);
-    const posY = randFloat(50, 125);
-    const posZ = 0;
-    if (imageMaps[i].hasTendrils) {
-        protoOrgs[i] = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurf, new Color(randFloat(.3, .7), randFloat(.3, .7), randFloat(.3, .7)), pPhys, tdm);
-    } else {
-        protoOrgs[i] = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurf, new Color(.7, .6, .6), pPhys);
-    }
+const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Middle_001.png');
+const textureTop = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Top_001.png');
 
-}
-const pp = new ProtoPlasm(protoOrgs, 100, new Vector3(1400, 900, 100));
+const matMid = new MeshPhongMaterial({ color: 0xffffff, transparent: true, wireframe: false, flatShading: false, specular: 0x334433, shininess: 250, opacity: randFloat(1, 1), side: DoubleSide, map: textureMid, });
+
+const matTop = new MeshPhongMaterial({ color: 0xffffff, specular: 0x554433, transparent: true, wireframe: false, opacity: randFloat(1, 1), side: DoubleSide, map: textureTop });
+
+
+const sz = randFloat(700, 700);
+const detail01 = randInt(36, 48);
+const detail02 = randInt(12, 16);
+const vSurfMid = new VerletSurface(new Vector2(sz, sz), new Vector2(detail01, detail02), matMid, randFloat(.1, .8), true);
+const pPhys = new ProtoPhysics(
+    randFloat(14, 20), //amp
+    PI / randFloat(30, 60), //freq
+    new Vector2(randFloat(-.35, .35), randFloat(-.35, .35)), //spd
+    new Vector3(randFloat(PI / -1200, PI / 1200), randFloat(PI / -1200, PI / 1200), randFloat(PI / -1900, PI / 1900)) //rotSpd
+);
+
+const vSurfTop = new VerletSurface(new Vector2(sz, sz), new Vector2(detail01, detail02), matTop, randFloat(.1, .8), true);
+// const tdm = new TendrilDataModel(randFloat(.5, 3.5), randInt(16, 24), new Vector2(.1, .4), new Vector2(4, 6));
+
+const posX = randFloat(0, 0);
+const posY = randFloat(0, 0);
+const posZ = 0;
+
+protoOrg = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurfMid, new Color(.7, .6, .6), pPhys);
+protoOrg.setZIndexDepth(75);
+protoOrg.addSubStructure(vSurfTop);
+
+protoOrg.setSurfaceDrawable(false, true, false)
+
+const pp = new ProtoPlasm(protoOrg, 100, new Vector3(2400, 1500, 100));
 pp.setJitter(new Vector3(.1, .1, .1));
 pp.start();
 scene.add(pp);
 
 
 // background
-let env = new VerletPlane2(8200, 3500, 30, 30, "data/ProtoMorph/Proto_BG_006.png", AnchorPlane.EDGES_ALL);
+let env = new VerletPlane2(10200, 7500, 30, 30, "data/ProtoMorph/Proto_BG_005.png", AnchorPlane.EDGES_ALL);
 env.position.setZ(-1900);
 env.moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
 scene.add(env);
@@ -141,41 +147,41 @@ env.setNodesOff(AnchorPlane.EDGES_ALL);
 /************************************************************/
 
 
-const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.01, .1));
+const ambientTexturesLight = new AmbientLight(new Color(randFloat(.75, .9), randFloat(.75, .9), randFloat(.75, .9)), randFloat(.7, .9));
 scene.add(ambientTexturesLight);
 
 const hemiLt = new HemisphereLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.01, .3));
 scene.add(hemiLt);
 
 const col2 = new Color(1, 1, 1);
-const intensity = .9;
+const intensity = 1;
 const light = new DirectionalLight(col2, intensity);
-light.position.set(0, 0, 600);
-light.castShadow = true;
+light.position.set(0, 0, 400);
+//light.castShadow = true;
 scene.add(light);
 
-const spot = new SpotLight(new Color(randFloat(.5, 1), randFloat(.5, 1), randFloat(.5, 1)), randFloat(.5, .5));
-spot.position.set(randFloat(-10, 10), randFloat(50, 160), randFloat(500, 550));
+const spot = new SpotLight(new Color(1, 1, 1), 1, 1000);
+spot.position.set(-500, 0, 400);
 spot.castShadow = true;
-spot.shadow.radius = 12; //doesn't work with PCFsoftshadows
-spot.shadow.bias = -0.0001;
-spot.shadow.mapSize.width = 1024 * 4;
-spot.shadow.mapSize.height = 1024 * 4;
+// spot.shadow.radius = 12; //doesn't work with PCFsoftshadows
+// spot.shadow.bias = -0.0001;
+// spot.shadow.mapSize.width = 1024 * 4;
+// spot.shadow.mapSize.height = 1024 * 4;
 scene.add(spot);
 
 const pointLt = new PointLight(new Color(randFloat(.3, 1), randFloat(.3, 1), randFloat(.3, 1)), randFloat(.5, 1.2), randFloat(4000, 4000));
 pointLt.translateX(randFloat(0, 0));
 pointLt.translateY(randFloat(0, 0));
 pointLt.translateZ(randFloat(0, 0));
-pointLt.castShadow = true;
-scene.add(pointLt);
+//pointLt.castShadow = true;
+////scene.add(pointLt);
 
 // creates spotlight on floor
-const pointLt2 = new PointLight(new Color(randFloat(.8, 1), randFloat(.8, 1), randFloat(.8, 1)), randFloat(.8, 1.5), randFloat(3000, 3000));
+const pointLt2 = new PointLight(new Color(randFloat(.8, 1), randFloat(.8, 1), randFloat(.8, 1)), randFloat(.8, 1.5), randFloat(300, 300));
 pointLt2.translateX(randFloat(0, 0));
 pointLt2.translateY(randFloat(0, 0));
 pointLt2.translateZ(800);
-pointLt2.castShadow = true;
+//pointLt2.castShadow = true;
 //scene.add(pointLt2);
 
 
@@ -190,7 +196,7 @@ function animate() {
     pp.run(time);
 
     env.verlet();
-    env.jitterNodes(new Vector2(-2, 2));
+    env.jitterNodes(new Vector2(-.2, .2));
     /************************************************************/
 
 

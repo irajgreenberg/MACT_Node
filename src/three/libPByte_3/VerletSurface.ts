@@ -239,6 +239,8 @@ export class VerletSurface extends VerletBase {
         geometry.setAttribute('position', new BufferAttribute(verts, 3));
         geometry.setAttribute('uv', new BufferAttribute(UVs, 2));
         geometry.setIndex(_inds);
+        geometry.computeVertexNormals();
+        geometry.computeTangents();
         this.mesh = new Mesh(geometry, this.mat)
         this.add(this.mesh);
 
@@ -258,6 +260,8 @@ export class VerletSurface extends VerletBase {
             pos.setY(i, this.nodes[i].position.y)
             pos.setZ(i, this.nodes[i].position.z)
         }
+        this.mesh.geometry.computeVertexNormals();
+        this.mesh.geometry.computeTangents();
     }
 
     getEdgeVecs(): Vector3[] {

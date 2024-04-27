@@ -37,12 +37,21 @@ export class ProtoPlasm extends Group {
     */
     jitterMinMax: Vector3 = new Vector3();
 
-    constructor(orgs: ProtoOrganism_Single[], zIndexDepthMin: number = 100, bounds: Vector3 = new Vector3(1400, 1000, 500)) {
+    constructor(orgs: ProtoOrganism_Single | ProtoOrganism_Single[], zIndexDepthMin: number = 100, bounds: Vector3 = new Vector3(1400, 1000, 500)) {
         super();
-        this.orgs = orgs;
+
+        // handle single or array organism input
+        // after the condtional array type used throughout class
+        if (orgs instanceof ProtoOrganism_Single) {
+            this.orgs.push(orgs);
+        } else if (Array.isArray(orgs)) {
+            this.orgs = orgs;
+        }
+
         this.zIndexDepthMin = zIndexDepthMin;
         this.bounds = bounds;
         this._create();
+
     }
 
     private _create() {

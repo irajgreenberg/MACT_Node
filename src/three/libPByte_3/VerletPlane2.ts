@@ -66,11 +66,11 @@ export class VerletPlane2 extends VerletGeometryBase {
 
         this.planeGeom = new PlaneGeometry(width, height, widthSegs, heightSegs);
         const tex = new TextureLoader().load(diffuseImage);
-        this.planeBasicMat = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide, map: tex, transparent: true, opacity: .99, wireframe: false });
+        this.planeBasicMat = new MeshBasicMaterial({ color: 0xffffff, side: DoubleSide, map: tex, transparent: true, opacity: 1, wireframe: false });
         this.planePhongMat = new MeshPhongMaterial(
             {
                 color: 0xffffff, side: DoubleSide, map: tex, transparent: true, opacity: 1, wireframe: false, specular: 0xffffff,
-                reflectivity: 5,
+                shininess: 330,
 
             });
         this.colCount = widthSegs + 1;
