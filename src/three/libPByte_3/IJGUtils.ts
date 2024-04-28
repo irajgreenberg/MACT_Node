@@ -8,6 +8,63 @@ import { mapLinear, randFloat } from 'three/src/math/MathUtils';
 import { VerletNode } from './VerletNode';
 //import { Frequency } from 'tone';
 
+/**
+ * Returns a 2D look-up boolean table to
+ * determine transparent regions of png's.
+ */
+export function getAlphaLookUpTable(imgURL: string): boolean[][] {
+    const hasAlphaTable: boolean[][] = [];
+
+    window.onload = (): void => {
+        const canvas = document.getElementById('pixelCanvas') as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+            console.error('Unable to get canvas context');
+            return;
+        }
+
+        // Load the image
+        const image = new Image();
+        image.src = imgURL; // Set the path to your image
+        image.onload = () => {
+            // Resize the canvas to the image dimensions
+            canvas.width = image.width;
+            canvas.height = image.height;
+
+            // Draw the image onto the offscreen canvas
+            ctx.drawImage(image, 0, 0);
+
+            // Access the image's pixel data
+            const imageData = ctx.getImageData(0, 0, image.width, image.height);
+            const pixels = imageData.data; // Pixel data: RGBA values in a Uint8ClampedArray
+
+            // Collect alpha values in 1D arr
+            const alphas_1D: number[] = [];
+            for (let i = 3; i < pixels.length; i += 4) {
+                alphas_1D.push(pixels[i]); pixels
+            }
+
+            // Collect alpha vales in 2D arr
+            for (let i = 0; i < image.height; i++) {
+                hasAlphaTable[i] = []
+                for (let j = 0; j < image.width; j++) {
+                    const k = i * image.width + j;
+                    if (alphas_1D[k] === 0) {
+                        hasAlphaTable[i].push(false);
+                    } else {
+                        hasAlphaTable[i].push(true);
+                    }
+                }
+            }
+        };
+    };
+
+    return hasAlphaTable;
+}
+
+
+
 export function simpleSaveImage(renderer: WebGLRenderer, scene: Scene, camera: PerspectiveCamera, fileName: string, w: number, h: number) {
     camera.aspect = w / h;
     camera.setViewOffset(w, h, w * 0, h * 0, w, h);
