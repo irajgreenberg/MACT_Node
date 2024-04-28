@@ -6,7 +6,7 @@
 /* Project Description: 
 */
 
-import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderer } from 'three'
+import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, Mesh, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, OrthographicCamera, PCFSoftShadowMap, PerspectiveCamera, PlaneGeometry, PointLight, RGBAFormat, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderTarget, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPlane } from "../../libPByte_3/IJGUtils";
@@ -16,6 +16,7 @@ import { VerletSurface } from '../../libPByte_3/VerletSurface';
 import { TendrilDataModel } from '../../libPByte_3/TendrilDataModel';
 import { ProtoPhysics } from '../../libPByte_3/ProtoPhysics';
 import { ProtoPlasm } from './ProtoPlasm';
+import { Camera } from 'p5';
 
 // enum HasTendrils {
 //     NO,
@@ -63,85 +64,43 @@ document.title = "[Proto]morphogenesis_005] | Ira Greenberg.2024"
 const controls = new OrbitControls(camera, renderer.domElement);
 
 /************************Custom code*************************/
+window.onload = (): void => {
+    const canvas = document.getElementById('pixelCanvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
 
-interface ImageMap {
-    imageStr: string;
-    hasTendrils: boolean;
-}
+    if (!ctx) {
+        console.error('Unable to get canvas context');
+        return;
+    }
 
-const imageMaps: ImageMap[] = [
-    { imageStr: "Proto_Org_001.png", hasTendrils: false },
-    { imageStr: "Proto_Org_002.png", hasTendrils: false },
-    { imageStr: "Proto_Org_003.png", hasTendrils: false },
-    { imageStr: "Proto_Org_004.png", hasTendrils: false },
-    { imageStr: "Proto_Org_005.png", hasTendrils: false },
-    { imageStr: "Proto_Org_006.png", hasTendrils: false },
-    { imageStr: "Proto_Org_007.png", hasTendrils: true },
-    { imageStr: "Proto_Org_008.png", hasTendrils: false },
-    { imageStr: "Proto_Org_009.png", hasTendrils: false },
-    { imageStr: "Proto_Org_010.png", hasTendrils: false },
-    { imageStr: "Proto_Org_011.png", hasTendrils: false },
-    { imageStr: "Proto_Org_012.png", hasTendrils: false },
-    { imageStr: "Proto_Org_013.png", hasTendrils: false },
-    { imageStr: "Proto_Org_014.png", hasTendrils: false },
-    { imageStr: "Proto_Org_015.png", hasTendrils: false },
-    { imageStr: "Proto_Org_016.png", hasTendrils: false },
-    { imageStr: "Proto_Org_017.png", hasTendrils: true },
-    { imageStr: "Proto_Org_018.png", hasTendrils: false },
-    { imageStr: "Proto_Org_019.png", hasTendrils: false },
-    { imageStr: "Proto_Org_020.png", hasTendrils: true },
-    { imageStr: "Proto_Org_021.png", hasTendrils: true },
-    { imageStr: "Proto_Org_022.png", hasTendrils: true }
-];
+    // Load the image
+    const image = new Image();
+    image.src = 'data/ProtoMorph/Proto_Org_001.png'; // Set the path to your image
+    image.onload = () => {
+        // Resize the canvas to the image dimensions
+        canvas.width = image.width;
+        canvas.height = image.height;
 
-let protoOrg: ProtoOrganism_Single;
+        // Draw the image onto the canvas
+        ctx.drawImage(image, 0, 0);
 
+        // Access the image's pixel data
+        const imageData = ctx.getImageData(0, 0, image.width, image.height);
+        const pixels = imageData.data; // Pixel data: RGBA values in a Uint8ClampedArray
 
-const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Middle_001.png');
-const textureTop = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Top_001.png');
+        // Example: Log the RGBA values of the first pixel
+        console.log("pixels.length = ", pixels.length);
+        for (let i = 0; i < pixels.length / 10; i += 4) {
+            console.log('pixel alpha data:', pixels[3 + i]);
+        }
 
-const matMid = new MeshPhongMaterial({ color: 0xffffff, transparent: true, wireframe: false, flatShading: false, specular: 0x334433, shininess: 250, opacity: randFloat(1, 1), side: DoubleSide, map: textureMid, });
-
-const matTop = new MeshPhongMaterial({ color: 0xffffff, specular: 0x554433, transparent: true, wireframe: false, opacity: randFloat(1, 1), side: DoubleSide, map: textureTop });
+    };
+};
 
 
-const sz = randFloat(700, 700);
-const detail01 = randInt(36, 48);
-const detail02 = randInt(12, 16);
-const vSurfMid = new VerletSurface(new Vector2(sz, sz), new Vector2(detail01, detail02), matMid, randFloat(.1, .8), true);
-const pPhys = new ProtoPhysics(
-    randFloat(14, 20), //amp
-    PI / randFloat(30, 60), //freq
-    new Vector2(randFloat(-.35, .35), randFloat(-.35, .35)), //spd
-    new Vector3(randFloat(PI / -1200, PI / 1200), randFloat(PI / -1200, PI / 1200), randFloat(PI / -1900, PI / 1900)) //rotSpd
-);
-
-const vSurfTop = new VerletSurface(new Vector2(sz, sz), new Vector2(detail01, detail02), matTop, randFloat(.1, .8), true);
-// const tdm = new TendrilDataModel(randFloat(.5, 3.5), randInt(16, 24), new Vector2(.1, .4), new Vector2(4, 6));
-
-const posX = randFloat(0, 0);
-const posY = randFloat(0, 0);
-const posZ = 0;
-
-protoOrg = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurfMid, new Color(.7, .6, .6), pPhys);
-protoOrg.setZIndexDepth(75);
-protoOrg.addSubStructure(vSurfTop);
-
-protoOrg.setSurfaceDrawable(false, true, false)
-
-const pp = new ProtoPlasm(protoOrg, 100, new Vector3(2400, 1500, 100));
-pp.setJitter(new Vector3(.1, .1, .1));
-pp.start();
-scene.add(pp);
 
 
-// background
-let env = new VerletPlane2(10200, 7500, 30, 30, "data/ProtoMorph/Proto_BG_005.png", AnchorPlane.EDGES_ALL);
-env.position.setZ(-1900);
-env.moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
-scene.add(env);
-env.renderVerletGeometry(false, false);
-env.setNodesOff(AnchorPlane.EDGES_ALL);
+
 
 
 /************************************************************/
@@ -191,13 +150,6 @@ function animate() {
     //controls.autoRotate = true;
     const time = Date.now();
 
-    /************************Custom code*************************/
-
-    pp.run(time);
-
-    env.verlet();
-    env.jitterNodes(new Vector2(-.2, .2));
-    /************************************************************/
 
 
     render();

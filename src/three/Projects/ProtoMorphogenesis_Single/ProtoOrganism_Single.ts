@@ -205,11 +205,12 @@ export class ProtoOrganism_Single extends Group {
             this.position.x += this.physics.spd.x;
             this.position.y += this.physics.spd.y;
         }
+
     }
 
     rotate(rotSpd: Vector3): void {
-        // this.rotateX(rotSpd.x);
-        // this.rotateY(rotSpd.y);
+        this.rotateX(rotSpd.x);
+        this.rotateY(rotSpd.y);
         this.rotateZ(rotSpd.z);
     }
 
