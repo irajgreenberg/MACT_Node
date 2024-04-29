@@ -16,8 +16,15 @@ export function getAlphaLookUpTable(imgURL: string): boolean[][] {
     const hasAlphaTable: boolean[][] = [];
 
     window.onload = (): void => {
-        const canvas = document.getElementById('pixelCanvas') as HTMLCanvasElement;
+        const canvas = document.createElement('canvas');
+        // const canvas = document.getElementById('pixelCanvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
+
+
+        // canvas.style.left = "400px";
+        // canvas.style.top = "300px";
+        // canvas.style.position = "absolute";
+
 
         if (!ctx) {
             console.error('Unable to get canvas context');

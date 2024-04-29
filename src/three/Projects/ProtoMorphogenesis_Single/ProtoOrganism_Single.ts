@@ -7,7 +7,7 @@
 Class encapsulates a VerletSurface with optionally attached tendrils
 */
 
-import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, Material, Mesh, MeshBasicMaterial, TubeGeometry, Vector2, Vector3 } from "three";
+import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, Material, Mesh, MeshBasicMaterial, MeshPhongMaterial, TubeGeometry, Vector2, Vector3 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPoint, SimplCurve } from "../../libPByte_3/IJGUtils";
 import { VerletStrand } from "../../libPByte_3/VerletStrand";
@@ -16,6 +16,7 @@ import { VerletNode } from "../../libPByte_3/VerletNode";
 import { TendrilDataModel } from "../../libPByte_3/TendrilDataModel";
 import { VerletSurface } from "../../libPByte_3/VerletSurface";
 import { ProtoPhysics } from "../../libPByte_3/ProtoPhysics";
+import { ProtoTubeGeometry } from "../../libPByte_3/ProtoTubeGeometry";
 
 
 /**
@@ -36,12 +37,13 @@ export class ProtoOrganism_Single extends Group {
     pos: Vector3;
     body: VerletSurface;
     tdm?: TendrilDataModel;
-    col: Color;
+    col: Color; // for bodies, not tendrils
     physics: ProtoPhysics;
 
     tendrils: VerletStrand[] = [];
     tendrilSticks: Mesh[] = [];
     tendrilStickRadii: number[] = [];
+    tendrilStickRadiiSegments: number[] = [];
 
     private substructure!: VerletSurface;
     private substructureZIndex: number = 0;
@@ -77,10 +79,20 @@ export class ProtoOrganism_Single extends Group {
 
 
                 const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
+                // for animation loop
+
                 this.tendrilStickRadii.push(randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y));
-                const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y), false);
-                const material = new MeshBasicMaterial({ color: this.col, side: DoubleSide, transparent: true, opacity: .5 });
+
+                this.tendrilStickRadiiSegments.push(randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y));
+
+                // const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y), false);
+
+                const geometry = new ProtoTubeGeometry(path, this.tdm.segments, this.tendrilStickRadiiSegments[i], false, { func: FuncType.SINUSOIDAL, min: 2, max: 3, periods: 3 });
+
+
+                const material = new MeshPhongMaterial({ color: this.tdm.tendrilCol, specular: 0xffdddd, shininess: 30, transparent: true, opacity: .6 });
                 const mesh = new Mesh(geometry, material);
+
                 this.tendrilSticks.push(new Mesh(geometry, material));
                 this.add(this.tendrilSticks[this.tendrilSticks.length - 1]);
             }
@@ -144,12 +156,17 @@ export class ProtoOrganism_Single extends Group {
 
         if (this.tdm) {
             for (let i = 0; i < this.tendrils.length; i++) {
-                let input = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(1);
+                let input = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(.95);
                 this.tendrils[i].setHeadPosition(input);
                 this.tendrils[i].nodes[this.tendrils[i].nodes.length - 1].position.multiplyScalar(randFloat(1.00005, 1.0004));
                 const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
                 this.tendrilSticks[i].geometry.dispose();
-                const geometry = new TubeGeometry(path, this.tdm.segments, this.tendrilStickRadii[i], 12, false);
+                // const geometry = new TubeGeometry(path, this.tdm.segments, this.tendrilStickRadii[i], this.tendrilStickRadiiSegments[i], false);
+
+
+                const geometry = new ProtoTubeGeometry(path, this.tdm.segments, this.tendrilStickRadiiSegments[i], false, { func: FuncType.SINUSOIDAL, min: 2, max: 4, periods: 1 });
+
+
                 this.tendrilSticks[i].geometry = geometry
             }
         }

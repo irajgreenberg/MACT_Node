@@ -28,7 +28,7 @@ import { ProtoPlasm } from './ProtoPlasm';
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 10000);
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 800;
+camera.position.z = 600;
 
 const scene = new Scene();
 
@@ -49,6 +49,8 @@ document.body.style.backgroundColor = '#' + myColor.getHexString();
 let fogFactor = 0.0002;
 //scene.fog = new FogExp2('#' + myColor.getHexString(), fogFactor)
 //scene.fog = new FogExp2(0x8888AA, fogFactor)
+
+
 
 // main renderer
 let renderer = new WebGLRenderer({ alpha: true, antialias: true, logarithmicDepthBuffer: true });
@@ -97,7 +99,9 @@ const imageMaps: ImageMap[] = [
 let protoOrg: ProtoOrganism_Single;
 
 
-const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Middle_001.png');
+//const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Middle_001.png');
+const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_004.png');
+
 const textureTop = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Top_001.png');
 
 const matMid = new MeshPhongMaterial({ color: 0xffffff, transparent: true, wireframe: false, flatShading: false, specular: 0x334433, shininess: 250, opacity: randFloat(1, 1), side: DoubleSide, map: textureMid, bumpScale: 5, bumpMap: textureMid });
@@ -123,7 +127,9 @@ const posX = randFloat(0, 0);
 const posY = randFloat(0, 0);
 const posZ = 0;
 
-protoOrg = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurfMid, new Color(.7, .6, .6), pPhys);
+const tdm = new TendrilDataModel(randFloat(.5, 1.5), randInt(16, 24), new Vector2(5.6, 10.4), new Vector2(6, 8), new Color(1, .4, .4));
+
+protoOrg = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurfMid, new Color(1, .6, .6), pPhys, tdm);
 protoOrg.setZIndexDepth(75);
 protoOrg.addSubStructure(vSurfTop);
 
@@ -136,10 +142,10 @@ scene.add(pp);
 
 
 // background
-let env = new VerletPlane2(10200, 7500, 10, 10, "data/ProtoMorph/Proto_BG_005.png", AnchorPlane.EDGES_ALL);
+let env = new VerletPlane2(10200, 7500, 10, 10, "data/ProtoMorph/Proto_BG_Single_001.jpg", AnchorPlane.EDGES_ALL);
 env.position.setZ(-1900);
 env.moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
-//scene.add(env);
+scene.add(env);
 env.renderVerletGeometry(false, false);
 env.setNodesOff(AnchorPlane.EDGES_ALL);
 
