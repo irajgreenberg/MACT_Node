@@ -3,7 +3,7 @@
 // Santa Fe, NM | Dallas, TX
 // 2024
 
-import { Group, Vector3 } from "three";
+import { Group, Material, MeshPhongMaterial, Vector3 } from "three";
 import { ProtoOrganism_Single } from "./ProtoOrganism_Single";
 import { sin, PI, cos } from "../../libPByte_3/IJGUtils";
 import { randFloat } from "three/src/math/MathUtils";

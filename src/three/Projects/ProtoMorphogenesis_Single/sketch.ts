@@ -133,6 +133,10 @@ protoOrg = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloa
 protoOrg.setZIndexDepth(75);
 protoOrg.addSubStructure(vSurfTop);
 
+// hack fix, needs better integration in OOP design
+protoOrg.setAlphaLookUpTable(getAlphaLookUpTable("data/ProtoMorph/alpha_test_100_pixels.png"));
+
+
 //protoOrg.setSurfaceDrawable(false, true, false)
 
 const pp = new ProtoPlasm(protoOrg, 100, new Vector3(2400, 1500, 100));
@@ -151,7 +155,7 @@ env.setNodesOff(AnchorPlane.EDGES_ALL);
 
 
 // testing alpha image
-console.log(getAlphaLookUpTable("data/ProtoMorph/alpha_test_100_pixels.png"));
+//console.log(getAlphaLookUpTable("data/ProtoMorph/alpha_test_100_pixels.png"));
 
 /************************************************************/
 

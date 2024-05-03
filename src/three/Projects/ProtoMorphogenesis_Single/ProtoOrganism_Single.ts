@@ -7,7 +7,7 @@
 Class encapsulates a VerletSurface with optionally attached tendrils
 */
 
-import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, Material, Mesh, MeshBasicMaterial, MeshPhongMaterial, TubeGeometry, Vector2, Vector3 } from "three";
+import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, LightProbe, Material, Mesh, MeshBasicMaterial, MeshPhongMaterial, TubeGeometry, Vector2, Vector3 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPoint, SimplCurve } from "../../libPByte_3/IJGUtils";
 import { VerletStrand } from "../../libPByte_3/VerletStrand";
@@ -49,6 +49,8 @@ export class ProtoOrganism_Single extends Group {
     private substructureZIndex: number = 0;
     private substructureZIndexDepth: number = 30;
 
+    alphaTable: boolean[][] = [];
+
 
     constructor(pos: Vector3, body: VerletSurface, col: Color, physics: ProtoPhysics, tdm?: TendrilDataModel) {
         super();
@@ -69,6 +71,12 @@ export class ProtoOrganism_Single extends Group {
         //create tendrils
         if (this.tdm) {
             for (let i = 0; i < this.body.edgeNodes.length; i++) {
+
+                // only create tendril if Verlet node is on pixel with alpha>0
+                // const unitNode = new Vector3().copy(this.body.edgeNodes[i].position).normalize();
+                // if (unitNode) {
+
+                // }
                 const head = this.body.edgeNodes[i].position;
                 const tail = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(this.tdm.length);
                 this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
@@ -156,7 +164,7 @@ export class ProtoOrganism_Single extends Group {
 
         if (this.tdm) {
             for (let i = 0; i < this.tendrils.length; i++) {
-                let input = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(.95);
+                let input = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(.99);
                 this.tendrils[i].setHeadPosition(input);
                 this.tendrils[i].nodes[this.tendrils[i].nodes.length - 1].position.multiplyScalar(randFloat(1.00005, 1.0004));
                 const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
@@ -249,6 +257,12 @@ export class ProtoOrganism_Single extends Group {
     setZIndexDepth(depth: number) {
         this.substructureZIndexDepth = depth;
 
+    }
+
+
+    setAlphaLookUpTable(alphaTable: boolean[][]): void {
+        this.alphaTable = alphaTable;
+        console.log(this.alphaTable);
     }
 }
 
