@@ -113,6 +113,7 @@ const sz = randFloat(700, 700);
 const detail01 = randInt(36, 48);
 const detail02 = randInt(12, 16);
 const vSurfMid = new VerletSurface(new Vector2(sz, sz), new Vector2(detail01, detail02), matMid, randFloat(.01, .08), true);
+
 const pPhys = new ProtoPhysics(
     randFloat(14, 20), //amp
     PI / randFloat(30, 60), //freq

@@ -73,7 +73,7 @@ export class ProtoOrganism_Single extends Group {
             for (let i = 0; i < this.body.edgeNodes.length; i++) {
 
                 // only create tendril if Verlet node is on pixel with alpha>0
-                // const unitNode = new Vector3().copy(this.body.edgeNodes[i].position).normalize();
+                const unitNode = new Vector3().copy(this.body.edgeNodes[i].position).normalize();
                 // if (unitNode) {
 
                 // }
@@ -262,7 +262,7 @@ export class ProtoOrganism_Single extends Group {
 
     setAlphaLookUpTable(alphaTable: boolean[][]): void {
         this.alphaTable = alphaTable;
-        console.log(this.alphaTable);
+        // console.log(this.alphaTable);
     }
 }
 
