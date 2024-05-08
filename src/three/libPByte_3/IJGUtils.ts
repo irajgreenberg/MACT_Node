@@ -8,23 +8,113 @@ import { mapLinear, randFloat } from 'three/src/math/MathUtils';
 import { VerletNode } from './VerletNode';
 //import { Frequency } from 'tone';
 
+
 /**
- * Returns a 2D look-up boolean table to
- * determine transparent regions of png's.
- */
-export function getAlphaLookUpTable(imgURL: string): boolean[][] {
-    const hasAlphaTable: boolean[][] = [];
+  * Returns a 2D look-up boolean table to
+  * determine transparent regions of png's.
+  */
+
+
+export interface ProtoAlphaData {
+    alpha_1D: number[];
+    w: number;
+    h: number;
+}
+
+
+// handled with promises for async access
+
+// Function to get the alpha data of an image
+export function getProtoAlphaData(imgURL: string): Promise<ProtoAlphaData> {
+    return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+            return reject(new Error('Unable to get canvas context'));
+        }
+
+        const image = new Image();
+        image.src = imgURL;
+
+        image.onload = () => {
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.drawImage(image, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            const alphaValues_1D: number[] = [];
+
+            // Loop through the pixel data array and extract alpha values
+            for (let i = 3; i < pixels.length; i += 4) {
+                alphaValues_1D.push(pixels[i]);
+            }
+
+            resolve({
+                alpha_1D: alphaValues_1D,
+                w: image.width,
+                h: image.height
+            });
+        };
+
+        image.onerror = () => {
+            reject(new Error('Failed to load image'));
+        };
+    });
+}
+
+
+// export function getProtoAlphaData(imgURL: string): ProtoAlphaData {
+//     const alphaValues_1D: number[] = [];
+
+//     let data: ProtoAlphaData = { alpha_1D: [], w: 0, h: 0 };
+
+//     window.onload = (): void => {
+//         const canvas = document.createElement('canvas');
+//         // const canvas = document.getElementById('pixelCanvas') as HTMLCanvasElement;
+//         const ctx = canvas.getContext('2d');
+
+//         if (!ctx) {
+//             console.error('Unable to get canvas context');
+//             return;
+//         }
+
+//         // Load the image
+//         const image = new Image();
+//         image.src = imgURL; // Set the path to your image
+//         image.onload = () => {
+//             // Resize the canvas to the image dimensions
+//             data.w = canvas.width = image.width;
+//             data.h = canvas.height = image.height;
+//             //  console.log(data.w);
+//             // Draw the image onto the offscreen canvas
+//             ctx.drawImage(image, 0, 0);
+
+//             // Access the image's pixel data
+//             const imageData = ctx.getImageData(0, 0, image.width, image.height);
+//             const pixels = imageData.data; // Pixel data: RGBA values in a Uint8ClampedArray
+
+//             // Collect alpha values in 1D arr
+//             for (let i = 3; i < pixels.length; i += 4) {
+//                 data.alpha_1D.push(pixels[i]);
+//             }
+//             // data.w = image.width;
+//             // data.h = image.height;
+//             return data;
+//         };
+//     };
+//     return data;
+// }
+
+
+export function getAlphaValues(imgURL: string): number[] {
+    const alphaValues_1D: number[] = [];
 
     window.onload = (): void => {
         const canvas = document.createElement('canvas');
         // const canvas = document.getElementById('pixelCanvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
-
-
-        // canvas.style.left = "400px";
-        // canvas.style.top = "300px";
-        // canvas.style.position = "absolute";
-
 
         if (!ctx) {
             console.error('Unable to get canvas context');
@@ -47,28 +137,77 @@ export function getAlphaLookUpTable(imgURL: string): boolean[][] {
             const pixels = imageData.data; // Pixel data: RGBA values in a Uint8ClampedArray
 
             // Collect alpha values in 1D arr
-            const alphas_1D: number[] = [];
             for (let i = 3; i < pixels.length; i += 4) {
-                alphas_1D.push(pixels[i]); pixels
-            }
-
-            // Collect alpha vales in 2D arr
-            for (let i = 0; i < image.height; i++) {
-                hasAlphaTable[i] = []
-                for (let j = 0; j < image.width; j++) {
-                    const k = i * image.width + j;
-                    if (alphas_1D[k] === 0) {
-                        hasAlphaTable[i].push(false);
-                    } else {
-                        hasAlphaTable[i].push(true);
-                    }
-                }
+                alphaValues_1D.push(pixels[i]); pixels
             }
         };
     };
 
-    return hasAlphaTable;
+    return alphaValues_1D;
 }
+
+
+/**
+ * Returns a 2D look-up boolean table to
+ * determine transparent regions of png's.
+ */
+// export function getAlphaLookUpTable(imgURL: string): boolean[][] {
+//     const hasAlphaTable: boolean[][] = [];
+
+//     window.onload = (): void => {
+//         const canvas = document.createElement('canvas');
+//         // const canvas = document.getElementById('pixelCanvas') as HTMLCanvasElement;
+//         const ctx = canvas.getContext('2d');
+
+
+//         // canvas.style.left = "400px";
+//         // canvas.style.top = "300px";
+//         // canvas.style.position = "absolute";
+
+
+//         if (!ctx) {
+//             console.error('Unable to get canvas context');
+//             return;
+//         }
+
+//         // Load the image
+//         const image = new Image();
+//         image.src = imgURL; // Set the path to your image
+//         image.onload = () => {
+//             // Resize the canvas to the image dimensions
+//             canvas.width = image.width;
+//             canvas.height = image.height;
+
+//             // Draw the image onto the offscreen canvas
+//             ctx.drawImage(image, 0, 0);
+
+//             // Access the image's pixel data
+//             const imageData = ctx.getImageData(0, 0, image.width, image.height);
+//             const pixels = imageData.data; // Pixel data: RGBA values in a Uint8ClampedArray
+
+//             // Collect alpha values in 1D arr
+//             const alphas_1D: number[] = [];
+//             for (let i = 3; i < pixels.length; i += 4) {
+//                 alphas_1D.push(pixels[i]); pixels
+//             }
+
+//             // Collect alpha vales in 2D arr
+//             for (let i = 0; i < image.height; i++) {
+//                 hasAlphaTable[i] = []
+//                 for (let j = 0; j < image.width; j++) {
+//                     const k = i * image.width + j;
+//                     if (alphas_1D[k] === 0) {
+//                         hasAlphaTable[i].push(false);
+//                     } else {
+//                         hasAlphaTable[i].push(true);
+//                     }
+//                 }
+//             }
+//         };
+//     };
+
+//     return hasAlphaTable;
+// }
 
 
 

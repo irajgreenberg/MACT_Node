@@ -9,7 +9,7 @@ Class encapsulates a VerletSurface with optionally attached tendrils
 
 import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, LightProbe, Material, Mesh, MeshBasicMaterial, MeshPhongMaterial, TubeGeometry, Vector2, Vector3 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPoint, SimplCurve } from "../../libPByte_3/IJGUtils";
+import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPoint, SimplCurve, ProtoAlphaData } from "../../libPByte_3/IJGUtils";
 import { VerletStrand } from "../../libPByte_3/VerletStrand";
 import { VerletStick } from "../../libPByte_3/VerletStick";
 import { VerletNode } from "../../libPByte_3/VerletNode";
@@ -44,6 +44,7 @@ export class ProtoOrganism_Single extends Group {
     tendrilSticks: Mesh[] = [];
     tendrilStickRadii: number[] = [];
     tendrilStickRadiiSegments: number[] = [];
+    hasTendrilAlpha: boolean[] = [];
 
     private substructure!: VerletSurface;
     private substructureZIndex: number = 0;
@@ -51,8 +52,12 @@ export class ProtoOrganism_Single extends Group {
 
     alphaTable: boolean[][] = [];
 
+    alphaData!: ProtoAlphaData;
 
-    constructor(pos: Vector3, body: VerletSurface, col: Color, physics: ProtoPhysics, tdm?: TendrilDataModel) {
+    protoAlphaData!: ProtoAlphaData
+
+
+    constructor(pos: Vector3, body: VerletSurface, col: Color, physics: ProtoPhysics, tdm?: TendrilDataModel, alphaData?: ProtoAlphaData) {
         super();
         this.pos = pos;
         this.body = body;
@@ -60,18 +65,75 @@ export class ProtoOrganism_Single extends Group {
         this.physics = physics;
         this.add(this.body);
 
+        // check for tendrils
         if (tdm) {
             this.tdm = tdm;
-            this.create();
+
+            // check for VerletSurface image alpha data
+            // used to enable tendril attachement to Verlet nodes
+            // only if non-transparent pixel data.
+            if (alphaData) {
+                this.alphaData = alphaData;
+                this.create();
+            }
+
         }
 
+
     }
+
+    private checkNodeAlpha(pos: Vector3): boolean {
+        // console.log(this.alphaData);
+        if (this.alphaData) {
+            //console.log(this.alphaData.alpha_1D);
+            // console.log('Image Width:', this.alphaData.w);
+            // console.log('Image Height:', this.alphaData.h);
+            // console.log('Alpha Values:', this.alphaData.alpha_1D);
+
+            for (let i = 0, k = 0; i < this.alphaData.h; i++) {
+                for (let j = 0; j < this.alphaData.w; j++) {
+                    k = i * this.alphaData.w + j;
+                    const w = this.alphaData.w;
+                    const h = this.alphaData.h;
+                    //console.log(w, h)
+                    // top row
+                    if (i === 0) {
+                        const v = new Vector3().copy(pos).normalize();
+                        const px = new Vector3(j / w, i / h, 0);
+                        // console.log(px);
+                        if (v.distanceTo(px) < 10) {
+                            //  console.log("what's up");
+                        }
+                        return true;
+                        // bottom row
+                    } else if (i === this.alphaData.h - 1) {
+                        return true;
+                        // left column
+                    } else if (j === 0) {
+                        return true;
+                        // right column
+                    } else if (j === this.alphaData.w - 1) {
+                        return true;
+                        // bottem edge
+                    }
+
+                }
+            }
+        }
+        return false;
+    }
+
 
     create() {
         //create tendrils
         if (this.tdm) {
             for (let i = 0; i < this.body.edgeNodes.length; i++) {
 
+                if (this.checkNodeAlpha(this.body.edgeNodes[i].position)) {
+
+                } else {
+
+                }
                 // only create tendril if Verlet node is on pixel with alpha>0
                 const unitNode = new Vector3().copy(this.body.edgeNodes[i].position).normalize();
                 // if (unitNode) {
@@ -260,10 +322,25 @@ export class ProtoOrganism_Single extends Group {
     }
 
 
-    setAlphaLookUpTable(alphaTable: boolean[][]): void {
-        this.alphaTable = alphaTable;
-        // console.log(this.alphaTable);
+    // setAlphaLookUpTable(alphaTable: boolean[][]): void {
+    //     this.alphaTable = alphaTable;
+    //     // console.log(this.alphaTable);
+    // }
+
+    setAlphaData(alphaData: ProtoAlphaData) {
+
+        this.alphaData = alphaData;
+        // for(let i=0; i<this.alphaData.alpha_1D.length; i++){
+        //    // if(this.alphaData.alpha_1D[i]>0){
+        //         this.hasTendrilAlpha.
+
+        //    // }
+
+        // }
+        // // console.log(this.alphaData);
+        console.log(this.alphaData);
     }
+
 }
 
 

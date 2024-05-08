@@ -9,7 +9,7 @@
 import { AmbientLight, Color, DirectionalLight, DoubleSide, FogExp2, HemisphereLight, MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, Scene, SpotLight, Texture, TextureLoader, Vector2, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPlane, getAlphaLookUpTable } from "../../libPByte_3/IJGUtils";
+import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPlane, getAlphaValues, getProtoAlphaData, ProtoAlphaData } from "../../libPByte_3/IJGUtils";
 import { NodeSelector, ProtoOrganism_Single } from './ProtoOrganism_Single';
 import { VerletPlane2 } from '../../libPByte_3/VerletPlane2';
 import { VerletSurface } from '../../libPByte_3/VerletSurface';
@@ -130,20 +130,70 @@ const posZ = 0;
 
 const tdm = new TendrilDataModel(randFloat(.5, 1.5), randInt(16, 24), new Vector2(5.6, 10.4), new Vector2(6, 8), new Color(1, .4, .4));
 
-protoOrg = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurfMid, new Color(1, .6, .6), pPhys, tdm);
-protoOrg.setZIndexDepth(75);
-protoOrg.addSubStructure(vSurfTop);
 
-// hack fix, needs better integration in OOP design
-protoOrg.setAlphaLookUpTable(getAlphaLookUpTable("data/ProtoMorph/alpha_test_100_pixels.png"));
+let isDataLoaded: boolean = false;
+let pp: ProtoPlasm;
+
+async function processImageData(url: string): Promise<void> {
+    try {
+        const data: ProtoAlphaData = await getProtoAlphaData(url);
+        // console.log('Image Width:', data.w);
+        // console.log('Image Height:', data.h);
+        // console.log('Alpha Values:', data.alpha_1D);
+
+        isDataLoaded = true;
 
 
-//protoOrg.setSurfaceDrawable(false, true, false)
+        protoOrg = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurfMid, new Color(1, .6, .6), pPhys, tdm, data);
+        protoOrg.setZIndexDepth(75);
+        protoOrg.addSubStructure(vSurfTop);
+        // protoOrg.setAlphaData(getProtoAlphaData("data/ProtoMorph/Proto_Org_004.png"));
 
-const pp = new ProtoPlasm(protoOrg, 100, new Vector3(2400, 1500, 100));
-pp.setJitter(new Vector3(.5, .5, .1));
-pp.start();
-scene.add(pp);
+        // hack fix, needs better integration in OOP design
+        //protoOrg.setAlphaLookUpTable(getAlphaLookUpTable("data/ProtoMorph/alpha_test_100_pixels.png"));
+
+        //console.log(getAlphaValues("data/ProtoMorph/alpha_test_100_pixels.png"));
+
+        //protoOrg.setSurfaceDrawable(false, true, false)
+
+        pp = new ProtoPlasm(protoOrg, 100, new Vector3(2400, 1500, 100));
+        pp.setJitter(new Vector3(.5, .5, .1));
+        pp.start();
+        scene.add(pp);
+
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error('Error loading image:', error.message);
+        } else {
+            console.error('Unexpected error:', error);
+        }
+    }
+}
+
+// Call the function
+processImageData("data/ProtoMorph/Proto_Org_004.png");
+
+
+// const pad = getProtoAlphaData("data/ProtoMorph/Proto_Org_004.png");
+// console.log(data);
+
+
+// protoOrg = new ProtoOrganism_Single(new Vector3(randFloat(-posX, posX), randFloat(-posY, posY), randFloat(-posZ, posZ)), vSurfMid, new Color(1, .6, .6), pPhys, tdm);
+// protoOrg.setZIndexDepth(75);
+// protoOrg.addSubStructure(vSurfTop);
+// // protoOrg.setAlphaData(getProtoAlphaData("data/ProtoMorph/Proto_Org_004.png"));
+
+// // hack fix, needs better integration in OOP design
+// //protoOrg.setAlphaLookUpTable(getAlphaLookUpTable("data/ProtoMorph/alpha_test_100_pixels.png"));
+
+// //console.log(getAlphaValues("data/ProtoMorph/alpha_test_100_pixels.png"));
+
+// //protoOrg.setSurfaceDrawable(false, true, false)
+
+// const pp = new ProtoPlasm(protoOrg, 100, new Vector3(2400, 1500, 100));
+// pp.setJitter(new Vector3(.5, .5, .1));
+// pp.start();
+// scene.add(pp);
 
 
 // background
@@ -156,7 +206,9 @@ env.setNodesOff(AnchorPlane.EDGES_ALL);
 
 
 // testing alpha image
-//console.log(getAlphaLookUpTable("data/ProtoMorph/alpha_test_100_pixels.png"));
+// console.log(getProtoAlphaData("data/ProtoMorph/alpha_test_100_pixels.png"));
+
+
 
 /************************************************************/
 
@@ -207,7 +259,9 @@ function animate() {
 
     /************************Custom code*************************/
 
-    pp.run(time);
+    if (isDataLoaded) {
+        pp.run(time);
+    }
 
     env.verlet();
     env.jitterNodes(new Vector2(-.2, .2));
