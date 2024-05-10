@@ -85,7 +85,7 @@ export class ProtoOrganism_Single extends Group {
     private checkNodeAlpha(pos: Vector3): boolean {
         // console.log(this.alphaData);
         if (this.alphaData) {
-            //console.log(this.alphaData.alpha_1D);
+            // console.log(pos);
             // console.log('Image Width:', this.alphaData.w);
             // console.log('Image Height:', this.alphaData.h);
             // console.log('Alpha Values:', this.alphaData.alpha_1D);
@@ -95,12 +95,13 @@ export class ProtoOrganism_Single extends Group {
                     k = i * this.alphaData.w + j;
                     const w = this.alphaData.w;
                     const h = this.alphaData.h;
-                    //console.log(w, h)
+                    console.log(k)
                     // top row
-                    if (i === 0) {
+                    if (i == 0) {
                         const v = new Vector3().copy(pos).normalize();
-                        const px = new Vector3(j / w, i / h, 0);
-                        // console.log(px);
+                        //const px = new Vector3(j / w, i / h, 0);
+                        const px = new Vector3(j, i, 0);
+                        //console.log(px);
                         if (v.distanceTo(px) < 10) {
                             //  console.log("what's up");
                         }
