@@ -72,8 +72,8 @@ export class VerletSurface extends VerletBase {
         * detail0 = arcStep, detail1 = sliceStep, detail2, detail3 
         */
         const thetaStep = TWO_PI / detail0;
-        const sliceXStep = this.dim.x / 2.0 / detail1;
-        const sliceYStep = this.dim.y / 2.0 / detail1;
+        const sliceXStep = this.dim.x / 2.0 / (detail1 - 1);
+        const sliceYStep = this.dim.y / 2.0 / (detail1 - 1);
         let _vecs3_2D: Vector3[][] = [];
         let _vecs3_1D: Vector3[] = [];
         let _vecs: number[] = [];

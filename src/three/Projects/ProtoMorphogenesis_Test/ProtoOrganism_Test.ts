@@ -32,7 +32,7 @@ export enum NodeSelector {
     All = 'all',
 }
 
-export class ProtoOrganism_Single extends Group {
+export class ProtoOrganism_Test extends Group {
 
     pos: Vector3;
     body: VerletSurface;
@@ -79,13 +79,12 @@ export class ProtoOrganism_Single extends Group {
 
         }
 
-
     }
 
     private checkNodeAlpha(pos: Vector3): boolean {
         // console.log(pos);
         if (this.alphaData) {
-            console.log(pos.y);
+            // console.log(pos.y);
             // console.log('Image Width:', this.alphaData.w);
             //console.log('Image Height:', this.alphaData.h);
             // console.log('Alpha Values:', this.alphaData.alpha_1D);
@@ -95,12 +94,11 @@ export class ProtoOrganism_Single extends Group {
             // }
             let k = 0;
             for (let i = 0; i < this.alphaData.h; i++) {
-
                 for (let j = 0; j < this.alphaData.w; j++) {
                     k = i * this.alphaData.w + j;
                     const w = this.alphaData.w;
                     const h = this.alphaData.h;
-                    // console.log(k);
+                    console.log(k / (this.alphaData.w * this.alphaData.h));
                     // top row
                     if (i == 0) {
                         // const v = new Vector3().copy(pos).normalize();

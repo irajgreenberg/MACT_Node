@@ -16,7 +16,8 @@ module.exports = {
     //entry: "./src/three/Projects/ProtoMorph_003/sketch.ts",
     // entry: "./src/three/Projects/ProtoMorph_004/sketch.ts",
     //entry: "./src/three/Projects/ProtoMorphogenesis/sketch.ts",
-    entry: "./src/three/Projects/ProtoMorphogenesis_Single/sketch.ts",
+    //entry: "./src/three/Projects/ProtoMorphogenesis_Single/sketch.ts",
+    entry: "./src/three/Projects/ProtoMorphogenesis_Test/sketch.ts",
 
     module: {
         rules: [
