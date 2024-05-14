@@ -82,11 +82,15 @@ export class ProtoOrganism_Test extends Group {
     }
 
     private checkNodeAlpha(pos: Vector3): boolean {
-        // console.log(pos);
+
         if (this.alphaData) {
-            // console.log(pos.y);
+            // console.log("this.body.edgeNodes.length = ", this.body.edgeNodes.length)
+            // console.log('x = ', (pos.x + 350) / 700);
+            // console.log('y = ', (pos.y + 350) / 700);
+
+            // // console.log(pos.y);
             // console.log('Image Width:', this.alphaData.w);
-            //console.log('Image Height:', this.alphaData.h);
+            // console.log('Image Height:', this.alphaData.h);
             // console.log('Alpha Values:', this.alphaData.alpha_1D);
 
             // for (let b = 0; b < this.alphaData.h; b++) {
@@ -98,31 +102,16 @@ export class ProtoOrganism_Test extends Group {
                     k = i * this.alphaData.w + j;
                     const w = this.alphaData.w;
                     const h = this.alphaData.h;
-                    console.log(k / (this.alphaData.w * this.alphaData.h));
-                    // top row
-                    if (i == 0) {
-                        // const v = new Vector3().copy(pos).normalize();
-                        const v = new Vector3().copy(pos);
-                        v.addScalar(350);
-                        v.normalize();
-                        const px = new Vector3(j / w, i / h, 0);
-                        // const px = new Vector3(j, i, 0);
-                        // console.log(px);
-                        if (v.distanceTo(px) < .533) {
-                            //console.log("what's up");
-                            // console.log("v = v", v, "px = ", px);
-                        }
-                        // return true;
-                        // bottom row
-                    } else if (i === this.alphaData.h - 1) {
-                        //  return true;
-                        // left column
-                    } else if (j === 0) {
-                        // return true;
-                        // right column
-                    } else if (j === this.alphaData.w - 1) {
-                        // return true;
-                        // bottem edge
+                    // console.log(k, " = ", this.alphaData.alpha_1D[k]);
+
+                    const v0 = new Vector3((pos.x + 350) / 700, (pos.y + 350) / 700, 0);
+                    const v1 = new Vector3(j / (w - 1), i / (h - 1), 0);
+                    // console.log('v1.x = ', v1.x);
+                    // console.log('v1.y = ', v1.y);
+                    // console.log(v0.distanceTo(v1));
+                    if (v0.distanceTo(v1) <= .055 && this.alphaData.alpha_1D[k] == 255) {
+                        console.log(this.alphaData.alpha_1D[k]);
+                        return true;
                     }
 
                 }
@@ -135,44 +124,46 @@ export class ProtoOrganism_Test extends Group {
     create() {
         //create tendrils
         if (this.tdm) {
+
             for (let i = 0; i < this.body.edgeNodes.length; i++) {
 
                 if (this.checkNodeAlpha(this.body.edgeNodes[i].position)) {
 
-                } else {
+                    // } else {
 
+                    // }
+                    // only create tendril if Verlet node is on pixel with alpha>0
+                    const unitNode = new Vector3().copy(this.body.edgeNodes[i].position).normalize();
+                    // if (unitNode) {
+
+                    // }
+                    const head = this.body.edgeNodes[i].position;
+                    const tail = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(this.tdm.length);
+                    this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
+                    //  this.add(this.tendrils[this.tendrils.length - 1]);
+
+                    //   this.tendrils[i].setStrandColor(new Color("0xff6666"));
+                    this.tendrils[i].nodes[0].isVerletable = false;
+
+
+                    const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
+                    // for animation loop
+
+                    this.tendrilStickRadii.push(randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y));
+
+                    this.tendrilStickRadiiSegments.push(randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y));
+
+                    // const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y), false);
+
+                    const geometry = new ProtoTubeGeometry(path, this.tdm.segments, this.tendrilStickRadiiSegments[i], false, { func: FuncType.SINUSOIDAL, min: 2, max: 3, periods: 3 });
+
+
+                    const material = new MeshPhongMaterial({ color: this.tdm.tendrilCol, specular: 0xffdddd, shininess: 30, transparent: true, opacity: .6 });
+                    const mesh = new Mesh(geometry, material);
+
+                    this.tendrilSticks.push(new Mesh(geometry, material));
+                    this.add(this.tendrilSticks[this.tendrilSticks.length - 1]);
                 }
-                // only create tendril if Verlet node is on pixel with alpha>0
-                const unitNode = new Vector3().copy(this.body.edgeNodes[i].position).normalize();
-                // if (unitNode) {
-
-                // }
-                const head = this.body.edgeNodes[i].position;
-                const tail = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(this.tdm.length);
-                this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
-                //  this.add(this.tendrils[this.tendrils.length - 1]);
-
-                //   this.tendrils[i].setStrandColor(new Color("0xff6666"));
-                this.tendrils[i].nodes[0].isVerletable = false;
-
-
-                const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
-                // for animation loop
-
-                this.tendrilStickRadii.push(randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y));
-
-                this.tendrilStickRadiiSegments.push(randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y));
-
-                // const geometry = new TubeGeometry(path, this.tdm.segments, randFloat(this.tdm.radiiMinMax.x, this.tdm.radiiMinMax.y), randInt(this.tdm.radialSegsmentsMinMax.x, this.tdm.radialSegsmentsMinMax.y), false);
-
-                const geometry = new ProtoTubeGeometry(path, this.tdm.segments, this.tendrilStickRadiiSegments[i], false, { func: FuncType.SINUSOIDAL, min: 2, max: 3, periods: 3 });
-
-
-                const material = new MeshPhongMaterial({ color: this.tdm.tendrilCol, specular: 0xffdddd, shininess: 30, transparent: true, opacity: .6 });
-                const mesh = new Mesh(geometry, material);
-
-                this.tendrilSticks.push(new Mesh(geometry, material));
-                this.add(this.tendrilSticks[this.tendrilSticks.length - 1]);
             }
         }
         // //this.body.getEdgeVecs();
