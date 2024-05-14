@@ -102,11 +102,11 @@ let protoOrg: ProtoOrganism_Single;
 const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Middle_001.png');
 //const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_004.png');
 
-//const textureTop = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Top_001.png');
+const textureTop = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Top_001.png');
 
 const matMid = new MeshPhongMaterial({ color: 0xffffff, transparent: true, wireframe: false, flatShading: false, specular: 0x334433, shininess: 250, opacity: randFloat(1, 1), side: DoubleSide, map: textureMid, bumpScale: 5, bumpMap: textureMid });
 
-// const matTop = new MeshPhongMaterial({ color: 0xffffff, specular: 0xAA8855, transparent: true, wireframe: false, opacity: randFloat(1, 1), side: DoubleSide, map: textureTop, bumpScale: 5, bumpMap: textureTop });
+const matTop = new MeshPhongMaterial({ color: 0xffffff, specular: 0xAA8855, transparent: true, wireframe: false, opacity: randFloat(1, 1), side: DoubleSide, map: textureTop, bumpScale: 5, bumpMap: textureTop });
 
 
 const sz = randFloat(700, 700);

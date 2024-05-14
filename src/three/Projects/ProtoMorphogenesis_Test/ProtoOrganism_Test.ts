@@ -97,19 +97,22 @@ export class ProtoOrganism_Test extends Group {
             //     console.log(b);
             // }
             let k = 0;
+            const w = this.alphaData.w;
+            const h = this.alphaData.h;
+            const v0 = new Vector3((pos.x + 350) / 700, Math.abs((pos.y - 350) / 700), 0);
+            // console.log("pos.x =", v0.x, "pos.y = ", v0.y);
             for (let i = 0; i < this.alphaData.h; i++) {
                 for (let j = 0; j < this.alphaData.w; j++) {
                     k = i * this.alphaData.w + j;
-                    const w = this.alphaData.w;
-                    const h = this.alphaData.h;
+
                     // console.log(k, " = ", this.alphaData.alpha_1D[k]);
 
-                    const v0 = new Vector3((pos.x + 350) / 700, (pos.y + 350) / 700, 0);
                     const v1 = new Vector3(j / (w - 1), i / (h - 1), 0);
                     // console.log('v1.x = ', v1.x);
                     // console.log('v1.y = ', v1.y);
+
                     // console.log(v0.distanceTo(v1));
-                    if (v0.distanceTo(v1) <= .055 && this.alphaData.alpha_1D[k] == 255) {
+                    if (v0.distanceTo(v1) <= .08 && this.alphaData.alpha_1D[k] == 255) {
                         console.log(this.alphaData.alpha_1D[k]);
                         return true;
                     }
@@ -128,21 +131,24 @@ export class ProtoOrganism_Test extends Group {
             for (let i = 0; i < this.body.edgeNodes.length; i++) {
 
                 if (this.checkNodeAlpha(this.body.edgeNodes[i].position)) {
+                    // //  console.log("here");
 
-                    // } else {
+                    // // } else {
 
-                    // }
-                    // only create tendril if Verlet node is on pixel with alpha>0
+                    // // }
+                    // // only create tendril if Verlet node is on pixel with alpha>0
                     const unitNode = new Vector3().copy(this.body.edgeNodes[i].position).normalize();
-                    // if (unitNode) {
+                    // // if (unitNode) {
 
-                    // }
+                    // // }
                     const head = this.body.edgeNodes[i].position;
                     const tail = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(this.tdm.length);
-                    this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
-                    //  this.add(this.tendrils[this.tendrils.length - 1]);
 
-                    //   this.tendrils[i].setStrandColor(new Color("0xff6666"));
+                    console.log("here");
+                    this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
+                    // //  this.add(this.tendrils[this.tendrils.length - 1]);
+
+                    // //   this.tendrils[i].setStrandColor(new Color("0xff6666"));
                     this.tendrils[i].nodes[0].isVerletable = false;
 
 
@@ -337,7 +343,7 @@ export class ProtoOrganism_Test extends Group {
 
         // }
         // // console.log(this.alphaData);
-        console.log(this.alphaData);
+        // console.log(this.alphaData);
     }
 
 }

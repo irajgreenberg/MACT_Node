@@ -101,7 +101,7 @@ const imageMaps: ImageMap[] = [
 let protoOrg: ProtoOrganism_Test;
 
 
-const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_001.png');
+const textureMid = new TextureLoader().load('data/ProtoMorph/imgMap_10x10.png');
 const matMid = new MeshPhongMaterial({ color: 0xffffff, transparent: true, wireframe: false, flatShading: false, specular: 0x334433, shininess: 250, opacity: randFloat(1, 1), side: DoubleSide, map: textureMid, bumpScale: 5, bumpMap: textureMid });
 
 const sz = randFloat(700, 700);
@@ -168,6 +168,7 @@ async function processImageData(url: string): Promise<void> {
 }
 
 // Call the function
+//processImageData("data/ProtoMorph/imgMap_10x10_all_0_alpha.png");
 processImageData("data/ProtoMorph/imgMap_10x10.png");
 
 
