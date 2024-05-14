@@ -93,7 +93,7 @@ export class ProtoPlasm extends Group {
     public run(time: number): void {
         for (let i = 0; i < this.orgs.length; i++) {
             this.orgs[i].verlet();
-            //console.log(this.orgs[i].physics.spd);
+            // //console.log(this.orgs[i].physics.spd);
             this.orgs[i].move(this.orgs[i].physics.spd);
             this.orgs[i].rotate(this.orgs[i].physics.rotSpd);
             this.orgs[i].pulse();
@@ -116,6 +116,8 @@ export class ProtoPlasm extends Group {
                 this.orgs[i].position.y = -this.bounds.y / 2 + this.orgs[i].body.dim.y;
                 this.orgs[i].physics.spd.y *= -1;
             }
+
+
 
             // if (this.orgs[i].position.z > this.bounds.z / 2) {
             //     this.orgs[i].position.z = this.bounds.z / 2;

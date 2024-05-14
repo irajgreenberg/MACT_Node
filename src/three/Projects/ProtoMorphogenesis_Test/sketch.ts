@@ -234,6 +234,7 @@ function animate() {
         pp.run(time);
     }
 
+
     env.verlet();
     env.jitterNodes(new Vector2(-.2, .2));
     /************************************************************/

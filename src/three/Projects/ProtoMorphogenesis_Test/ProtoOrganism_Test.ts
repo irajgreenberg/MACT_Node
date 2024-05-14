@@ -112,7 +112,7 @@ export class ProtoOrganism_Test extends Group {
                     // console.log('v1.y = ', v1.y);
 
                     // console.log(v0.distanceTo(v1));
-                    if (v0.distanceTo(v1) <= .08 && this.alphaData.alpha_1D[k] == 255) {
+                    if (v0.distanceTo(v1) <= .056 && this.alphaData.alpha_1D[k] == 255) {
                         console.log(this.alphaData.alpha_1D[k]);
                         return true;
                     }
@@ -127,9 +127,7 @@ export class ProtoOrganism_Test extends Group {
     create() {
         //create tendrils
         if (this.tdm) {
-
             for (let i = 0; i < this.body.edgeNodes.length; i++) {
-
                 if (this.checkNodeAlpha(this.body.edgeNodes[i].position)) {
                     // //  console.log("here");
 
@@ -144,13 +142,10 @@ export class ProtoOrganism_Test extends Group {
                     const head = this.body.edgeNodes[i].position;
                     const tail = new Vector3().copy(this.body.edgeNodes[i].position).multiplyScalar(this.tdm.length);
 
-                    console.log("here");
+                    console.log("this.tendrils", this.tendrils.length);
                     this.tendrils.push(new VerletStrand(head, tail, 6, AnchorPoint.HEAD, .3));
-                    // //  this.add(this.tendrils[this.tendrils.length - 1]);
 
-                    // //   this.tendrils[i].setStrandColor(new Color("0xff6666"));
                     this.tendrils[i].nodes[0].isVerletable = false;
-
 
                     const path = new CatmullRomCurve3(this.tendrils[i].getNodeVecs());
                     // for animation loop
