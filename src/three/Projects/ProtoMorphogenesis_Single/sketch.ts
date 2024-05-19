@@ -99,8 +99,9 @@ const imageMaps: ImageMap[] = [
 let protoOrg: ProtoOrganism_Single;
 
 
-const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Middle_001.png');
-//const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_004.png');
+//const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Middle_001.png');
+//const textureMid = new TextureLoader().load('data/ProtoMorph/Proto_BG_001.png');
+const textureMid = new TextureLoader().load('data/ProtoMorph/math_002.png');
 
 const textureTop = new TextureLoader().load('data/ProtoMorph/Proto_Org_Single_Top_001.png');
 
@@ -197,7 +198,7 @@ processImageData("data/ProtoMorph/Proto_Org_004.png");
 
 
 // background
-let env = new VerletPlane2(10200, 7500, 10, 10, "data/ProtoMorph/Proto_BG_Single_001.jpg", AnchorPlane.EDGES_ALL);
+let env = new VerletPlane2(10200, 7500, 10, 10, "data/ProtoMorph/Proto_BG_001.png", AnchorPlane.EDGES_ALL);
 env.position.setZ(-1900);
 env.moveNode(50, new Vector3(randFloat(30, 60), randFloat(30, 60), randFloat(30, 60)));
 scene.add(env);
