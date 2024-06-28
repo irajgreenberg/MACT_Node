@@ -20,6 +20,7 @@ module.exports = {
     //entry: "./src/three/Projects/ProtoMorphogenesis_Test/sketch.ts",
     //entry: "./src/three/Projects/ProtoMorphogenesis_Structure/sketch.ts",
     entry: "./src/three/Projects/SurfaceAlphaAttachmentTest/sketch.ts",
+    entry: "./src/three/Projects/Protobyte_Summer_2024/sketch.ts",
 
 
     module: {
