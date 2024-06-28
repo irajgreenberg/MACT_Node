@@ -96,7 +96,7 @@ export class Protobyte_Summer_2024 extends Group {
 
 
         // strands
-        let strandLoops = 1;
+        let strandLoops = 3;
         let strandLoopSegs = 100;
 
 
@@ -105,7 +105,7 @@ export class Protobyte_Summer_2024 extends Group {
             // Initial point
             let theta = Math.random() * 2 * Math.PI; // Random angle in the xy-plane
             let phi = Math.random() * Math.PI; // Random angle from z-axis
-            let radius = randFloat(90, 250);
+            let radius = randFloat(165, 230);
             let x = radius * Math.sin(phi) * Math.cos(theta);
             let y = radius * Math.sin(phi) * Math.sin(theta);
             let z = radius * Math.cos(phi);
@@ -113,7 +113,7 @@ export class Protobyte_Summer_2024 extends Group {
             curvePts.push(new Vector3(x, y, z));
 
             // Generate subsequent curvePts
-            for (let i = 1; i < 1000; i++) { // Increased to 1000 for a more complete winding around the sphere
+            for (let i = 1; i < randInt(60, 175); i++) { // Increased to 1000 for a more complete winding around the sphere
                 // Small random perturbation
                 theta += (Math.random() - 0.5) * 2; // Small random perturbation
                 phi += (Math.random() - 0.5) * 2; // Small random perturbation
@@ -130,9 +130,9 @@ export class Protobyte_Summer_2024 extends Group {
             }
 
             let curve = new CatmullRomCurve3(curvePts);
-            let creatureGeom = new ProtoTubeGeometry(curve, 4000, 8, false, { func: FuncType.SINUSOIDAL, min: randFloat(.2, .2), max: randFloat(.2, randFloat(.2, 1)), periods: randFloat(1, 1) });
+            let creatureGeom = new ProtoTubeGeometry(curve, 4000, 16, false, { func: FuncType.SINUSOIDAL, min: randFloat(.2, .2), max: randFloat(10, randFloat(10, 20)), periods: randFloat(20, 30) });
 
-            this.strands[h] = new Mesh(creatureGeom, new MeshBasicMaterial({ color: new Color(Math.random(), Math.random(), Math.random()), wireframe: true, transparent: true, opacity: randFloat(.05, .15) }));
+            this.strands[h] = new Mesh(creatureGeom, new MeshBasicMaterial({ color: new Color(Math.random(), Math.random(), Math.random()), wireframe: true, transparent: true, opacity: randFloat(.05, .75) }));
             this.add(this.strands[h]);
         }
 
