@@ -88,7 +88,7 @@ scene.add(pointLt2);
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    //controls.autoRotate = true;
+    controls.autoRotate = true;
 
     const time = Date.now() * 0.007;
     render();

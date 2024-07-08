@@ -80,7 +80,7 @@ export class Protobyte_Summer_2024 extends Group {
 
         curvePts = [];
         theta = 0.0;
-        const sentinal3 = 20;
+        const sentinal3 = 10;
 
         for (let i = 0; i < sentinal3; i++) {
             let step = 200 / sentinal3;
@@ -91,12 +91,12 @@ export class Protobyte_Summer_2024 extends Group {
         curve = new CatmullRomCurve3(curvePts);
         creatureGeom = new ProtoTubeGeometry(curve, 100, 8, false, { func: FuncType.SINUSOIDAL, min: randFloat(.2, 1), max: randFloat(20, 40), periods: randFloat(10, 15) });
 
-        this.pbShell03 = new Mesh(creatureGeom, new MeshBasicMaterial({ color: "#ffaaaa", wireframe: true, transparent: true, opacity: .9 }));
+        this.pbShell03 = new Mesh(creatureGeom, new MeshBasicMaterial({ color: new Color(Math.random(), Math.random(), Math.random()), wireframe: true, transparent: true, opacity: .9 }));
         this.add(this.pbShell03);
 
 
         // strands
-        let strandLoops = 3;
+        let strandLoops = randInt(2, 6);
         let strandLoopSegs = 100;
 
 
@@ -113,7 +113,7 @@ export class Protobyte_Summer_2024 extends Group {
             curvePts.push(new Vector3(x, y, z));
 
             // Generate subsequent curvePts
-            for (let i = 1; i < randInt(60, 175); i++) { // Increased to 1000 for a more complete winding around the sphere
+            for (let i = 1; i < randInt(60, 475); i++) { // Increased to 1000 for a more complete winding around the sphere
                 // Small random perturbation
                 theta += (Math.random() - 0.5) * 2; // Small random perturbation
                 phi += (Math.random() - 0.5) * 2; // Small random perturbation
@@ -130,7 +130,7 @@ export class Protobyte_Summer_2024 extends Group {
             }
 
             let curve = new CatmullRomCurve3(curvePts);
-            let creatureGeom = new ProtoTubeGeometry(curve, 4000, 16, false, { func: FuncType.SINUSOIDAL, min: randFloat(.2, .2), max: randFloat(10, randFloat(10, 20)), periods: randFloat(20, 30) });
+            let creatureGeom = new ProtoTubeGeometry(curve, 8000, 16, false, { func: FuncType.SINUSOIDAL, min: randFloat(.1, .2), max: randFloat(.2, randFloat(.2, 1)), periods: randFloat(20, 60) });
 
             this.strands[h] = new Mesh(creatureGeom, new MeshBasicMaterial({ color: new Color(Math.random(), Math.random(), Math.random()), wireframe: true, transparent: true, opacity: randFloat(.05, .75) }));
             this.add(this.strands[h]);
