@@ -6,8 +6,8 @@
 // Creates Verlet Tendrils - motion/springing based on displacement
 
 import { VerletNode } from './VerletNode';
-import { VerletStick } from './VerletStick';
-import { AnchorPoint, FuncType, GeometryDetail } from './IJGUtils';
+import { AnchorPoint, VerletStick } from './VerletStick';
+import { FuncType, GeometryDetail } from './IJGUtils';
 import { BufferGeometry, Color, Group, Line, LineBasicMaterial, MathUtils, MeshBasicMaterial, Vector3 } from 'three';
 
 export class VerletStrand extends Group {

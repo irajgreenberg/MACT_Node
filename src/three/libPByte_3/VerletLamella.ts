@@ -1,6 +1,6 @@
 import { VerletNode } from './VerletNode';
-import { VerletStick } from './VerletStick';
-import { AnchorPoint, FrenetFrame, GeometryDetail, Quad, trace } from './IJGUtils';
+import { AnchorPoint, VerletStick } from './VerletStick';
+import { FrenetFrame, GeometryDetail, Quad, trace } from './IJGUtils';
 import { BufferAttribute, BufferGeometry, Color, DoubleSide, Group, Line, LineBasicMaterial, MathUtils, Mesh, MeshBasicMaterial, MeshPhongMaterial, PlaneGeometry, Shape, Vector2, Vector3 } from 'three';
 import { VerletSegmentedStrip } from './VerletSegmentedStrip';
 import { line } from './IJGUtils';

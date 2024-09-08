@@ -1,7 +1,7 @@
-import { AnchorPoint, GeometryDetail } from './IJGUtils';
+import { GeometryDetail } from './IJGUtils';
 import { VerletNode } from './VerletNode';
 import { VerletStrand } from './VerletStrand';
-import { VerletStick } from './VerletStick';
+import { AnchorPoint, VerletStick } from './VerletStick';
 import * as THREE from 'three';
 import { Color, Vector3 } from 'three';
 

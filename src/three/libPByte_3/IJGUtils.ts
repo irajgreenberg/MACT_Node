@@ -904,15 +904,16 @@ export enum HairDensity {
     CUSTOM = -1
 }
 
-// Verlet stick terminal anchoring
-export enum AnchorPoint {
-    NONE,
-    HEAD,
-    TAIL,
-    HEAD_TAIL,
-    MOD2,
-    RAND
-}
+// // Verlet stick terminal anchoring
+// moved to VerletStick
+// export enum AnchorPoint {
+//     NONE,
+//     HEAD,
+//     TAIL,
+//     HEAD_TAIL,
+//     MOD2,
+//     RAND
+// }
 
 // Axes for drawing plane
 export enum AxesPlane {

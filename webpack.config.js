@@ -15,12 +15,13 @@ module.exports = {
     //entry: "./src/three/Projects/ProtoMorph_002/sketch.ts",
     //entry: "./src/three/Projects/ProtoMorph_003/sketch.ts",
     // entry: "./src/three/Projects/ProtoMorph_004/sketch.ts",
-    entry: "./src/three/Projects/ProtoMorphogenesis/sketch.ts",
+    // entry: "./src/three/Projects/ProtoMorphogenesis/sketch.ts",
     //entry: "./src/three/Projects/ProtoMorphogenesis_Single/sketch.ts",
     //entry: "./src/three/Projects/ProtoMorphogenesis_Test/sketch.ts",
     //entry: "./src/three/Projects/ProtoMorphogenesis_Structure/sketch.ts",
     // entry: "./src/three/Projects/SurfaceAlphaAttachmentTest/sketch.ts",
     // entry: "./src/three/Projects/Protobyte_Summer_2024/sketch.ts",
+    entry: "./src/three/Projects/CreatureWireframe01/sketch.ts",
 
 
     module: {

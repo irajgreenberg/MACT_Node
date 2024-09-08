@@ -7,9 +7,9 @@
 
 import * as THREE from 'three';
 import { VerletNode } from './VerletNode';
-import { VerletStick } from './VerletStick';
+import { AnchorPoint, VerletStick } from './VerletStick';
 import { VerletStrand } from './VerletStrand';
-import { AnchorPoint, Propulsion, VerletMaterials, GeometryDetail } from './IJGUtils';
+import { Propulsion, VerletMaterials, GeometryDetail } from './IJGUtils';
 import { BufferGeometry, Color, Vector3 } from 'three';
 //import { Vector3 } from '/build/three.module.js';
 

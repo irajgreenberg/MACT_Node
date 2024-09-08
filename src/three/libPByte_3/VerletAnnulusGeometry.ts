@@ -1,10 +1,10 @@
 
 
 import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, PlaneGeometry, Vector3 } from "three";
-import { AnchorPoint, PBMath } from "./IJGUtils";
+import { PBMath } from "./IJGUtils";
 import { VerletGeometryBase } from "./VerletGeometryBase";
 import { VerletNode } from "./VerletNode";
-import { VerletStick } from "./VerletStick";
+import { AnchorPoint, VerletStick } from "./VerletStick";
 
 export class VerletAnnulusGeometry extends VerletGeometryBase {
     attachmentEdge: Vector3[] = [];

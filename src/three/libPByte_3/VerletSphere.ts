@@ -5,8 +5,8 @@
 
 import { Color, Group, Vector2, Vector3 } from 'three';
 import { VerletNode } from './VerletNode';
-import { VerletStick } from './VerletStick';
-import { AnchorPoint, GeometryDetail } from './IJGUtils';
+import { AnchorPoint, VerletStick } from './VerletStick';
+import { GeometryDetail } from './IJGUtils';
 import { VerletStrand } from './VerletStrand';
 
 // Verlet Sphere, constructed of 

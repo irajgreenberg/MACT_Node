@@ -10,9 +10,9 @@
 //----------------------------------------------
 
 import { BufferGeometry, Color, Group, Line, LineBasicMaterial, MathUtils, MeshBasicMaterial, Vector3 } from 'three';
-import { AnchorPoint, GeometryDetail, FuncType } from './IJGUtils';
+import { GeometryDetail, FuncType } from './IJGUtils';
 import { VerletNode } from './VerletNode';
-import { VerletStick } from './VerletStick';
+import { AnchorPoint, VerletStick } from './VerletStick';
 
 
 export class VerletArm extends Group {

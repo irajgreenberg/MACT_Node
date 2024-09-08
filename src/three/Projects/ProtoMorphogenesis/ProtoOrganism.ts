@@ -9,9 +9,9 @@ Class encapsulates a VerletSurface with optionally attached tendrils
 
 import { CatmullRomCurve3, Color, Curve, CurvePath, DoubleSide, Group, Material, Mesh, MeshBasicMaterial, TubeGeometry, Vector2, Vector3 } from "three";
 import { randFloat, randInt } from 'three/src/math/MathUtils';
-import { FuncType, saveImage, PI, TWO_PI, sin, cos, AnchorPoint, SimplCurve } from "../../libPByte_3/IJGUtils";
+import { FuncType, saveImage, PI, TWO_PI, sin, cos, SimplCurve } from "../../libPByte_3/IJGUtils";
 import { VerletStrand } from "../../libPByte_3/VerletStrand";
-import { VerletStick } from "../../libPByte_3/VerletStick";
+import { AnchorPoint, VerletStick } from "../../libPByte_3/VerletStick";
 import { VerletNode } from "../../libPByte_3/VerletNode";
 import { TendrilDataModel } from "../../libPByte_3/TendrilDataModel";
 import { VerletSurface } from "../../libPByte_3/VerletSurface";
